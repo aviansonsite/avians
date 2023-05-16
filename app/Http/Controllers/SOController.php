@@ -152,14 +152,14 @@ class SOController extends Controller
             ->leftjoin('users as u','u.id','so.a_id')
             ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','u.name','u.delete as u_delete','u.is_active')
             ->where(['so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
-            ->orderby('updated_at','DESC')
+            ->orderby('so.updated_at','DESC')
             ->get();
         }else{
             $data=DB::table('sales_orders as so')
             ->leftjoin('users as u','u.id','so.a_id')
             ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','u.name','u.delete as u_delete','u.is_active')
             ->where(['so.a_id'=>$a_id,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
-            ->orderby('updated_at','DESC')
+            ->orderby('so.updated_at','DESC')
             ->get();
         }
         
