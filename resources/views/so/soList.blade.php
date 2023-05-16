@@ -146,79 +146,84 @@
          
                             <div class="tab-pane" id="update_so" role="tabpanel">
                                 {!! Form::open(['class'=>"form-horizontal oa_form",'enctype'=>'multipart/form-data','files' => 'true','id'=>'postOAForm']) !!}
+
                                     <input type="hidden" name="edit_id" id="edit_id" value="">
                                     <input type="hidden" name="role" id="role" value="{{$roles}}">
 
                                     <div class="row">
-                                        <div class="col-md-4 col-sm-12">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
+                                            <div class="form-group mb-3">
+                                                <label for="labours" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Lead Technician Support<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="labours" required name="labours">
+                                                
+                                                </select>
+                                                <span class="text-danger error" id="lerror"></span>
+                                               
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-8 col-sm-12 col-lg-8 lerror_msg">
+                                            <span class="text-danger error" id="lerror_msg"></span>
+                                        </div>
+
+                                        <div class="col-md-2 col-sm-12 col-lg-2 labour_change">
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" id="so_number" placeholder="Enter SO Number" name="so_number" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="10">
-                                                <label for="so_number">OA Number</label>
+                                                <label for="so_number">OA Number<sup class="text-danger">*</sup></label>
                                                 <span class="text-danger error" id="soerror"></span>
 
                                             </div>
                                         </div>
-                                        <div class="col-md-4 col-sm-12">
+                                        <div class="col-md-2 col-sm-12 col-lg-2 labour_change">
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" id="client_name" placeholder="Enter Client Name" name="client_name" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50">
-                                                <label for="client_name">Client Name</label>
+                                                <label for="client_name">Client Name<sup class="text-danger">*</sup></label>
                                                 <span class="text-danger error" id="cnerror"></span>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 col-sm-12">
+                                        <div class="col-md-2 col-sm-12 col-lg-2 labour_change">
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" id="project_name" placeholder="Enter Project Name" name="project_name" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50">
-                                                <label for="project_name">Project Name</label>
+                                                <label for="project_name">Project Name<sup class="text-danger">*</sup></label>
                                                 <span class="text-danger error" id="pnerror"></span>
                                             </div>
                                         </div>
-                                        <div class="col-md-6 col-sm-12">
+                                       
+                                        <div class="col-md-2 col-sm-12 col-lg-2 labour_change">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="cp_name" placeholder="Enter CP Name" name="cp_name"required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50">
+                                                <label for="cp_name">CP Name<sup class="text-danger">*</sup></label>
+                                                <span class="text-danger error" id="cpnerror"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-12 col-lg-2 labour_change">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="cp_ph_no" placeholder="Enter CP Phone" name="cp_ph_no" required maxlength="10">
+                                                <label for="cp_ph_no">CP Phone<sup class="text-danger">*</sup></label>
+                                                <span class="text-danger error" id="cpperror"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5 col-sm-12 col-lg-5 col-sm-12 labour_change">
                                             <div class="form-floating mb-3">
                                                 <textarea class="form-control" id="address" placeholder="Enter Address" required name="address" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100"></textarea>
-                                                <label for="address">Project Address</label>
+                                                <label for="address">Project Address<sup class="text-danger">*</sup></label>
                                                 <span class="text-danger error" id="aerror"></span>
 
                                             </div>
                                         </div>
-                                        <div class="col-md-3 col-sm-12">
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="cp_name" placeholder="Enter CP Name" name="cp_name"required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50">
-                                                <label for="cp_name">CP Name</label>
-                                                <span class="text-danger error" id="cpnerror"></span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 col-sm-12">
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="cp_ph_no" placeholder="Enter CP Phone" name="cp_ph_no" required maxlength="10">
-                                                <label for="cp_ph_no">CP Phone</label>
-                                                <span class="text-danger error" id="cpperror"></span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
-                                            <div class="form-group mb-3">
-                                                <label for="labours" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Lead Technician Support<sup class="text-danger">*</sup></label>
-                                                <select class="form-control select2" id="labours" required name="labours">
-                                                    <option value="" disabled selected>Select</option>
-                                                    @foreach($u_obj as $u)
-                                                        <option value="{{$u->id}}">{{$u->name}}</option>
-                                                    @endforeach
-                                                </select>
-                                                <span class="text-danger error" id="lerror"></span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <div class="form-group mb-3">
-                                                <label for="labour" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Support Technician <sup class="text-danger">*</sup></label>
+                                        <div class="col-md-7 col-sm-12 col-lg-7">
+                                            <div class="form-group mb-3 labour_change">
+                                                <label for="labour" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Support Technician<sup class="text-danger">*</sup></label>
                                                 <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="labour" name="labour[]" placeholder="Support Technician">
                     
                                                 </select>
-                                                <span class="text-danger error" id="lerror"></span>
+                                                <span class="text-danger error" id="slerror"></span>
                                             </div>
                                         </div>
                                     </div> 
                                     <div class="d-sm-flex flex-wrap">
                                         <h4 class="card-title mb-4"></h4>
-                                        <div class="ms-auto">
+                                        <div class="ms-auto labour_change">
                                             <input type="button" class="btn btn-primary btn-sm waves-effect waves-light mb-2 submit_btn" id="add_so"  value="Save" />
                                         </div>
                                     </div>
@@ -255,7 +260,8 @@
     $(document).ready(function(){
         var $body = $("body");
         $('#labour,#labours').select2();
-       
+        $(".labour_change").hide();     // on labour change 
+        $(".lerror_msg").hide();     // on labour change check st
     });
     var $body = $("body");
    $( function(){
@@ -268,21 +274,27 @@
 
     $('.nav-tabs a[href="#update_so"]').click(function(){
        
-            $('#so_number').prop('disabled', false);
-            $('#client_name').prop('disabled', false);
-            $('#project_name').prop('disabled', false);
+        $('#so_number').prop('disabled', false);
+        $('#client_name').prop('disabled', false);
+        $('#project_name').prop('disabled', false);
 
+        $(".labour_change").hide();     // on labour change 
+        $(".lerror_msg").hide();     // on labour change check status
         $('.oa_form')[0].reset()
         $('#edit_id').val('');
-        $("#labour").empty();            
+        $("#labour").empty();        
+        $("#labours").empty();            
+
         getSO();
+        
 
     });
 
     //For set/unset select field
     $('.nav-tabs a[href="#so_list"]').click(function()
     {
-        $("#labour").empty();            
+        $("#labour").empty();    
+        $("#labours").empty();            
         getSO();
     });
 
@@ -302,7 +314,8 @@
                 console.log(data.data);
                 $("#datatable").DataTable().destroy();
                 content ="";
-                var i = 0;                
+                var i = 0;         
+                $("#labour").empty();         
                 $.each(data.data,function(index,row){
 
                         content +="<tr>";
@@ -326,24 +339,91 @@
                 $('#datatable').dataTable();
 
                 //For labour
-                // $('#edit_labour').append("<option value='' class='text-muted' selected disabled>"+'All '+"</option>");
+                $('#labours').append("<option value='' class='text-muted' selected disabled>"+'Select'+"</option>");
                 $('#labour').append("<option value='' class='text-muted' >"+'All'+"</option>");
 
                 $.each(data.u_obj,function(index,row){
                     //For Add Material Modal
                     // $('#edit_labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
                     $('#labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
+                    $('#labours').append("<option value='"+row.id+"'>"+row.name+"</option>");
                 });
+
+                
             }
         });
     }
 
+    //Lead technician support on change fields
+    $('#labours').change(function(e)
+    {
+        var id = $(this).val();
+        var so_id= $('#edit_id').val();
+        
+        // alert(so_id);
+       
+        $.ajax({
+            headers:{
+                'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+            },
+            url:"{{url('check_tl_status')}}",
+            type :'get',
+            data : {id:id,so_id:so_id},
+            cache: false,
+            dataType: 'json',                 
+            success:function(data){
+                console.log(data);
+
+                if(data.so_id == null){
+                    if (data.count == 0) 
+                    { 
+                        $(".labour_change").show();     // on labour change 
+                        $(".lerror_msg").hide();     // on labour change check status
+                
+                    }else{
+                        $(".lerror_msg").show();     // on labour change check status
+                        $(".labour_change").hide();     // on labour change 
+                        $("#lerror_msg").html("This Technician Already Exist in "+data.oa_number+" ,Please Select Another OA For Further Operation.");
+                    }
+                }else{
+                    if (((data.count == 1) && (data.so_id == data.d_so_id)) || ((data.count == 0) && (data.d_so_id == 0)) ) 
+                    { 
+                        $(".labour_change").show();     // on labour change 
+                        $(".lerror_msg").hide();     // on labour change check status
+                
+                    }else{
+                        $(".lerror_msg").show();     // on labour change check status
+                        $(".labour_change").hide();     // on labour change 
+                        $("#lerror_msg").html("This Technician Already Exist in "+data.oa_number+" ,Please Select Another OA For Further Operation.");
+                    }
+                }
+                 
+              
+                //     $("#labour").empty();
+                
+                // //For labour
+                // // $('#labours').append("<option value='' class='text-muted' selected disabled>"+'Select'+"</option>");
+                // $('#labour').append("<option value='' class='text-muted' >"+'All'+"</option>");
+
+                // $.each(data.u_obj,function(index,row){
+                //     //For Add Material Modal
+                //     // $('#edit_labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
+                //     $('#labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
+                //     // $('#labours').append("<option value='"+row.id+"'>"+row.name+"</option>");
+                // });
+            }
+        });
+  
+    });
 
     $(document).on("click",'.editU',function()
     {
         var id = $(this).data('id');
+       
         if(id !=""){
-
+            // $("#labour").empty();        
+            // $("#labours").empty();
+            // getSO();
             var role= $('#role').val();
             if(role == 1){
                 $('#so_number').prop('disabled', true);
@@ -379,12 +459,15 @@
             $('#address').val(address); 
             $('#cp_name').val(cp_name); 
             $('#cp_ph_no').val(cp_ph_no);
+            
             $.each(r,function(index,value)
             {
-                $('#labour option[value='+value+']').attr('selected','selected').change();
+                
+                $("#labour option[value='"+value+"']").attr('selected','selected').change();
+
             });
 
-            $('#labours option[value='+lead_technician+']').attr('selected','selected').change();
+            $("#labours option[value='"+lead_technician+"']").attr('selected','selected').change();
 
         }
 
@@ -461,10 +544,10 @@
 
         if( $.trim(labour).length == 0 )
         {
-            $('#lerror').text('Please Select Support Technicians.');
+            $('#slerror').text('Please Select Support Technicians.');
             event.preventDefault();
         }else{
-            $('#lerror').text('');
+            $('#slerror').text('');
             ++n;
         }
 
@@ -515,7 +598,8 @@
                         $("#address").val('');
                         $("#cp_name").val('');
                         $("#cp_ph_no").val();    
-                        // $("#labour").empty();            
+                        $("#labour").empty();    
+                        $("#labours").empty();             
 
                         // $("#addModal").modal("hide");
                         getSO();

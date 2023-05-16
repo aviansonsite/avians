@@ -185,6 +185,15 @@
                                         <tbody id="exp_pay_records">
                                            
                                         </tbody>
+                                        <tfoot id="tucledata">
+                                            <tr>
+                                                <th colspan="7" class="text-center"><strong>Total</strong></th>
+                                                <th id="t_ucleamount"></th>
+                                                @if($roles == 1)
+                                                    <th></th>
+                                                @endif
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </div>
@@ -211,6 +220,15 @@
                                         <tbody id="cll_records">
                                         
                                         </tbody>
+                                        <tfoot id="tclldata">
+                                            <tr>
+                                                <th colspan="7" class="text-center"><strong>Total</strong></th>
+                                                <th id="t_cllamount"></th>
+                                                @if($roles == 0)
+                                                    <th></th>
+                                                    @endif
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </div>
@@ -234,6 +252,12 @@
                                         <tbody id="apprvd_records">
                                         
                                         </tbody>
+                                        <tfoot id="taprdata">
+                                            <tr>
+                                                <th colspan="8" class="text-center"><strong>Total</strong></th>
+                                                <th id="t_apprvdamount"></th>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </div>
@@ -251,11 +275,23 @@
                                                 <th scope="col" style="width: 100px">Admin Remark</th>
                                                 <th scope="col" style="width: 100px">Status</th>
                                                 <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
+                                                @if($roles == 0)
+                                                    <th scope="col">Action</th>
+                                                @endif
                                             </tr>
                                         </thead>
                                         <tbody id="cal_records">
                                         
                                         </tbody>
+                                        <tfoot id="tcaldata">
+                                            <tr>
+                                                <th colspan="7" class="text-center"><strong>Total</strong></th>
+                                                <th id="t_calamount"></th>
+                                                @if($roles == 0)
+                                                    <th></th>
+                                                @endif
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                     
                                 </div>
@@ -297,12 +333,13 @@
                             <label for="exp_type" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Expense Type<sup class="text-danger">*</sup></label>
                             <select class="form-control select2" id="exp_type" required name="exp_type" disabled>
                                 <option value="" disabled selected>Select</option>
-                                <option value="Hotel">Hotel</option>
-                                <option value="Material_Purchase">Material Purchase</option>
-                                <option value="Labour_Hired">Labour Hired</option>
-                                <option value="Crane/Hydra">Crane/Hydra</option>
-                                <option value="Scaffolding">Scaffolding</option>
-                                <option value="Other">Other</option>
+                                    <option value="Crane/Hydra">Crane/Hydra</option>
+                                    <option value="Daily Allowance">Daily Allowance</option>
+                                    <option value="Hotel">Hotel</option>
+                                    <option value="Labour_Hired">Labour Hired</option>
+                                    <option value="Material_Purchase">Material Purchase</option>
+                                    <option value="Scaffolding">Scaffolding</option>
+                                    <option value="Other">Other</option>
                             </select>
                             <span class="text-danger error" id="eterror"></span>
                         </div>
@@ -423,6 +460,10 @@
         $('#labours').select2();
         $('#exp_type,#status_change').select2({ dropdownParent: $('#editPaymentModal') });
 
+        $("#tucledata").hide();
+        $("#tclldata").hide();
+        $("#tcaldata").hide();
+        $("#taprdata").hide();
     });
     var $body = $("body");
 
@@ -450,12 +491,17 @@
                 $("#apprvdDatatable").DataTable().destroy();
 
 
+                $("#tucledata").show();
+                $("#tclldata").show();
+                $("#tcaldata").show();
+                $("#taprdata").show();
+
+                var t_ucleamount=t_cllamount=t_calamount=t_apprvdamount=0; 
                 content ="";
                 content1 ="";
                 content2 ="";
                 content3 ="";
-
-                var i=j=k=l= 0;  
+                var i=j=k=l= 0;       
                 // $("#labour").empty();            
                 // $("#so").empty();        
                 $.each(data.data,function(index,row){
@@ -473,6 +519,7 @@
                         }else{
                             var exp_date = " - "
                         }
+                        t_ucleamount+=Number(row.amount);           //total of amount
                         var d = new Date();
                         var current_date = d.getDate();
                             content +="<tr>";
@@ -495,7 +542,9 @@
                             
                             content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                             content +="<td>"+row.amount+"</td>";
-                            content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                            if(data.role == 1){
+                                content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                            }
                             content += "</tr>";
 
                     }   
@@ -514,6 +563,9 @@
                         }else{
                             var exp_date = " - "
                         }
+
+                        t_cllamount+=Number(row.aprvd_amount);           //total of amount
+
                         var d = new Date();
                         var current_date = d.getDate();
                             content1 +="<tr>";
@@ -534,10 +586,11 @@
                                 content1 +="<td class='text-center'> - </td>";
                             }
                             content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            content1 +="<td>"+row.amount+"</td>";
+                            content1 +="<td>"+row.aprvd_amount+"</td>";
+                            if(data.role == 0){
+                                content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                            }
                             content1 += "</tr>";
-
-
                     }
 
                     if(row.status == 'Approved'){
@@ -554,6 +607,7 @@
                         }else{
                             var exp_date = " - "
                         }
+                        t_apprvdamount+=Number(row.aprvd_amount);           //total of amount
                         var d = new Date();
                         var current_date = d.getDate();
                             content3 +="<tr>";
@@ -579,7 +633,7 @@
                                 content3 +="<td class='text-center'> - </td>";
                             }
                             content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            content3 +="<td>"+row.amount+"</td>";
+                            content3 +="<td>"+row.aprvd_amount+"</td>";
                             content3 += "</tr>";
 
 
@@ -599,6 +653,7 @@
                         }else{
                             var exp_date = " - "
                         }
+                        t_calamount+=Number(row.amount);       // total of amount
                         var d = new Date();
                         var current_date = d.getDate();
                             content2 +="<tr>";
@@ -620,12 +675,14 @@
                             }
                             content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                             content2 +="<td>"+row.amount+"</td>";
+                            if(data.role == 0){
+                                content2 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                            }
                             content2 += "</tr>";
 
-                        }
+                    }
                     
                 });
-                
 
                 $("#exp_pay_records").html(content); //For append html data
                 $('#expDatatable').dataTable();
@@ -661,6 +718,13 @@
                 $("#cancelDatatable").DataTable().destroy();
                 $("#apprvdDatatable").DataTable().destroy();
 
+                
+                $("#tucledata").show();
+                $("#tclldata").show();
+                $("#tcaldata").show();
+                $("#taprdata").show();
+
+                var t_ucleamount=t_cllamount=t_calamount=t_apprvdamount=0; 
                 content ="";
                 content1 ="";
                 content2 ="";
@@ -683,6 +747,7 @@
                         }else{
                             var exp_date = " - "
                         }
+                        t_ucleamount+=Number(row.amount);           //total of amount
                         var d = new Date();
                         var current_date = d.getDate();
                             content +="<tr>";
@@ -706,7 +771,7 @@
                             content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                             content +="<td>"+row.amount+"</td>";
                             if(data.role == 1){
-                                content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
                             }
                             content += "</tr>";
 
@@ -726,6 +791,9 @@
                         }else{
                             var exp_date = " - "
                         }
+
+                        t_cllamount+=Number(row.aprvd_amount);           //total of amount
+
                         var d = new Date();
                         var current_date = d.getDate();
                             content1 +="<tr>";
@@ -746,9 +814,9 @@
                                 content1 +="<td class='text-center'> - </td>";
                             }
                             content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            content1 +="<td>"+row.amount+"</td>";
+                            content1 +="<td>"+row.aprvd_amount+"</td>";
                             if(data.role == 0){
-                                content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
                             }
                             content1 += "</tr>";
                     }
@@ -767,6 +835,7 @@
                         }else{
                             var exp_date = " - "
                         }
+                        t_apprvdamount+=Number(row.aprvd_amount);           //total of amount
                         var d = new Date();
                         var current_date = d.getDate();
                             content3 +="<tr>";
@@ -792,7 +861,7 @@
                                 content3 +="<td class='text-center'> - </td>";
                             }
                             content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            content3 +="<td>"+row.amount+"</td>";
+                            content3 +="<td>"+row.aprvd_amount+"</td>";
                             content3 += "</tr>";
 
 
@@ -812,6 +881,7 @@
                         }else{
                             var exp_date = " - "
                         }
+                        t_calamount+=Number(row.amount);       // total of amount
                         var d = new Date();
                         var current_date = d.getDate();
                             content2 +="<tr>";
@@ -833,9 +903,12 @@
                             }
                             content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                             content2 +="<td>"+row.amount+"</td>";
+                            if(data.role == 0){
+                                content2 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                            }
                             content2 += "</tr>";
 
-                        }
+                    }
                     
                 });
                 
@@ -852,13 +925,18 @@
                 $("#apprvd_records").html(content3); //For append html data
                 $('#apprvdDatatable').dataTable();    
                 
+                //table footer
+                $("#t_ucleamount").html(t_ucleamount+".00");
+                $("#t_cllamount").html(t_cllamount+".00");
+                $("#t_calamount").html(t_calamount+".00");
+                $("#t_apprvdamount").html(t_apprvdamount+".00");
             }
         });
     }
 
 
 
-    //For SA Edit Expenses Operation
+    //For admin Edit Expenses Operation
     $(document).on("click",'.exp_editU',function()
     {
         var id = $(this).data('id');
@@ -883,6 +961,7 @@
             var exp_desc = $(this).data('exp_desc');
             var exp_date = $(this).data('exp_date');
             var amount = $(this).data('amount');
+            var aprvd_amount = $(this).data('aprvd_amount');
             var attachment = $(this).data('attachment');
 
             var  attachment="files/user/expense/"+attachment;
@@ -890,12 +969,19 @@
             $('#exp_desc').val(exp_desc); 
             $('#exp_date').val(exp_date); 
             $('#expense_amnt').val(amount); 
-            $('#attachment1').attr("href",attachment);
-            $('#updated_amnt').val(amount); 
+            $('#attachment1').attr("href",attachment); 
             $('#t_name').html(t_name);   
             $('#e_num').html(e_num);
+
+            if(aprvd_amount != null){
+                $('#updated_amnt').val(aprvd_amount); 
+            }else{
+                $('#updated_amnt').val(amount); 
+            }
             
-            $('#exp_type option[value='+exp_type+']').attr('selected','selected').change();
+            $("#exp_type").val(exp_type).trigger("change"); 
+            // $("#exp_type option[value='"+exp_type+"']").attr('selected','selected').change();
+            // $('#exp_type option[value='+exp_type+']').attr('selected','selected').change();
             $('#status_change option[value=Cleared]').attr('selected','selected').change();
 
             $('#editPaymentModal').modal('show');
@@ -904,7 +990,7 @@
 
     });
 
-     //For Edit Operation
+     //For SA Edit Expenses Operation
      $(document).on("click",'.exp_editSA',function()
     {
         var id = $(this).data('id');
@@ -930,6 +1016,7 @@
             var exp_date = $(this).data('exp_date');
             var acc_remark = $(this).data('acc_remark');
             var amount = $(this).data('amount');
+            var aprvd_amount = $(this).data('aprvd_amount');
             var attachment = $(this).data('attachment');
 
             var  attachment="files/user/expense/"+attachment;
@@ -939,12 +1026,22 @@
             $('#expense_amnt').val(amount); 
             $('#acc_remark').val(acc_remark);
             $('#attachment1').attr("href",attachment);
-            $('#updated_amnt').val(amount); 
-            $('#sa_updated_amnt').val(amount);
+           
             $('#t_name').html(t_name);   
             $('#e_num').html(e_num);
 
-            $('#exp_type option[value='+exp_type+']').attr('selected','selected').change();
+            if(aprvd_amount != null){
+                $('#updated_amnt').val(aprvd_amount); 
+                $('#sa_updated_amnt').val(aprvd_amount);
+            }else{
+                $('#updated_amnt').val(amount); 
+                $('#sa_updated_amnt').val(amount);
+            }
+
+            $("#exp_type").val(exp_type).trigger("change"); 
+
+            // $("#exp_type option[value='"+exp_type+"']").attr('selected','selected').change();
+            // $('#exp_type option[value='+exp_type+']').attr('selected','selected').change();
             $('#status_change option[value=Cleared]').attr('selected','selected').change();
 
             $('#editPaymentModal').modal('show');

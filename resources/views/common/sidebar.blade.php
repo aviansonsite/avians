@@ -92,7 +92,7 @@ $count=count($role);
                             </li>
                         @endif
                         <!-- labour -->
-                        @if($roles==0 || $roles==1 || $roles==2)
+                        @if($roles==1)
                             <li class="nav-item">
                                 <a href="{{route('technician_attendance.page')}}" class="waves-effect nav-link">
                                     <i class="bx bx-file"></i>

@@ -147,7 +147,7 @@
                                                     <option value="{{$u->id}}">{{$u->name}}</option>
                                                 @endforeach
                                             </select>
-                                            <span class="text-danger error" id="lerror"></span>
+                                             <small><span class="text-danger" id="slerror" style="font-size: 11px !important;"></span></small>
                                         </div>
                                     </div>
                                     <div class="col-md-3 col-sm-12 col-lg-3">
@@ -183,15 +183,12 @@
                                             <div class="form-group mb-3">
                                                 <label for="labour" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician <sup class="text-danger">*</sup></label>
                                                 <select class="form-control select2" id="labour" required name="labour">
-                                                    <option value="" disabled selected>Select</option>
-                                                    @foreach($u_obj as $u)
-                                                        <option value="{{$u->id}}">{{$u->name}}</option>
-                                                    @endforeach
+                                              
                                                 </select>
                                                 <span class="text-danger error" id="lerror"></span>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <!-- <div class="col-md-3 col-sm-12 col-lg-3">
                                             <div class="form-group mb-3">
                                                 <label for="so" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA<sup class="text-danger">*</sup></label>
                                                 <select class="form-control select2" id="so" required name="so">
@@ -202,24 +199,24 @@
                                                 </select>
                                                 <span class="text-danger error" id="soerror"></span>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         
                                         <?php $tdate=date("Y-m-d");?>
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
                                                 <input type="date" class="form-control" id="payment_date" placeholder="Payment Date" name="payment_date" required max="{{$tdate}}" value="{{$tdate}}">
                                                 <label for="payment_date">Payment Date<sup class="text-danger">*</sup></label>
                                                 <span class="text-danger error" id="pdaerror"></span>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" id="payment_amnt" placeholder="Payment Amount" name="payment_amnt" maxlength="10" required>
                                                 <label for="payment_amnt">Amount (In Rs.)<sup class="text-danger">*</sup></label>
                                                 <span class="text-danger error" id="paerror"></span>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 col-sm-12 col-lg-5">
                                             <div class="form-floating mb-3">
                                                 <textarea class="form-control" id="pay_desc" placeholder="Enter Payment Description" required name="pay_desc" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100"></textarea>
                                                 <label for="pay_desc">Payment Description</label>
@@ -227,8 +224,14 @@
 
                                             </div>
                                         </div>
+                                        <div class="d-sm-flex flex-wrap">
+                                            <div class="ms-auto labour_change">
+                                                <button type="button" class="btn btn-primary btn-sm waves-effect waves-light" id="add_labour_payment">Submit</button>
+                                            </div>
+                                        </div>
+
                                         <div>
-                                            <button type="button" class="btn btn-primary waves-effect waves-light" id="add_labour_payment">Submit</button>
+                                            
                                         </div>
                                     </div> 
                                 {!! Form::close() !!}
@@ -268,85 +271,127 @@
     });
     var $body = $("body");
 
-     // For from date ,to date records
-     $(document).on("click",'#tech_pay_ftd_records',function()
+    // For serch record Validation
+    var n =0;
+    $("#tech_pay_ftd_records").click(function(event) 
+    {
+
+        var from_date = $('#from_date').val();
+        var to_date = $('#to_date').val();
+        var labours= $('#labours').val();
+
+        n=0;    
+        if( $.trim(from_date).length == 0 )
+        {
+            $('#fderror').text('Please Select From Date.');
+            event.preventDefault();
+        }else{
+            $('#fderror').text('');
+            ++n;
+        }
+
+        if( $.trim(to_date).length == 0 )
+        {
+            $('#tderror').text('Please Select To Date.');
+            event.preventDefault();
+        }else{
+            $('#tderror').text('');
+            ++n;
+        }
+       
+        if( $.trim(labours).length == 0 )
+        {
+            $('#slerror').text('Please Select Technician');
+            event.preventDefault();
+        }else{
+            $('#slerror').text('');
+            ++n;
+        }
+
+    });
+
+    // For from date ,to date records
+    $(document).on("click",'#tech_pay_ftd_records',function()
     {           
                
         var from_date = $('#from_date').val();
         var to_date = $('#to_date').val();
         var labours = $('#labours').val();
+        if(n == 3){
+            
+            $.ajax({
+                headers:{
+                    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+                },
+                url:"{{url('get_labour_payment')}}",
+                type :'get',
+                data : {from_date:from_date,to_date:to_date,labours:labours},
+                cache: false,
+                dataType: 'json',                 
+                success:function(data){
+                    console.log(data.data);
+                    $("#datatable").DataTable().destroy();
+                    content ="";
+                    var i = 0;       
+                    $("#labour").empty();            
+                    $("#so").empty();        
+                    $.each(data.data,function(index,row){
+                        //date convert into dd/mm/yyyy
+                        function formatDate (input) {
+                            var datePart = input.match(/\d+/g),
+                            year = datePart[0].substring(0), // get only two digits
+                            month = datePart[1], day = datePart[2];
+                            return day+'-'+month+'-'+year;
+                        }
+                        if(row.payment_date != null){
+                            var payment_date = formatDate (row.payment_date); // "18/01/10"
+                        }else{
+                            var payment_date = " - "
+                        }
+                        var d = new Date();
+                        var current_date = d.getDate();
+                            content +="<tr>";
+                            content +="<td>"+ ++i +"</td>";
+                            content +="<td>"+payment_date+"</td>";
+                            content +="<td>"+row.labour_name+"</td>";
+                            content +="<td>"+row.p_desc+"</td>";
+                            content +="<td>"+row.payment_amnt+"</td>";
 
-        $.ajax({
-            headers:{
-                'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-            },
-            url:"{{url('get_labour_payment')}}",
-            type :'get',
-            data : {from_date:from_date,to_date:to_date,labours:labours},
-            cache: false,
-            dataType: 'json',                 
-            success:function(data){
-                console.log(data.data);
-                $("#datatable").DataTable().destroy();
-                content ="";
-                var i = 0;       
-                $("#labour").empty();            
-                $("#so").empty();        
-                $.each(data.data,function(index,row){
-                    //date convert into dd/mm/yyyy
-                    function formatDate (input) {
-                        var datePart = input.match(/\d+/g),
-                        year = datePart[0].substring(0), // get only two digits
-                        month = datePart[1], day = datePart[2];
-                        return day+'-'+month+'-'+year;
-                    }
-                    if(row.payment_date != null){
-                        var payment_date = formatDate (row.payment_date); // "18/01/10"
-                    }else{
-                        var payment_date = " - "
-                    }
-                    var d = new Date();
-                    var current_date = d.getDate();
-                        content +="<tr>";
-                        content +="<td>"+ ++i +"</td>";
-                        content +="<td>"+payment_date+"</td>";
-                        content +="<td>"+row.labour_name+"</td>";
-                        content +="<td>"+row.p_desc+"</td>";
-                        content +="<td>"+row.payment_amnt+"</td>";
+                            content +="<td>";
+                            if((payment_date == $.datepicker.formatDate('dd-mm-yy', new Date())) && (data.role ==2) ){
+                                    content +="<a class='btn btn-outline-secondary btn-sm editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Technician' data-id='"+row.id+"' data-so='"+row.so_id+"' data-payment_date='"+row.payment_date+"' data-p_desc='"+row.p_desc+"' data-payment_amnt='"+row.payment_amnt+"' data-labour='"+row.u_id+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete Technician' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+                                }
+                                
+                            content +="</td>";
+                            content += "</tr>";
+                    });
+                    
 
-                        content +="<td>";
-                        if((payment_date == $.datepicker.formatDate('dd-mm-yy', new Date())) && (data.role ==2) ){
-                                content +="<a class='btn btn-outline-secondary btn-sm editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Technician' data-id='"+row.id+"' data-so='"+row.so_id+"' data-payment_date='"+row.payment_date+"' data-p_desc='"+row.p_desc+"' data-payment_amnt='"+row.payment_amnt+"' data-labour='"+row.u_id+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete Technician' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
-                            }
-                            
-                        content +="</td>";
-                        content += "</tr>";
-                });
-                
+                    $("#so_records").html(content); //For append html data
+                    $('#datatable').dataTable();
 
-                $("#so_records").html(content); //For append html data
-                $('#datatable').dataTable();
+                    //For labour
+                    // $('#edit_labour').append("<option value='' class='text-muted' selected disabled>"+'Select '+"</option>");
+                    $('#labour').append("<option value='' class='text-muted' selected disabled>"+'Select '+"</option>");
 
-                //For labour
-                // $('#edit_labour').append("<option value='' class='text-muted' selected disabled>"+'Select '+"</option>");
-                $('#labour').append("<option value='' class='text-muted' selected disabled>"+'Select '+"</option>");
+                    $.each(data.u_obj,function(index,row){
+                        //For Add Material Modal
+                        // $('#edit_labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
+                        $('#labour').append("<option value='"+row.lead_technician+"' data-oth_id='"+row.oth_id+"'>"+row.name+" - ("+row.so_number+")</option>");
+                    });
 
-                $.each(data.u_obj,function(index,row){
-                    //For Add Material Modal
-                    // $('#edit_labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
-                    $('#labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
-                });
+                    //For so
+                    // $('#edit_so').append("<option value='' class='text-muted' selected disabled>"+'ALL'+"</option>");
+                    $.each(data.s_obj,function(index,row){
+                        //For Add Material Modal
+                        // $('#edit_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
+                        $('#so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
 
-                //For so
-                // $('#edit_so').append("<option value='' class='text-muted' selected disabled>"+'ALL'+"</option>");
-                $.each(data.s_obj,function(index,row){
-                    //For Add Material Modal
-                    // $('#edit_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
-                    $('#so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
-
-                });
-            }
-        });
+                    });
+                }
+            });
+        }
+       
        
     });
 
@@ -363,7 +408,7 @@
             cache: false,
             dataType: 'json',                 
             success:function(data){
-                console.log(data.data);
+                console.log(data);
                 $("#datatable").DataTable().destroy();
                 content ="";
                 var i = 0;       
@@ -406,12 +451,12 @@
 
                 //For labour
                 // $('#edit_labour').append("<option value='' class='text-muted' selected disabled>"+'Select '+"</option>");
-                $('#labour').append("<option value='' class='text-muted' selected disabled>"+'Select '+"</option>");
+                $('#labour').append("<option value='' class='text-muted' selected disabled>"+'Select'+"</option>");
 
                 $.each(data.u_obj,function(index,row){
                     //For Add Material Modal
                     // $('#edit_labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
-                    $('#labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
+                    $('#labour').append("<option value='"+row.lead_technician+"' data-oth_id='"+row.oth_id+"'>"+row.name+" - ("+row.so_number+")</option>");
                 });
 
                 //For so
@@ -489,8 +534,10 @@
     $("#add_labour_payment").click(function(event) 
     {
         // alert('hi');
+         
+
         var labour = $('#labour').val();
-        var so= $('#so').val();
+        var oth_id = $('#labour').find('option:selected').data('oth_id'); 
         var pay_desc = $('#pay_desc').val();
         var payment_date= $('#payment_date').val();
         var payment_amnt = $('#payment_amnt').val();
@@ -523,14 +570,14 @@
             ++n;
         }
 
-        if( $.trim(so).length == 0 )
-        {
-            $('#soerror').text('Please Select SO.');
-            event.preventDefault();
-        }else{
-            $('#soerror').text('');
-            ++n;
-        }
+        // if( $.trim(so).length == 0 )
+        // {
+        //     $('#soerror').text('Please Select SO.');
+        //     event.preventDefault();
+        // }else{
+        //     $('#soerror').text('');
+        //     ++n;
+        // }
 
         if( $.trim(labour).length == 0 )
         {
@@ -545,11 +592,11 @@
     // For Add Labour Payment
     $(document).on("click",'#add_labour_payment',function()
     {           
-        if(n==5)
+        if(n==4)
         {        
             var edit_id= $('#edit_id').val();
             var labour = $('#labour').val();
-            var so= $('#so').val();
+            var oth_id = $('#labour').find('option:selected').data('oth_id'); 
             var pay_desc = $('#pay_desc').val();
             var payment_date= $('#payment_date').val();
             var payment_amnt = $('#payment_amnt').val();
@@ -560,7 +607,7 @@
                 },
                 url:"{{url('post_labour_payment')}}",
                 type :'get',
-                data : {so:so,pay_desc:pay_desc,payment_date:payment_date,payment_amnt:payment_amnt,labour:labour,edit_id:edit_id},
+                data : {oth_id:oth_id,pay_desc:pay_desc,payment_date:payment_date,payment_amnt:payment_amnt,labour:labour,edit_id:edit_id},
                 async: false,
                 cache: true,
                 dataType: 'json',

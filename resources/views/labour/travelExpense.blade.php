@@ -103,6 +103,8 @@
                         {!! Form::open(['class'=>"form-horizontal",'id'=>"tech_pay_search_form"]) !!}
                                 <div class="row">
                                     <?php $tdate=date("Y-m-d"); ?>
+                                    <input type="hidden" name="roles" id="roles" value="{{$roles}}">
+                                    
                                     <div class="col-md-3 col-sm-12 col-lg-3">
                                         <div class="form-floating mb-3">
                                             <input type="date" max="{{$tdate}}" class="form-control" id="from_date"  name="from_date" required placeholder="dd-mm-yyyy" value="{{$tdate}}">
@@ -129,7 +131,7 @@
                                                         <option value="{{$u->id}}">{{$u->name}}</option>
                                                     @endforeach
                                                 </select>
-                                                <span class="text-danger error" id="lerror"></span>
+                                                <span class="text-danger error" id="slerror"></span>
                                             </div>
                                         </div>
                                     @endif    
@@ -180,7 +182,10 @@
                                             <tr>
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">Travel Date</th>
-                                                <th scope="col" style="width: 100px">Action</th>
+
+                                                @if($roles != 0)
+                                                    <th scope="col" style="width: 100px">Action</th>
+                                                @endif
                                                 <th scope="col" style="width: 100px">Travel Mode</th>
                                                 <th scope="col" style="width: 100px">From Location</th>
                                                 <th scope="col" style="width: 100px">To Location</th>
@@ -195,7 +200,7 @@
                                         </tbody>
                                         <!-- <tfoot id="tucledata">
                                             <tr>
-                                                <th colspan="7" class="text-center"><strong>Total</strong></th>
+                                                <th colspan="2" class="text-center"><strong>Total</strong></th>
                                                 <th id="t_ucleamount"></th>
                                                 @if($roles == 1)
                                                     <th></th>
@@ -216,9 +221,9 @@
                                                 @if($roles == 0)
                                                     <th scope="col" style="width: 100px">Action</th>
                                                 @endif
-                                                <th scope="col" style="width: 100px">Travel Mode</th>
-                                                <th scope="col" style="width: 100px">From Location</th>
-                                                <th scope="col" style="width: 100px">To Location</th>
+                                                <th scope="col" style="white-space: normal;">Travel Mode</th>
+                                                <th scope="col" style="white-space: normal;">From Location</th>
+                                                <th scope="col" style="white-space: normal;">To Location</th>
                                                 <th scope="col" style="width: 100px">Total KM</th>
                                                 <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
                                                 <th scope="col" style="width: 100px">Status</th>
@@ -249,9 +254,9 @@
                                             <tr>
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">Travel Date</th>
-                                                <th scope="col" style="width: 100px">Travel Mode</th>
-                                                <th scope="col" style="width: 100px">From Location</th>
-                                                <th scope="col" style="width: 100px">To Location</th>
+                                                <th scope="col" style="white-space: normal;">Travel Mode</th>
+                                                <th scope="col" style="white-space: normal;">From Location</th>
+                                                <th scope="col" style="white-space: normal;">To Location</th>
                                                 <th scope="col" style="width: 100px">Total KM</th>
                                                 <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
                                                 <th scope="col" style="width: 100px">Status</th>
@@ -280,6 +285,9 @@
                                             <tr>
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">Travel Date</th>
+                                                @if($roles == 0)
+                                                    <th scope="col">Action</th>
+                                                @endif
                                                 <th scope="col" style="width: 100px">Travel Mode</th>
                                                 <th scope="col" style="width: 100px">From Location</th>
                                                 <th scope="col" style="width: 100px">To Location</th>
@@ -311,7 +319,16 @@
                                     <input type="hidden" name="car_rates" id="car_rates" value="{{Session::get('CAR_RATE')}}">
 
                                     <div class="row">
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
+                                            <div class="form-group mb-3">
+                                                <label for="exp_so" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="exp_so" required name="exp_so">
+                                                    
+                                                </select>
+                                                <span class="text-danger error" id="esoerror"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-group mb-3">
                                                 <label for="mode_travel" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Mode of Travel<sup class="text-danger">*</sup></label>
                                                 <select class="form-control select2" id="mode_travel" required name="mode_travel">
@@ -326,43 +343,57 @@
                                                 <span class="text-danger error" id="mterror"></span>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" id="from_location" placeholder="From Location" name="from_location" maxlength="10" required>
                                                 <label for="from_location">From Location<sup class="text-danger">*</sup></label>
                                                 <span class="text-danger error" id="flerror"></span>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" id="to_location" placeholder="To Location" name="to_location" maxlength="10" required>
                                                 <label for="to_location">To Location<sup class="text-danger">*</sup></label>
                                                 <span class="text-danger error" id="tlerror"></span>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="total_km" placeholder="Total KM" name="total_km" maxlength="10" required>
-                                                <label for="total_km">Total KM<sup class="text-danger">*</sup></label>
-                                                <small id="bike_rate" style="color:green">Per KM Rate - {{Session::get('BIKE_RATE')}}</small>
-                                                <small id="car_rate" style="color:green">Per KM Rate - {{Session::get('CAR_RATE')}}</small>
-                                                <span class="text-danger error" id="tkerror"></span>
+                                                <input type="text" class="form-control" id="no_of_person" placeholder="To Location" name="no_of_person" maxlength="10" required>
+                                                <label for="no_of_person">No of Person<sup class="text-danger">*</sup></label>
+                                                <span class="text-danger error" id="nperror"></span>
                                             </div>
                                         </div>
-
-                                        <?php $tdate=date("Y-m-d");?>
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
-                                                <input type="date" class="form-control" id="travel_date" placeholder="Travel Date" name="travel_date" required max="{{$tdate}}" value="{{$tdate}}">
+                                                <input type="text" class="form-control" id="travel_amnt" placeholder="Travel Amount" name="travel_amnt" maxlength="10" required>
+                                                <label for="travel_amnt">Amount (In Rs.)<sup class="text-danger">*</sup></label>
+                                                <span class="text-danger error" id="taerror"></span>
+                                            </div>
+                                        </div>
+                                        <?php $tdate=date("Y-m-d");?>
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
+                                            <div class="form-floating mb-3">
+                                                <input type="date" class="form-control" id="travel_date" placeholder="Travel Date" name="travel_date" required max="{{$tdate}}" value="{{$tdate}}" readonly>
                                                 <label for="travel_date">Travel Date<sup class="text-danger">*</sup></label>
                                                 <span class="text-danger error" id="tderror"></span>
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="col-md-2 col-sm-12 col-lg-2" id="km_div">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="total_km" placeholder="Total KM" name="total_km" maxlength="10" required>
+                                                <label for="total_km">Total KM</label>
+                                                <small id="bike_rate" style="color:green">Per KM Rate : {{Session::get('BIKE_RATE')}}</small>
+                                                <small id="car_rate" style="color:green">Per KM Rate : {{Session::get('CAR_RATE')}}</small>
+                                                <span class="text-danger error" id="tkerror"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
                                                 <input type="file" class="form-control" id="attachment" placeholder="Enter photo File" name="attachment">
-                                                <label for="attachment">Attachment<sup class="text-danger">*</sup></label>
+                                                <label for="attachment">Attachment</label>
                                                 <!-- For Extension an Encoding File  -->
                                                 <textarea class="form-control" style="display: none" id="payment_encodedfile"></textarea> 
                                                 <input type="hidden" name="payment_extension" id="payment_extension">
@@ -382,13 +413,6 @@
                                             </div>
                                         </div>
                                        
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="travel_amnt" placeholder="Travel Amount" name="travel_amnt" maxlength="10" required>
-                                                <label for="travel_amnt">Amount (In Rs.)<sup class="text-danger">*</sup></label>
-                                                <span class="text-danger error" id="taerror"></span>
-                                            </div>
-                                        </div>
                                         <div class="d-sm-flex flex-wrap">
                                             <div class="ms-auto">
                                                 <button type="button" class="btn btn-primary btn-sm waves-effect waves-light mb-2" id="add_expense">Submit</button>
@@ -642,7 +666,7 @@
     
     $(document).ready(function(){
         var $body = $("body");
-        $('#mode_travel').select2();
+        $('#mode_travel,#exp_so').select2();
         $("#tucledata").hide();
         $("#tclldata").hide();
         $("#tcaldata").hide();
@@ -650,7 +674,7 @@
 
         $("#bike_rate").hide();     // on change bike rate 
         $("#car_rate").hide();      // on change car rate
-        
+        $("#km_div").hide();     // on change car 
     });
 
     // mode of travel on change fields
@@ -658,19 +682,30 @@
     {
         $("#bike_rate").hide();     // on change bike rate 
         $("#car_rate").hide();      // on change car rate
+        $("#km_div").hide();     // on change car 
         $("#travel_amnt").prop('readonly', false);
+        var edit_id= $('#exp_edit_id').val();
+        // alert(edit_id);
+        if(edit_id == ""){
+            $("#travel_amnt").val("");
+            $("#total_km").val("");
+        }
+       
 
         var mode_travel = $(this).val(); 
+
         if(mode_travel == "Bike"){
-            // $("#travel_amnt").val("");
-            // $("#total_km").val("");
+          
+            
+            $("#km_div").show();     // on change bike 
             $("#bike_rate").show();     // on change bike rate 
             $("#travel_amnt").prop('readonly', true);
         }
 
         if(mode_travel == "Own Car"){
             // $("#travel_amnt").val("");
-            // $("#total_km").val("");
+            // $("#km_div").val("");
+            $("#km_div").show();     // on change car 
             $("#car_rate").show();      // on change car rate
             $("#travel_amnt").prop('readonly', true);
         }
@@ -678,7 +713,7 @@
     });
 
     // // mode of travel on change fields
-    $('#total_km').change(function(e)
+    $('#total_km').blur(function(e)
     {
 
         var total_km = $('#total_km').val();
@@ -698,270 +733,366 @@
         
     });
 
-    // For from date ,to date records
-    $(document).on("click",'#exp_req_ftd_records',function()
-    {           
+    // For serch record Validation
+    var n =0;
+    $("#exp_req_ftd_records").click(function(event) 
+    {
 
         var from_date = $('#from_date').val();
         var to_date = $('#to_date').val();
-        var labours = $('#labours').val();
-        $.ajax({
-            headers:{
-                'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-            },
-            url:"{{url('get_travel_expenses')}}",
-            type :'get',
-            data : {from_date:from_date,to_date:to_date,labours:labours},
-            cache: false,
-            dataType: 'json',                 
-            success:function(data){
-                console.log(data.data);
-                if (data.status==true) 
-                { 
-                    $("#expDatatable").DataTable().destroy();
-                    $("#clearedDatatable").DataTable().destroy();
-                    $("#cancelDatatable").DataTable().destroy();
-                    $("#apprvdDatatable").DataTable().destroy();
+        var labours= $('#labours').val();
 
-                    $("#tucledata").show();
-                    $("#tclldata").show();
-                    $("#tcaldata").show();
-                    $("#taprdata").show();
+        n=0;    
+        if( $.trim(from_date).length == 0 )
+        {
+            $('#fderror').text('Please Select From Date.');
+            event.preventDefault();
+        }else{
+            $('#fderror').text('');
+            ++n;
+        }
 
-                    var t_ucleamount=t_cllamount=t_calamount=0; 
-                    content ="";        //For Uncleared datatable
-                    content1 ="";        //For Cleared datatable
-                    content2 ="";        //For Cancelled datatable
-                    content3 ="";        //For Cancelled datatable
-                    var i = 0;       
-     
-                    
-                    $.each(data.data,function(index,row){
-                    if(row.status == 'Uncleared')
-                    {
-                        //date convert into dd/mm/yyyy
-                        function formatDate (input) {
-                            var datePart = input.match(/\d+/g),
-                            year = datePart[0].substring(0), // get only two digits
-                            month = datePart[1], day = datePart[2];
-                            return day+'-'+month+'-'+year;
-                        }
-                        if(row.travel_date != null){
-                            var travel_date = formatDate (row.travel_date); // "18/01/10"
-                        }else{
-                            var travel_date = " - "
-                        }
+        if( $.trim(to_date).length == 0 )
+        {
+            $('#tderror').text('Please Select To Date.');
+            event.preventDefault();
+        }else{
+            $('#tderror').text('');
+            ++n;
+        }
+       
+        if( $.trim(labours).length == 0 )
+        {
+            $('#slerror').text('Please Select Technician');
+            event.preventDefault();
+        }else{
+            $('#slerror').text('');
+            ++n;
+        }
 
-                        t_ucleamount+=Number(row.travel_amount);           //total of amount
-                        var d = new Date();
-                        var current_date = d.getDate();
-                            content +="<tr>";
-                            content +="<td>"+ ++i +"</td>";
-                            content +="<td>"+travel_date+"</td>";
-                            content +="<td>";
-                                if((travel_date == $.datepicker.formatDate('dd-mm-yy', new Date())) && (data.role == 3)){
-                                    content +="<a class='btn btn-outline-secondary btn-sm exp_editT' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delT' rel='tooltip' data-bs-placement='top' title='Delete Travel Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+    });
+
+    // For from date ,to date records
+    $(document).on("click",'#exp_req_ftd_records',function()
+    {     
+ 
+            var from_date = $('#from_date').val();
+            var to_date = $('#to_date').val();
+            var labours = $('#labours').val();
+            $.ajax({
+                headers:{
+                    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+                },
+                url:"{{url('get_travel_expenses')}}",
+                type :'get',
+                data : {from_date:from_date,to_date:to_date,labours:labours},
+                cache: false,
+                dataType: 'json',                 
+                success:function(data){
+                    console.log(data.data);
+                    if (data.status==true) 
+                    { 
+                        $("#expDatatable").DataTable().destroy();
+                        $("#clearedDatatable").DataTable().destroy();
+                        $("#cancelDatatable").DataTable().destroy();
+                        $("#apprvdDatatable").DataTable().destroy();
+
+                        $("#tucledata").show();
+                        $("#tclldata").show();
+                        $("#tcaldata").show();
+                        $("#taprdata").show();
+
+                        var t_ucleamount=t_cllamount=t_calamount=0; 
+                        content ="";        //For Uncleared datatable
+                        content1 ="";        //For Cleared datatable
+                        content2 ="";        //For Cancelled datatable
+                        content3 ="";        //For Cancelled datatable
+                        var i = 0;       
+        
+                        
+                        $.each(data.data,function(index,row){
+                            if(row.status == 'Uncleared')
+                            {
+                                //date convert into dd/mm/yyyy
+                                function formatDate (input) {
+                                    var datePart = input.match(/\d+/g),
+                                    year = datePart[0].substring(0), // get only two digits
+                                    month = datePart[1], day = datePart[2];
+                                    return day+'-'+month+'-'+year;
                                 }
-                                if((data.role == 1)){
-                                    content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"' data-ad_remark='"+row.ad_remark+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
-                                    
+                                if(row.travel_date != null){
+                                    var travel_date = formatDate (row.travel_date); // "18/01/10"
+                                }else{
+                                    var travel_date = " - "
                                 }
-                            content +="</td>";
 
-                            if(row.mode_travel == "Shared_Auto"){
-                                content +="<td> Shared Auto </td>";
-                            }else if(row.mode_travel == "Private_Auto"){
-                                content +="<td> Private Auto </td>";
-                            }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
-                                content +="<td>"+row.mode_travel+"</td>";
-                            }
-                           
-                            content +="<td>"+row.from_location+"</td>";
-                            content +="<td>"+row.to_location+"</td>";
-                            content +="<td>"+row.total_km+"</td>";
-                            content +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
-
+                                t_ucleamount+=Number(row.travel_amount);           //total of amount
+                                var d = new Date();
+                                var current_date = d.getDate();
+                                    content +="<tr>";
+                                    content +="<td>"+ ++i +"</td>";
+                                    content +="<td>"+travel_date+"</td>";
+                                    if(data.role != 0){
+                                        content +="<td>";
+                                            if((travel_date == $.datepicker.formatDate('dd-mm-yy', new Date())) && (data.role == 3)){
+                                                content +="<a class='btn btn-outline-secondary btn-sm exp_editT' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delT' rel='tooltip' data-bs-placement='top' title='Delete Travel Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+                                            }
+                                            if((data.role == 1)){
+                                                content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"' data-ad_remark='"+row.ad_remark+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
+                                                
+                                            }
+                                        content +="</td>";
+                                    }
+                                    if(row.mode_travel == "Shared_Auto"){
+                                        content +="<td> Shared Auto </td>";
+                                    }else if(row.mode_travel == "Private_Auto"){
+                                        content +="<td> Private Auto </td>";
+                                    }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                        content +="<td>"+row.mode_travel+"</td>";
+                                    }
                                 
-                            content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            if(row.travel_desc != null){
-                                content +="<td>"+row.travel_desc+"</td>";
-                            }else{
-                                content +="<td class='text-center'> - </td>";
-                            }
-                            content += "</tr>";
-                    }      
+                                    content +="<td>"+row.from_location+"</td>";
+                                    content +="<td>"+row.to_location+"</td>";
+                                    if(row.total_km != null){
+                                        content +="<td>"+row.total_km+"</td>";
+                                    }else{
+                                        content +="<td class='text-center'> - </td>";
+                                    }
+                                    
+                                    if(row.attachment != null){
+                                        content +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                    }else{
+                                        content +="<td>"+row.travel_amount+"</td>";
+                                    }   
 
-                    if(row.status == 'Cleared')
-                    {
-                        //date convert into dd/mm/yyyy
-                        function formatDate (input) {
-                            var datePart = input.match(/\d+/g),
-                            year = datePart[0].substring(0), // get only two digits
-                            month = datePart[1], day = datePart[2];
-                            return day+'-'+month+'-'+year;
-                        }
-                        if(row.travel_date != null){
-                            var travel_date = formatDate (row.travel_date); // "18/01/10"
-                        }else{
-                            var travel_date = " - "
-                        }
+                                    content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
 
-                        t_cllamount+=Number(row.travel_amount);           //total of amount
+                                    if(row.travel_desc != null){
+                                        content +="<td>"+row.travel_desc+"</td>";
+                                    }else{
+                                        content +="<td class='text-center'> - </td>";
+                                    }
+                                    content += "</tr>";
+                            }      
 
-                        var d = new Date();
-                        var current_date = d.getDate();
-                            content1 +="<tr>";
-                            content1 +="<td>"+ ++i +"</td>";
-                            content1 +="<td>"+travel_date+"</td>";
-                           
-                            if(data.role == 0){
-                                content1 +="<td>";
-                                content1 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
-                                content1 +="</td>";
+                            if(row.status == 'Cleared')
+                            {
+                                //date convert into dd/mm/yyyy
+                                function formatDate (input) {
+                                    var datePart = input.match(/\d+/g),
+                                    year = datePart[0].substring(0), // get only two digits
+                                    month = datePart[1], day = datePart[2];
+                                    return day+'-'+month+'-'+year;
+                                }
+                                if(row.travel_date != null){
+                                    var travel_date = formatDate (row.travel_date); // "18/01/10"
+                                }else{
+                                    var travel_date = " - "
+                                }
 
-                            }
-                            if(row.mode_travel == "Shared_Auto"){
-                                content1 +="<td> Shared Auto </td>";
-                            }else if(row.mode_travel == "Private_Auto"){
-                                content1 +="<td> Private Auto </td>";
-                            }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
-                                content1 +="<td>"+row.mode_travel+"</td>";
-                            }
-                            content1 +="<td>"+row.from_location+"</td>";
-                            content1 +="<td>"+row.to_location+"</td>";
-                            content1 +="<td>"+row.total_km+"</td>";
-                            content1 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
-                            content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            if(row.ad_remark != null){
-                                content1 +="<td>"+row.ad_remark+"</td>";
-                            }else{
-                                content1 +="<td class='text-center'> - </td>";
-                            }
-                            if(row.travel_desc != null){
-                                content1 +="<td>"+row.travel_desc+"</td>";
-                            }else{
-                                content1 +="<td class='text-center'> - </td>";
-                            }
-                            content1 += "</tr>";
-                    }
+                                t_cllamount+=Number(row.travel_amount);           //total of amount
 
-                    if(row.status == 'Approved'){
+                                var d = new Date();
+                                var current_date = d.getDate();
+                                    content1 +="<tr>";
+                                    content1 +="<td>"+ ++i +"</td>";
+                                    content1 +="<td>"+travel_date+"</td>";
+                                
+                                    if(data.role == 0){
+                                        content1 +="<td>";
+                                        content1 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
+                                        content1 +="</td>";
 
-                        //date convert into dd/mm/yyyy
-                        function formatDate (input) {
-                            var datePart = input.match(/\d+/g),
-                            year = datePart[0].substring(0), // get only two digits
-                            month = datePart[1], day = datePart[2];
-                            return day+'-'+month+'-'+year;
-                        }
-                        if(row.travel_date != null){
-                            var travel_date = formatDate (row.travel_date); // "18/01/10"
-                        }else{
-                            var travel_date = " - "
-                        }
+                                    }
+                                    if(row.mode_travel == "Shared_Auto"){
+                                        content1 +="<td> Shared Auto </td>";
+                                    }else if(row.mode_travel == "Private_Auto"){
+                                        content1 +="<td> Private Auto </td>";
+                                    }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                        content1 +="<td>"+row.mode_travel+"</td>";
+                                    }
+                                    content1 +="<td>"+row.from_location+"</td>";
+                                    content1 +="<td>"+row.to_location+"</td>";
+                                    if(row.total_km != null){
+                                        content1 +="<td>"+row.total_km+"</td>";
+                                    }else{
+                                        content1 +="<td class='text-center'> - </td>";
+                                    }
 
-                        t_apprvdamount+=Number(row.travel_amount);           //total of amount
-
-                        var d = new Date();
-                        var current_date = d.getDate();
-                            content3 +="<tr>";
-                            content3 +="<td>"+ ++i +"</td>";
-                            content3 +="<td>"+travel_date+"</td>";
-                            if(row.mode_travel == "Shared_Auto"){
-                                content3 +="<td> Shared Auto </td>";
-                            }else if(row.mode_travel == "Private_Auto"){
-                                content3 +="<td> Private Auto </td>";
-                            }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
-                                content3 +="<td>"+row.mode_travel+"</td>";
-                            }
-                            content3 +="<td>"+row.from_location+"</td>";
-                            content3 +="<td>"+row.to_location+"</td>";
-                            content3 +="<td>"+row.total_km+"</td>";
-                            content3 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
-                            content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-
-                            if(row.ad_remark != null){
-                                content3 +="<td>"+row.ad_remark+"</td>";
-                            }else{
-                                content3 +="<td class='text-center'> - </td>";
+                                    if(row.attachment != null){
+                                        content1 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                    }else{
+                                        content1 +="<td>"+row.travel_amount+"</td>";
+                                    }   
+                                    content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                                    if(row.ad_remark != null){
+                                        content1 +="<td>"+row.ad_remark+"</td>";
+                                    }else{
+                                        content1 +="<td class='text-center'> - </td>";
+                                    }
+                                    if(row.travel_desc != null){
+                                        content1 +="<td>"+row.travel_desc+"</td>";
+                                    }else{
+                                        content1 +="<td class='text-center'> - </td>";
+                                    }
+                                    content1 += "</tr>";
                             }
 
-                            if(row.sa_remark != null){
-                                content3 +="<td>"+row.sa_remark+"</td>";
-                            }else{
-                                content3 +="<td class='text-center'> - </td>";
+                            if(row.status == 'Approved')
+                            {
+
+                                //date convert into dd/mm/yyyy
+                                function formatDate (input) {
+                                    var datePart = input.match(/\d+/g),
+                                    year = datePart[0].substring(0), // get only two digits
+                                    month = datePart[1], day = datePart[2];
+                                    return day+'-'+month+'-'+year;
+                                }
+                                if(row.travel_date != null){
+                                    var travel_date = formatDate (row.travel_date); // "18/01/10"
+                                }else{
+                                    var travel_date = " - "
+                                }
+
+                                t_apprvdamount+=Number(row.travel_amount);           //total of amount
+
+                                var d = new Date();
+                                var current_date = d.getDate();
+                                    content3 +="<tr>";
+                                    content3 +="<td>"+ ++i +"</td>";
+                                    content3 +="<td>"+travel_date+"</td>";
+                                    if(row.mode_travel == "Shared_Auto"){
+                                        content3 +="<td> Shared Auto </td>";
+                                    }else if(row.mode_travel == "Private_Auto"){
+                                        content3 +="<td> Private Auto </td>";
+                                    }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                        content3 +="<td>"+row.mode_travel+"</td>";
+                                    }
+                                    content3 +="<td>"+row.from_location+"</td>";
+                                    content3 +="<td>"+row.to_location+"</td>";
+                                    if(row.total_km != null){
+                                        content3 +="<td>"+row.total_km+"</td>";
+                                    }else{
+                                        content3 +="<td class='text-center'> - </td>";
+                                    }
+
+                                    if(row.attachment != null){
+                                        content3 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                    }else{
+                                        content3 +="<td>"+row.travel_amount+"</td>";
+                                    }   
+
+                                    content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+
+                                    if(row.ad_remark != null){
+                                        content3 +="<td>"+row.ad_remark+"</td>";
+                                    }else{
+                                        content3 +="<td class='text-center'> - </td>";
+                                    }
+
+                                    if(row.sa_remark != null){
+                                        content3 +="<td>"+row.sa_remark+"</td>";
+                                    }else{
+                                        content3 +="<td class='text-center'> - </td>";
+                                    }
+
+                                    if(row.travel_desc != null){
+                                        content3 +="<td>"+row.travel_desc+"</td>";
+                                    }else{
+                                        content3 +="<td class='text-center'> - </td>";
+                                    }
+                                    content3 += "</tr>";
+
+
                             }
 
-                            if(row.travel_desc != null){
-                                content3 +="<td>"+row.travel_desc+"</td>";
-                            }else{
-                                content3 +="<td class='text-center'> - </td>";
+                            if(row.status == 'Cancelled')
+                            {
+                                //date convert into dd/mm/yyyy
+                                function formatDate (input) {
+                                    var datePart = input.match(/\d+/g),
+                                    year = datePart[0].substring(0), // get only two digits
+                                    month = datePart[1], day = datePart[2];
+                                    return day+'-'+month+'-'+year;
+                                }
+                                if(row.travel_date != null){
+                                    var travel_date = formatDate (row.travel_date); // "18/01/10"
+                                }else{
+                                    var travel_date = " - "
+                                }
+
+                                t_calamount+=Number(row.travel_amount);           //total of amount
+
+                                var d = new Date();
+                                var current_date = d.getDate();
+                                    content2 +="<tr>";
+                                    content2 +="<td>"+ ++i +"</td>";
+                                    content2 +="<td>"+travel_date+"</td>";
+
+                                    if(row.mode_travel == "Shared_Auto"){
+                                        content2 +="<td> Shared Auto </td>";
+                                    }else if(row.mode_travel == "Private_Auto"){
+                                        content2 +="<td> Private Auto </td>";
+                                    }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                        content2 +="<td>"+row.mode_travel+"</td>";
+                                    }
+                                    content2 +="<td>"+row.from_location+"</td>";
+                                    content2 +="<td>"+row.to_location+"</td>";
+                                    if(row.total_km != null){
+                                        content2 +="<td>"+row.total_km+"</td>";
+                                    }else{
+                                        content2 +="<td class='text-center'> - </td>";
+                                    }
+
+                                    if(row.attachment != null){
+                                        content2 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                    }else{
+                                        content2 +="<td>"+row.travel_amount+"</td>";
+                                    } 
+
+                                    content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                                    if(row.travel_desc != null){
+                                        content2 +="<td>"+row.travel_desc+"</td>";
+                                    }else{
+                                        content2 +="<td class='text-center'> - </td>";
+                                    }
+                                    content2 += "</tr>";
                             }
-                            content3 += "</tr>";
 
+                        });
 
-                    }
+                        $("#exp_pay_records").html(content); //For append html data
+                        $('#expDatatable').dataTable();
 
-                    if(row.status == 'Cancelled')
-                    {
-                        //date convert into dd/mm/yyyy
-                        function formatDate (input) {
-                            var datePart = input.match(/\d+/g),
-                            year = datePart[0].substring(0), // get only two digits
-                            month = datePart[1], day = datePart[2];
-                            return day+'-'+month+'-'+year;
-                        }
-                        if(row.travel_date != null){
-                            var travel_date = formatDate (row.travel_date); // "18/01/10"
-                        }else{
-                            var travel_date = " - "
-                        }
+                        $("#cll_records").html(content1); //For append Cleared datatable html data 
+                        $('#clearedDatatable').dataTable();
 
-                        t_calamount+=Number(row.travel_amount);           //total of amount
+                        $("#cal_records").html(content2); //For append Cancelled datatable html data
+                        $('#cancelDatatable').dataTable();
 
-                        var d = new Date();
-                        var current_date = d.getDate();
-                            content2 +="<tr>";
-                            content2 +="<td>"+ ++i +"</td>";
-                            content2 +="<td>"+travel_date+"</td>";
+                        $("#apprvd_records").html(content3); //For append html data
+                        $('#apprvdDatatable').dataTable();    
 
-                            if(row.mode_travel == "Shared_Auto"){
-                                content2 +="<td> Shared Auto </td>";
-                            }else if(row.mode_travel == "Private_Auto"){
-                                content2 +="<td> Private Auto </td>";
-                            }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
-                                content2 +="<td>"+row.mode_travel+"</td>";
-                            }
-                            content2 +="<td>"+row.from_location+"</td>";
-                            content2 +="<td>"+row.to_location+"</td>";
-                            content2 +="<td>"+row.total_km+"</td>";
-                            content2 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
-                            content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            if(row.travel_desc != null){
-                                content2 +="<td>"+row.travel_desc+"</td>";
-                            }else{
-                                content2 +="<td class='text-center'> - </td>";
-                            }
-                            content2 += "</tr>";
-                    }
+                        $.each(data.s_obj,function(index,row){
+                            //For Add Material Modal
+                            // $('#edit_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
+                            $('#exp_so').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
+                        });
 
-                });
+                        // ACTIVE PANE AND LINK
+                        $('.nav-tabs a[href="#epayment_list"]').tab('show');
+                            //For Notification
+                            toastr.options.timeOut = 5000;
+                            toastr.options.positionClass = 'toast-top-right';
+                            toastr.options.showEasing= 'swing';
+                            toastr.options.hideEasing= 'linear';
+                            toastr.options.showMethod= 'fadeIn';
+                            toastr.options.hideMethod= 'fadeOut';
+                            toastr.options.closeButton= true;
+                            toastr.success(data.message);
+                
+                    }else{
 
-                    $("#exp_pay_records").html(content); //For append html data
-                    $('#expDatatable').dataTable();
-
-                    $("#cll_records").html(content1); //For append Cleared datatable html data 
-                    $('#clearedDatatable').dataTable();
-
-                    $("#cal_records").html(content2); //For append Cancelled datatable html data
-                    $('#cancelDatatable').dataTable();
-
-                    $("#apprvd_records").html(content3); //For append html data
-                    $('#apprvdDatatable').dataTable();    
-
-
-                    // ACTIVE PANE AND LINK
-                    $('.nav-tabs a[href="#epayment_list"]').tab('show');
                         //For Notification
                         toastr.options.timeOut = 5000;
                         toastr.options.positionClass = 'toast-top-right';
@@ -970,23 +1101,13 @@
                         toastr.options.showMethod= 'fadeIn';
                         toastr.options.hideMethod= 'fadeOut';
                         toastr.options.closeButton= true;
-                        toastr.success(data.message);
-            
-                }else{
+                        toastr.error(data.message);
+                    }
 
-                    //For Notification
-                    toastr.options.timeOut = 5000;
-                    toastr.options.positionClass = 'toast-top-right';
-                    toastr.options.showEasing= 'swing';
-                    toastr.options.hideEasing= 'linear';
-                    toastr.options.showMethod= 'fadeIn';
-                    toastr.options.hideMethod= 'fadeOut';
-                    toastr.options.closeButton= true;
-                    toastr.error(data.message);
                 }
-
-            }
-        });
+            });
+    
+       
         
         
     });
@@ -1046,16 +1167,18 @@
                             content +="<tr>";
                             content +="<td>"+ ++i +"</td>";
                             content +="<td>"+travel_date+"</td>";
-                            content +="<td>";
-                                if((travel_date == $.datepicker.formatDate('dd-mm-yy', new Date())) && (data.role == 3)){
-                                    content +="<a class='btn btn-outline-secondary btn-sm exp_editT' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delT' rel='tooltip' data-bs-placement='top' title='Delete Travel Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
-                                }
-                                if((data.role == 1)){
-                                    content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"' data-ad_remark='"+row.ad_remark+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
-                                    
-                                }
-                            content +="</td>";
 
+                            if(data.role != 0){
+                                content +="<td>";
+                                    if((travel_date == $.datepicker.formatDate('dd-mm-yy', new Date())) && (data.role == 3)){
+                                        content +="<a class='btn btn-outline-secondary btn-sm exp_editT' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delT' rel='tooltip' data-bs-placement='top' title='Delete Travel Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+                                    }
+                                    if((data.role == 1)){
+                                        content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"' data-ad_remark='"+row.ad_remark+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
+                                        
+                                    }
+                                content +="</td>";
+                            }
                             if(row.mode_travel == "Shared_Auto"){
                                 content +="<td> Shared Auto </td>";
                             }else if(row.mode_travel == "Private_Auto"){
@@ -1066,8 +1189,19 @@
                            
                             content +="<td>"+row.from_location+"</td>";
                             content +="<td>"+row.to_location+"</td>";
-                            content +="<td>"+row.total_km+"</td>";
-                            content +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+
+                            if(row.total_km != null){
+                                content +="<td>"+row.total_km+"</td>";
+                            }else{
+                                content +="<td class='text-center'> - </td>";
+                            }
+
+                            
+                            if(row.attachment != null){
+                                content +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                            }else{
+                                content +="<td>"+row.travel_amount+"</td>";
+                            } 
 
                                 
                             content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
@@ -1094,20 +1228,21 @@
                             var travel_date = " - "
                         }
 
-                        t_cllamount+=Number(row.travel_amount);           //total of amount
+                        t_cllamount+=Number(row.aprvd_amount);           //total of amount
 
                         var d = new Date();
                         var current_date = d.getDate();
                             content1 +="<tr>";
-                            content1 +="<td>"+ ++i +"</td>";
+                            content1 +="<td>"+ ++j +"</td>";
                             content1 +="<td>"+travel_date+"</td>";
                            
                             if(data.role == 0){
                                 content1 +="<td>";
-                                content1 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
+                                content1 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
                                 content1 +="</td>";
 
                             }
+
                             if(row.mode_travel == "Shared_Auto"){
                                 content1 +="<td> Shared Auto </td>";
                             }else if(row.mode_travel == "Private_Auto"){
@@ -1115,16 +1250,30 @@
                             }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
                                 content1 +="<td>"+row.mode_travel+"</td>";
                             }
+
                             content1 +="<td>"+row.from_location+"</td>";
                             content1 +="<td>"+row.to_location+"</td>";
-                            content1 +="<td>"+row.total_km+"</td>";
-                            content1 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+
+                            if(row.total_km != null){
+                                content1 +="<td>"+row.total_km+"</td>";
+                            }else{
+                                content1 +="<td class='text-center'> - </td>";
+                            }
+
+                            if(row.attachment != null){
+                                content1 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                            }else{
+                                content1 +="<td>"+row.aprvd_amount+"</td>";
+                            } 
+
                             content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+
                             if(row.ad_remark != null){
                                 content1 +="<td>"+row.ad_remark+"</td>";
                             }else{
                                 content1 +="<td class='text-center'> - </td>";
                             }
+
                             if(row.travel_desc != null){
                                 content1 +="<td>"+row.travel_desc+"</td>";
                             }else{
@@ -1148,12 +1297,12 @@
                             var travel_date = " - "
                         }
 
-                        t_apprvdamount+=Number(row.travel_amount);           //total of amount
+                        t_apprvdamount+=Number(row.aprvd_amount);           //total of amount
 
                         var d = new Date();
                         var current_date = d.getDate();
                             content3 +="<tr>";
-                            content3 +="<td>"+ ++i +"</td>";
+                            content3 +="<td>"+ ++k +"</td>";
                             content3 +="<td>"+travel_date+"</td>";
                             if(row.mode_travel == "Shared_Auto"){
                                 content3 +="<td> Shared Auto </td>";
@@ -1164,8 +1313,19 @@
                             }
                             content3 +="<td>"+row.from_location+"</td>";
                             content3 +="<td>"+row.to_location+"</td>";
-                            content3 +="<td>"+row.total_km+"</td>";
-                            content3 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+
+                            if(row.total_km != null){
+                                content3 +="<td>"+row.total_km+"</td>";
+                            }else{
+                                content3 +="<td class='text-center'> - </td>";
+                            }
+
+                            if(row.attachment != null){
+                                content3 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                            }else{
+                                content3 +="<td>"+row.aprvd_amount+"</td>";
+                            } 
+
                             content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
 
                             if(row.ad_remark != null){
@@ -1210,8 +1370,15 @@
                         var d = new Date();
                         var current_date = d.getDate();
                             content2 +="<tr>";
-                            content2 +="<td>"+ ++i +"</td>";
+                            content2 +="<td>"+ ++l +"</td>";
                             content2 +="<td>"+travel_date+"</td>";
+
+                            if(data.role == 0){
+                                content2 +="<td>";
+                                content2 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
+                                content2 +="</td>";
+
+                            }
 
                             if(row.mode_travel == "Shared_Auto"){
                                 content2 +="<td> Shared Auto </td>";
@@ -1222,8 +1389,18 @@
                             }
                             content2 +="<td>"+row.from_location+"</td>";
                             content2 +="<td>"+row.to_location+"</td>";
-                            content2 +="<td>"+row.total_km+"</td>";
-                            content2 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+
+                            if(row.total_km != null){
+                                content2 +="<td>"+row.total_km+"</td>";
+                            }else{
+                                content2 +="<td class='text-center'> - </td>";
+                            }
+
+                            if(row.attachment != null){
+                                content2 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                            }else{
+                                content2 +="<td>"+row.travel_amount+"</td>";
+                            } 
                             content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                             if(row.travel_desc != null){
                                 content2 +="<td>"+row.travel_desc+"</td>";
@@ -1259,8 +1436,7 @@
                 $.each(data.s_obj,function(index,row){
                     //For Add Material Modal
                     // $('#edit_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
-                    $('#exp_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
-
+                    $('#exp_so').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
                 });
             }
         });
@@ -1303,6 +1479,7 @@
 
         $('#attachment1').hide();
         // getLabourExpenses();
+        $("#mode_travel").val("").trigger("change");      // for when use select options are not dynamically print 
 
     });
 
@@ -1343,7 +1520,8 @@
             $('#attachment1').attr("href",attachment);
 
             //  $("#labour").find("option[value="+labour+"]").prop("selected", "selected");
-            $("#mode_travel option[value='"+mode_travel+"']").attr('selected','selected').change();
+            // $("#mode_travel option[value='"+mode_travel+"']").attr('selected','selected').change();
+            $("#mode_travel").val(mode_travel).trigger("change");      // for when use select options are not dynamically print 
         }
         
 
@@ -1355,6 +1533,7 @@
     {
         // alert('hi');
         var edit_id= $('#exp_edit_id').val();
+        var exp_so = $('#exp_so').val();
         var mode_travel = $('#mode_travel').val();
         var from_location= $('#from_location').val();
         var to_location = $('#to_location').val();
@@ -1362,6 +1541,8 @@
         var travel_date= $('#travel_date').val();
         var travel_desc = $('#travel_desc').val();
         var travel_amnt = $('#travel_amnt').val();
+        var no_of_person = $('#no_of_person').val();
+
 
         n=0;    
         if( $.trim(mode_travel).length == 0 )
@@ -1391,15 +1572,6 @@
             ++n;
         }
 
-        if( $.trim(total_km).length == 0 )
-        {
-            $('#tkerror').text('Please Enter KM.');
-            event.preventDefault();
-        }else{
-            $('#tkerror').text('');
-            ++n;
-        }
-
         if( $.trim(travel_date).length == 0 )
         {
             $('#tderror').text('Please Select Date.');
@@ -1407,15 +1579,6 @@
         }else{
             $('#tderror').text('');
             ++n;
-        }
-
-        if( $.trim(travel_desc).length == 0 )
-        {
-            $('#tdeerror').text('Please Enter Description.');
-            event.preventDefault();
-        }else{
-            $('#tdeerror').text('');
-            
         }
 
         if( $.trim(travel_amnt).length == 0 )
@@ -1426,6 +1589,32 @@
             $('#taerror').text('');
             ++n;
         }
+        
+        if( $.trim(no_of_person).length == 0 )
+        {
+            $('#nperror').text('Please Enter No of Person.');
+            event.preventDefault();
+        }else{
+            $('#nperror').text('');
+            ++n;
+        }
+
+        // if( $.trim(travel_desc).length == 0 )
+        // {
+        //     $('#tdeerror').text('Please Enter Description.');
+        //     event.preventDefault();
+        // }else{
+        //     $('#tdeerror').text('');
+            
+        // }
+
+        // if( $.trim(total_km).length == 0 )
+        // {
+        //     $('#tkerror').text('Please Enter KM.');
+        //     event.preventDefault();
+        // }else{
+        //     $('#tkerror').text('');
+        // }
 
         var ext1 = $('#attachment').val().split('.').pop().toLowerCase();
         if($.inArray(ext1, ['png','jpg','jpeg']) == -1 && ext1 != '')
@@ -1463,6 +1652,7 @@
         {        
             var form_data = new FormData();
             form_data.append("exp_edit_id", $("#exp_edit_id").val());
+            form_data.append("exp_so", $("#exp_so").val());
             form_data.append("mode_travel", $("#mode_travel").val());
             form_data.append("from_location", $("#from_location").val());
             form_data.append("to_location", $("#to_location").val());
@@ -1470,7 +1660,7 @@
             form_data.append("travel_date", $("#travel_date").val());
             form_data.append("travel_desc", $("#travel_desc").val());
             form_data.append("travel_amnt", $("#travel_amnt").val());
-
+            form_data.append("no_of_person", $("#no_of_person").val());
        
             // For File Encode
             var attachment1=$('#payment_encodedfile').val();
@@ -1608,22 +1798,22 @@
 
     // mode of travel on change fields
     $('#a_mode_travel').change(function(e)
-        {
-            $("#abike_rate").hide();     // on change bike rate 
-            $("#acar_rate").hide();      // on change car rate
+    {
+        $("#abike_rate").hide();     // on change bike rate 
+        $("#acar_rate").hide();      // on change car rate
 
-            var mode_travel = $(this).val(); 
-            if(mode_travel == "Bike"){
-                $("#abike_rate").show();     // on change bike rate 
-            }
+        var mode_travel = $(this).val(); 
+        if(mode_travel == "Bike"){
+            $("#abike_rate").show();     // on change bike rate 
+        }
 
-            if(mode_travel == "Own Car"){
-                $("#acar_rate").show();      // on change car rate
-            }
-    
-        });
+        if(mode_travel == "Own Car"){
+            $("#acar_rate").show();      // on change car rate
+        }
 
-    //For SA Edit Expenses Operation
+    });
+
+    //For Admin Edit Expenses Operation
     $(document).on("click",'.exp_editU',function()
     {
         var id = $(this).data('id');
@@ -1642,6 +1832,7 @@
         // $('#exp_type option:selected').remove();
         $("#mode_travel option:selected").removeAttr("selected");
         if(id !=""){
+            $("#attachment2").show();
             var t_name = $(this).data('labour_name');
             var e_num = $(this).data('emp_number');
 
@@ -1652,6 +1843,12 @@
             var total_km = $(this).data('total_km');
             var travel_amount = $(this).data('travel_amount');
             var travel_desc = $(this).data('travel_desc');
+            var attachment = $(this).data('attachment');
+            var aprvd_amount = $(this).data('aprvd_amount');
+
+            if(attachment == null){
+                $("#attachment2").hide();
+            }
             var  attachment="files/user/travel_expense/"+attachment;
 
             $('#exp_edit_id').val(id);   
@@ -1661,12 +1858,23 @@
             $('#a_total_km').val(total_km); 
             $('#expense_amnt').val(travel_amount); 
             $('#a_travel_desc').val(travel_desc); 
-            $('#updated_amnt').val(travel_amount); 
+            // $('#updated_amnt').val(travel_amount); 
             $('#attachment2').attr("href",attachment);
             $('#t_name').html(t_name);   
             $('#e_num').html(e_num);
 
-            $('#a_mode_travel option[value='+mode_travel+']').attr('selected','selected').change();
+            if(aprvd_amount != null){
+                $('#updated_amnt').val(aprvd_amount); 
+                // $('#sa_updated_amnt').val(aprvd_amount);
+            }else{
+                $('#updated_amnt').val(travel_amount); 
+                // $('#sa_updated_amnt').val(travel_amount);
+            }
+
+            $("#a_mode_travel").val(mode_travel).trigger("change");      // for when use select options are not dynamically print 
+
+            // $("#a_mode_travel option[value='"+mode_travel+"']").attr('selected','selected').change();
+            // $('#a_mode_travel option[value='+mode_travel+']').attr('selected','selected').change();
             $('#status_change option[value=Cleared]').attr('selected','selected').change();
 
             $('#editPaymentModal').modal('show');
@@ -1675,7 +1883,7 @@
 
     });
 
-     //For Edit Operation
+     //For SA Edit Expenses Operation
      $(document).on("click",'.exp_editSA',function()
     {
         var id = $(this).data('id');
@@ -1691,9 +1899,11 @@
             $("#updated_amnt").prop('disabled', false);
             $("#acc_remark").prop('disabled', false);
         }
+
         // $('#exp_type option:selected').remove();
         $("#exp_type option:selected").removeAttr("selected");
         if(id !=""){
+            $("#attachment2").show();
             var t_name = $(this).data('labour_name');
             var e_num = $(this).data('emp_number');
 
@@ -1703,21 +1913,32 @@
             var to_location = $(this).data('to_location');
             var total_km = $(this).data('total_km');
             var travel_amount = $(this).data('travel_amount');
+            var aprvd_amount = $(this).data('aprvd_amount');
             var travel_desc = $(this).data('travel_desc');
             var ad_remark = $(this).data('ad_remark');
+            var attachment = $(this).data('attachment');
+            // alert(aprvd_amount);
+            if(attachment == null){
+                $("#attachment2").hide();
+            }
             var  attachment="files/user/travel_expense/"+attachment;
   
-           
             $('#exp_edit_id').val(id);   
             $('#a_travel_date').val(travel_date); 
             $('#a_from_location').val(from_location); 
             $('#a_to_location').val(to_location);   
             $('#a_total_km').val(total_km); 
             $('#a_travel_desc').val(travel_desc); 
-
             $('#expense_amnt').val(travel_amount); 
-            $('#updated_amnt').val(travel_amount); 
-            $('#sa_updated_amnt').val(travel_amount);
+
+            if(aprvd_amount != null){
+                $('#updated_amnt').val(aprvd_amount); 
+                $('#sa_updated_amnt').val(aprvd_amount);
+            }else{
+                $('#updated_amnt').val(travel_amount); 
+                $('#sa_updated_amnt').val(travel_amount);
+            }
+            
 
             $('#ad_remark').val(ad_remark);
 
@@ -1725,7 +1946,9 @@
             $('#t_name').html(t_name);   
             $('#e_num').html(e_num);
 
-            $('#a_mode_travel option[value='+mode_travel+']').attr('selected','selected').change();
+            $("#a_mode_travel").val(mode_travel).trigger("change");      // for when use select options are not dynamically print 
+            
+            // $("#a_mode_travel option[value='"+mode_travel+"']").attr('selected','selected').change();
             $('#status_change option[value=Cleared]').attr('selected','selected').change();
 
             $('#editPaymentModal').modal('show');
@@ -1734,7 +1957,7 @@
 
     });
 
-    // From SO Validation
+    // From update_expense Validation
     var n =0;
     $("#update_expense").click(function(event) 
     {
@@ -1752,6 +1975,7 @@
         }else{
             $('#uaerror').text('');
             ++n;
+           
         }
 
         if( $.trim(status).length == 0 )
@@ -1769,7 +1993,7 @@
             event.preventDefault();
         }else{
             $('#arerror').text('');
-            ++n;
+            
         }
 
     });

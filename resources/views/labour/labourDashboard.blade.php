@@ -127,7 +127,7 @@
                                 <h4 class="mb-2 text-center">{{$total_expense}}.00</h4>
                                 <div class="row ">
                                     <div class="col-md-5">
-                                        <h6 class="mb-0 text-center waves-effect style1" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="Technician Expense">{{$technician_expenses}}</h6> 
+                                        <h6 class="mb-0 text-center waves-effect style1" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="Technician Expense">{{$total_tech_expense}}</h6> 
                                         <!-- <p class="text-muted fw-medium text-center">T Expense</p> -->
                                     </div>  
                                     <div class="col-md-1">

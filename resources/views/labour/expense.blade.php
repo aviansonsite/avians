@@ -286,12 +286,11 @@
                                 {!! Form::open(['class'=>"form-horizontal epayment_form",'enctype'=>'multipart/form-data','files' => 'true' ,'id'=>'postexpPaymentform']) !!}
                                     <input type="hidden" name="exp_edit_id" id="exp_edit_id" value="">
                                     <div class="row">
-                                        <div class="col-md-6 col-sm-12 col-lg-6">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-group mb-3">
-                                                <label for="exp_so" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA <sup class="text-danger">*</sup></label>
-                                                <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="exp_so" name="exp_so[]" placeholder="Select SO">
-                                                  
-                                                   
+                                                <label for="exp_so" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="exp_so" required name="exp_so">
+                                                    
                                                 </select>
                                                 <span class="text-danger error" id="esoerror"></span>
                                             </div>
@@ -302,10 +301,11 @@
                                                 <label for="exp_type" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Expense Type<sup class="text-danger">*</sup></label>
                                                 <select class="form-control select2" id="exp_type" required name="exp_type">
                                                     <option value="" disabled selected>Select</option>
-                                                    <option value="Hotel">Hotel</option>
-                                                    <option value="Material_Purchase">Material Purchase</option>
-                                                    <option value="Labour_Hired">Labour Hired</option>
                                                     <option value="Crane/Hydra">Crane/Hydra</option>
+                                                    <option value="Daily Allowance">Daily Allowance</option>
+                                                    <option value="Hotel">Hotel</option>
+                                                    <option value="Labour_Hired">Labour Hired</option>
+                                                    <option value="Material_Purchase">Material Purchase</option>
                                                     <option value="Scaffolding">Scaffolding</option>
                                                     <option value="Other">Other</option>
                                                 </select>
@@ -314,7 +314,7 @@
                                         </div>
 
                                         <?php $tdate=date("Y-m-d");?>
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
                                                 <input type="date" class="form-control" id="exp_date" placeholder="Expense Date" name="exp_date" required max="{{$tdate}}" value="{{$tdate}}">
                                                 <label for="exp_date">Expense Date<sup class="text-danger">*</sup></label>
@@ -322,7 +322,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
                                                 <input type="file" class="form-control" id="attachment" placeholder="Enter photo File" name="attachment">
                                                 <label for="attachment">Attachment<sup class="text-danger">*</sup></label>
@@ -335,16 +335,7 @@
                                                 <span id="aerror"></span>
                                             </div>
                                         </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-floating mb-3">
-                                                <textarea class="form-control" id="exp_desc" placeholder="Enter Expense Description" required name="exp_desc" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100"></textarea>
-                                                <label for="exp_desc">Expense Description</label>
-                                                <span class="text-danger error" id="ederror"></span>
-
-                                            </div>
-                                        </div>
-                                       
+                                        
                                         <div class="col-md-3 col-sm-12 col-lg-3">
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" id="expense_amnt" placeholder="Expense Amount" name="expense_amnt" maxlength="10" required>
@@ -352,6 +343,17 @@
                                                 <span class="text-danger error" id="eaerror"></span>
                                             </div>
                                         </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-floating mb-3">
+                                                <textarea class="form-control" id="exp_desc" placeholder="Enter Expense Description" required name="exp_desc" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100"></textarea>
+                                                <label for="exp_desc">Expense Description<sup class="text-danger">*</sup></label>
+                                                <span class="text-danger error" id="ederror"></span>
+
+                                            </div>
+                                        </div>
+                                       
+                                        
                                         <div class="d-sm-flex flex-wrap">
                                             <div class="ms-auto">
                                                 <button type="button" class="btn btn-primary btn-sm waves-effect waves-light mb-2" id="add_expense">Submit</button>
@@ -690,7 +692,7 @@
                     $.each(data.s_obj,function(index,row){
                         //For Add Material Modal
                         // $('#edit_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
-                        $('#exp_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
+                        $('#exp_so').append("<option value='"+row.oth_id+"'>"+row.so_number+"</option>");
 
                     });
 
@@ -799,7 +801,7 @@
                             content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                             content +="<td>";
                                 if(exp_date == $.datepicker.formatDate('dd-mm-yy', new Date())){
-                                    content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-so='"+row.so_id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delI' rel='tooltip' data-bs-placement='top' title='Delete Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+                                    content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-oth_id='"+row.oth_id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delI' rel='tooltip' data-bs-placement='top' title='Delete Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
                                 }
                             content +="</td>";
                             content += "</tr>";
@@ -831,7 +833,7 @@
                             }else if(row.exp_type == "Labour_Hired"){
                                 content1 +="<td> Labour Hired </td>";
                             }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                content +="<td>"+row.exp_type+"</td>";
+                                content1 +="<td>"+row.exp_type+"</td>";
                             }
                             content1 +="<td>"+row.exp_desc+"</td>";
                             if(row.acc_remark != null){
@@ -839,7 +841,7 @@
                             }else{
                                 content1 +="<td class='text-center'> - </td>";
                             }
-                            content1 +="<td>"+row.amount+"</td>";
+                            content1 +="<td>"+row.aprvd_amount+"</td>";
                             content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                             content1 += "</tr>";
                     }
@@ -957,8 +959,7 @@
                 $.each(data.s_obj,function(index,row){
                     //For Add Material Modal
                     // $('#edit_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
-                    $('#exp_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
-
+                    $('#exp_so').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
                 });
             }
         });
@@ -1017,6 +1018,7 @@
         var id = $(this).data('id');
         // $('#exp_type option:selected').remove();
         // $("#exp_type option:selected").removeAttr("selected");
+        
         if(id !=""){
             $('#attachment1').show();
             var exp_type = $(this).data('exp_type');
@@ -1024,14 +1026,8 @@
             var exp_date = $(this).data('exp_date');
             var amount = $(this).data('amount');
             var attachment = $(this).data('attachment');
-            var so= $(this).data('so');
-            var r=new Array();
-            if (so.toString().indexOf(',')>-1)
-            { 
-                var r=so.split(',');
-            }else{
-                r[0]=so.toString();
-            }
+            var oth_id= $(this).data('oth_id');
+     
             // ACTIVE PANE AND LINK
             $('.nav-tabs a[href="#update_epayment"]').tab('show');
 
@@ -1041,18 +1037,14 @@
             $('#exp_date').val(exp_date); 
             $('#expense_amnt').val(amount); 
             $('#attachment1').attr("href",attachment);
-            $.each(r,function(index,value)
-            {
-                // $("#so").find("option[value="+value+"]").prop("selected", "selected");
-                $("#exp_so option[value='"+value+"']").attr('selected','selected').change();
-
-
-            });
-
+           
             // alert(exp_type);
 
+            // for remove previous selection and select new type
+            $("#exp_type").val(exp_type).trigger("change"); 
+
             //  $("#labour").find("option[value="+labour+"]").prop("selected", "selected");
-            $("#exp_type option[value='"+exp_type+"']").attr('selected','selected').change();
+            // $("#exp_type option[value='"+exp_type+"']").attr('selected','selected').change();
         }
         
 
@@ -1122,7 +1114,8 @@
         {
             $('#aerror').html('Only .jpg, .jpeg, .png allowed').css('color','red');
             e.preventDefault();
-             return false;
+            return false;
+            ++n;
         }
     });
 
@@ -1232,7 +1225,7 @@
     });
 
 </script>
-<script>
+<!-- <script>
     $(document).ready(function(){
         var $body = $("body");
         $('#labour,#so').select2();
@@ -1630,7 +1623,7 @@
         }
         
     });
-</script>
+</script> -->
 
 
 @endpush

@@ -31,19 +31,21 @@
                         <div class="card  border border-primary overflow-hidden">
                             <div class="bg-primary bg-soft">
                                 <div class="row">
+                                     <div class="col-5 text-center">
+                                     <?php $logo=$u1_obj[0]->logo; ?>
+                                        <img src='{{asset("files/company/$logo")}}' alt="" style="height: 67px;margin-top: 35px;">
+                                    </div>
                                     <div class="col-7">
                                         <div class="text-primary p-4">
                                             <h5 class="text-primary">Welcome Back !</h5>
                                             <p>Sign in to continue to {{config('constants.PROJECT_NAME')}}.</p>
                                         </div>
                                     </div>
-                                    <div class="col-5 align-self-end">
-                                        <img src="{{asset('assets/images/profile-img.png')}}" alt="" class="img-fluid">
-                                    </div>
+                                    
                                 </div>
                             </div>
                             <div class="card-body pt-0"> 
-                                <div class="auth-logo">
+                                <!-- <div class="auth-logo">
                                     <a href="{{route('login.page')}}" class="auth-logo-light">
                                         <div class="avatar-md profile-user-wid mb-4">
                                             <span class="">
@@ -60,7 +62,7 @@
                                             </span>
                                         </div>
                                     </a>
-                                </div>
+                                </div> -->
                                 <div class="p-2">
                                     {!! Form::open(['class'=>"form-horizontal",'method'=>"post",'url'=>'checkLogin']) !!}
                                     {{ csrf_field() }}
@@ -73,7 +75,6 @@
                                             </div>
                                         </div>
 
-                                      
                                         <div class="col-md-12">
                                             <div class="form-floating mb-3 input-group auth-pass-inputgroup">
                                                 <input type="password" class="form-control" id="password" placeholder="Enter Password" required name="password" aria-label="Password" aria-describedby="password-addon">
@@ -82,14 +83,12 @@
                                             </div>
                                         </div>
 
-                                        
                                         <div class="mt-3 d-grid">
                                             <button class="btn btn-primary waves-effect waves-light" type="submit">Log In</button>
                                         </div>
 
                                         <div class="mt-4 text-center">
                                             <i class="mdi mdi-lock me-1"></i> Forgot your password? Please Contact Project Admin.
-
                                         </div>
                                     {!! Form::close() !!}
                                 </div>

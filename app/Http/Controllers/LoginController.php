@@ -7,6 +7,7 @@ use App\Models\CompanyProfileModel;
 use App\Models\LabourPaymentModel;
 use App\Models\TransferPaymentModel;
 use App\Models\TechnicianExpenseModel;
+use App\Models\OATLHistoryModel;
 use App\Models\UserModel;
 use App\Models\SOModel;
 use Session;
@@ -28,38 +29,47 @@ class LoginController extends Controller
 
 	  	$u_obj=UserModel::where('emp_number', 'LIKE', '%'.$emp_number.'%')->select('id','emp_number','name','mobile','password','delete','is_active','role')->get();
 		// dd($password,$u_obj);
-		
+	
 		if(count($u_obj)>0)
 		{
-			if ( $u_obj[0]->delete == 0 )
-			 {  
-				if( $u_obj[0]->is_active == 0)
-				{
-					if(Hash::check($password, $u_obj[0]->password)) 
-					{
-						Session::put('NAME',$u_obj[0]->name);
-						Session::put('MOBILE',$u_obj[0]->mobile);
-						Session::put('USER_ID',$u_obj[0]->id);
-						Session::put('ROLES',$u_obj[0]->role);
-						$c_obj=CompanyProfileModel::all();
-						Session::put('BIKE_RATE',$c_obj[0]->bike_pkm_rate);
-						Session::put('CAR_RATE',$c_obj[0]->car_pkm_rate);
+			$data=OATLHistoryModel::where(['lead_technician'=>$u_obj[0]->id,'status'=>1])->get();
 
-						return redirect()->route('dashboard'); 
-						
+			if((count($data) > 0) || ($u_obj[0]->role != 3)){
+
+				if ( $u_obj[0]->delete == 0)
+				{  
+					if( $u_obj[0]->is_active == 0)
+					{
+						if(Hash::check($password, $u_obj[0]->password)) 
+						{
+							Session::put('NAME',$u_obj[0]->name);
+							Session::put('MOBILE',$u_obj[0]->mobile);
+							Session::put('USER_ID',$u_obj[0]->id);
+							Session::put('ROLES',$u_obj[0]->role);
+							$c_obj=CompanyProfileModel::all();
+							Session::put('BIKE_RATE',$c_obj[0]->bike_pkm_rate);
+							Session::put('CAR_RATE',$c_obj[0]->car_pkm_rate);
+
+							return redirect()->route('dashboard'); 
+							
+						}else{
+							Session::put('ERROR_MESSAGE', 'Wrong Password.Please Try Again...!');
+							return redirect()->route('login.page'); 
+						}
 					}else{
-						Session::put('ERROR_MESSAGE', 'Wrong Password.Please Try Again...!');
+						Session::put('ERROR_MESSAGE', 'This User Is Currently Inactive.Please Contact To SuperAdmin!');
 						return redirect()->route('login.page'); 
 					}
+					
 				}else{
-					Session::put('ERROR_MESSAGE', 'This User Is Currently Inactive.Please Contact To SuperAdmin!');
+					Session::put('ERROR_MESSAGE', 'This Admin Account Is Deleted...!');
 					return redirect()->route('login.page'); 
 				}
-				
 			}else{
-				Session::put('ERROR_MESSAGE', 'This Admin Account Is Deleted...!');
-				return redirect()->route('login.page'); 
+				Session::put('ERROR_MESSAGE', 'OA is Not Assign Yet. Please Contact Admin to Assign OA!');
+				return redirect()->route('login.page');
 			}
+			
 		}else{
 			Session::put('ERROR_MESSAGE', 'User Not Found...!');
 			return redirect()->route('login.page');

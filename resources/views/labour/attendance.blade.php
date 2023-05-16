@@ -99,15 +99,15 @@
                            <?php 
                                 $pout_date = $p->pout_date;
                            ?>
-                           
+                               
                            @endforeach
-                                @if($t_count == 0)
+                           @if($t_count == 0)
                                     <button type="button" class="btn btn-primary btn-sm waves-effect waves-light w-sm" data-bs-toggle="modal" data-bs-target="#punchInModal" style="margin-left: 10px;">
                                     <i class="mdi mdi-plus font-size-11"></i> Punch In
                                     </button> 
                                 @endif
                                 @if($t_count == 1 &&  $pout_date == null)
-                                    <button type="button" class="btn btn-primary btn-sm waves-effect waves-light w-sm" style="margin-left: 10px;" data-pin_id="{{$p->id}}" id="pout_btn" data-pin_so_id="{{$p->pin_so_id}}" data-pin_u_id="{{$p->pin_u_id}}" >
+                                    <button type="button" class="btn btn-primary btn-sm waves-effect waves-light w-sm" style="margin-left: 10px;" data-pin_id="{{$p->id}}" id="pout_btn" data-pin_oth_id="{{$p->pin_oth_id}}" data-pin_u_id="{{$p->pin_u_ids}}" >
                                     <i class="mdi mdi-plus font-size-11"></i> Punch Out
                                     </button>
                                 @endif
@@ -177,35 +177,40 @@
             {!! Form::open(['class'=>"form-horizontal punch_in_form",'method'=>"post",'url'=>'punch_in','enctype'=>'multipart/form-data','files' => 'true' ,'id'=>'postPunchInform']) !!}
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-12 col-sm-12 col-lg-12">
+                    <!-- <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
                             <label for="p_in_so" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA <sup class="text-danger">*</sup></label>
                             <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="p_in_so" name="p_in_so[]" placeholder="Select SO">
                                 <option value="all">All</option>
-                                @foreach($s_obj as $s)
-                                    <option value="{{$s->id}}">{{$s->so_number}}</option>
-                                @endforeach
+                               
                             </select>
-                            <span class="text-danger error" id="soerror"></span>
+                            <span class="text-danger error" id="pin_soerror"></span>
+                        </div>
+                    </div> -->
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        <div class="form-group mb-3">
+                            <label for="p_in_so" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA<sup class="text-danger">*</sup></label>
+                            <select class="form-control select2" id="p_in_so" required name="p_in_so">
+                                
+                            </select>
+                            <span class="text-danger error" id="esoerror"></span>
                         </div>
                     </div>
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
                             <label for="p_in_labour" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician<sup class="text-danger">*</sup></label>
                             <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="p_in_labour" name="p_in_labour[]" placeholder="Select Technician">
-                                <option value="all">All</option>
-                                @foreach($u_obj as $u)
-                                    <option value="{{$u->id}}">{{$u->name}}</option>
-                                @endforeach
+                                
+                               
                             </select>
-                            <span class="text-danger error" id="lerror"></span>
+                            <span class="text-danger error" id="pin_lerror"></span>
                         </div>
                     </div>
 
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
                             <label for="p_in_remark">Enter Remark</label>
-                            <textarea class="form-control" id="p_in_remark" placeholder="Enter Remark" required name="p_in_remark" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" rows="3"></textarea>
+                            <textarea class="form-control" id="p_in_remark" placeholder="Enter Remark" name="p_in_remark" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" rows="3"></textarea>
                             <span class="text-danger error" id="pderror"></span>
 
                         </div>
@@ -223,7 +228,7 @@
                         <div class="form-floating mb-3">
                             <input type="date" class="form-control" id="p_in_date" placeholder="Punch In Date" name="p_in_date" required max="{{$tdate}}" value="{{$tdate}}" readonly>
                             <label for="p_in_date">Date<sup class="text-danger">*</sup></label>
-                            <span class="text-danger error" id="pdaerror"></span>
+                            <span class="text-danger error" id="pin_derror"></span>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12 col-lg-6 mb-3">
@@ -245,14 +250,14 @@
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="p_in_latitude" placeholder="Latitude" name="p_in_latitude" maxlength="10" required readonly>
                             <label for="p_in_latitude">Latitude<sup class="text-danger">*</sup></label>
-                            <span class="text-danger error" id="uaerror"></span>
+                            <span class="text-danger error" id="pin_laerror"></span>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12 col-lg-6">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="p_in_longitude" placeholder="Longitude" name="p_in_longitude" maxlength="10" required readonly>
                             <label for="p_in_longitude">Longitude<sup class="text-danger">*</sup></label>
-                            <!-- <span class="text-danger error" id="uaerror"></span> -->
+                            <span class="text-danger error" id="pin_loerror"></span>
                         </div>
                     </div>
                     <!-- <p id="demo"></p> -->
@@ -277,18 +282,19 @@
             </div>
             <div class="modal-body">
                 <div class="row">
+                    
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
-                            <label for="p_in_soh" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA <sup class="text-danger">*</sup></label>
-                            <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="p_in_soh" name="p_in_soh[]" placeholder="Select SO" disabled>
-                                <option value="all">All</option>
-                                @foreach($s_obj as $s)
-                                    <option value="{{$s->id}}">{{$s->so_number}}</option>
-                                @endforeach
+                            <label for="p_in_soh" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA<sup class="text-danger">*</sup></label>
+                            <select class="form-control select2" id="p_in_soh" required name="p_in_soh" disabled>
+                            @foreach($s_obj1 as $so)
+                                <option value="{{$so->oth_id}}">{{$so->so_number}}</option>
+                            @endforeach
                             </select>
-                            <span class="text-danger error" id="soerror"></span>
+                            <span class="text-danger error" id="esoerror"></span>
                         </div>
                     </div>
+
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
                             <label for="p_in_labourh" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician<sup class="text-danger">*</sup></label>
@@ -305,7 +311,7 @@
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
                             <label for="p_in_remarkh">Enter Remark</label>
-                            <textarea class="form-control" id="p_in_remarkh" placeholder="Enter Remark" required name="p_in_remarkh" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" readonly rows="3"></textarea>
+                            <textarea class="form-control" id="p_in_remarkh" placeholder="Enter Remark" name="p_in_remarkh" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" readonly rows="3"></textarea>
                             <span class="text-danger error" id="pderror"></span>
 
                         </div>
@@ -367,43 +373,38 @@
             <div class="modal-body">
                 <div class="row">
                 <input type="hidden" name="pin_id" id="pin_id" value="">
+                   
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
-                            <label for="pout_so" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA <sup class="text-danger">*</sup></label>
-                            <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="pout_so" name="pout_so[]" placeholder="Select SO">
-                                <option value="all">All</option>
-                                @foreach($s_obj as $s)
-                                    <option value="{{$s->id}}">{{$s->so_number}}</option>
-                                @endforeach
+                            <label for="pout_so" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA<sup class="text-danger">*</sup></label>
+                            <select class="form-control select2" id="pout_so" required name="pout_so">
+                                
                             </select>
-                            <span class="text-danger error" id="soerror"></span>
+                            <span class="text-danger error" id="esoerror"></span>
                         </div>
                     </div>
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
                             <label for="pout_labour" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician<sup class="text-danger">*</sup></label>
                             <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="pout_labour" name="pout_labour[]" placeholder="Select Technician">
-                                <option value="all">All</option>
-                                @foreach($u_obj as $u)
-                                    <option value="{{$u->id}}">{{$u->name}}</option>
-                                @endforeach
+                                
                             </select>
-                            <span class="text-danger error" id="lerror"></span>
+                            <span class="text-danger error" id="pout_lerror"></span>
                         </div>
                     </div>
                       
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
                             <label for="pout_remark">Enter Remark</label>
-                            <textarea class="form-control" id="pout_remark" placeholder="Enter Remark" required name="pout_remark" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" rows="3"></textarea>
-                            <span class="text-danger error" id="pderror"></span>
+                            <textarea class="form-control" id="pout_remark" placeholder="Enter Remark" name="pout_remark" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" rows="3"></textarea>
+                            <span class="text-danger error" id="pout_rerror"></span>
                         </div>
                     </div>
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
-                            <label for="pout_work_desc">Work Description</label>
-                            <textarea class="form-control" id="pout_work_desc" placeholder="Enter Work Description" required name="pout_work_desc" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" rows="3"></textarea>
-                            <span class="text-danger error" id="pderror"></span>
+                            <label for="pout_work_desc">Work Description<sup class="text-danger">*</sup></label>
+                            <textarea class="form-control" id="pout_work_desc" placeholder="Enter Work Description" name="pout_work_desc" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" rows="3"></textarea>
+                            <span class="text-danger error" id="pout_wderror"></span>
 
                         </div>
                     </div>
@@ -412,7 +413,7 @@
                         <div class="form-floating mb-3">
                             <input type="date" class="form-control" id="pout_date" placeholder="Punch In Date" name="pout_date" required max="{{$tdate}}" value="{{$tdate}}" readonly>
                             <label for="pout_date">Date<sup class="text-danger">*</sup></label>
-                            <span class="text-danger error" id="pdaerror"></span>
+                            <span class="text-danger error" id="pout_derror"></span>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12 col-lg-6 mb-3">
@@ -425,6 +426,7 @@
                             <br/>
                             <input type="button" class="btn btn-primary btn-sm waves-effect waves-light" value="Take Snapshot" onClick="take_snapshot1()">
                             <input type="hidden" name="pout_img" class="image-tag1">
+                            <span class="text-danger error" id="pout_ierror"></span>
                         </div>
                     </div>
                     <div class="col-md-12 col-sm-12 col-lg-12 ophoto1 text-center">
@@ -434,14 +436,14 @@
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="pout_latitude" placeholder="Latitude" name="pout_latitude" maxlength="10" required readonly>
                             <label for="pout_latitude">Latitude<sup class="text-danger">*</sup></label>
-                            <span class="text-danger error" id="uaerror"></span>
+                            <span class="text-danger error" id="pout_laerror"></span>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12 col-lg-6">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="pout_longitude" placeholder="Longitude" name="pout_longitude" maxlength="10" required readonly>
                             <label for="pout_longitude">Longitude<sup class="text-danger">*</sup></label>
-                            <!-- <span class="text-danger error" id="uaerror"></span> -->
+                            <span class="text-danger error" id="pout_loerror"></span>
                         </div>
                     </div>
                     <!-- <p id="demo"></p> -->
@@ -466,18 +468,20 @@
             </div>
             <div class="modal-body">
                 <div class="row">
+                
+
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
-                            <label for="pout_soh" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA <sup class="text-danger">*</sup></label>
-                            <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="pout_soh" name="pout_soh[]" placeholder="Select SO" disabled>
-                                <option value="all">All</option>
-                                @foreach($s_obj as $s)
-                                    <option value="{{$s->id}}">{{$s->so_number}}</option>
-                                @endforeach
+                            <label for="pout_soh" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA<sup class="text-danger">*</sup></label>
+                            <select class="form-control select2" id="pout_soh" required name="pout_soh" disabled>
+                            @foreach($s_obj1 as $so)
+                                <option value="{{$so->oth_id}}">{{$so->so_number}}</option>
+                            @endforeach
                             </select>
-                            <span class="text-danger error" id="soerror"></span>
+                            <span class="text-danger error" id="esoerror"></span>
                         </div>
                     </div>
+
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
                             <label for="pout_labourh" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician<sup class="text-danger">*</sup></label>
@@ -580,6 +584,157 @@
     });
     var $body = $("body");
 
+    // For punch out Validation
+    var n =0;
+    $("#postPunchOutform").submit(function(event) 
+    {
+        // alert('hi');
+        var pout_labour = $('#pout_labour').val();
+        var pout_so= $('#pout_so').val();
+        var pout_date = $('#pout_date').val();
+        var pout_latitude= $('#pout_latitude').val();
+        var pout_longitude = $('#pout_longitude').val();
+        var pout_work_desc = $('#pout_work_desc').val();
+
+        var pout_img = $('#pout_img').val();
+
+        // alert(pout_img)
+
+        n=0;   
+        // if( $.trim(pout_img).length == 0 )
+        // {
+        //     $('#pout_ierror').text('Please Take a Selfie.');
+        //     event.preventDefault();
+        // }else{
+        //     $('#pout_ierror').text('');
+        //     ++n;
+        // }
+
+        if( $.trim(pout_work_desc).length == 0 )
+        {
+            $('#pout_wderror').text('Please Enter Work Description.');
+            event.preventDefault();
+        }else{
+            $('#pout_wderror').text('');
+            ++n;
+        }
+
+        if( $.trim(pout_latitude).length == 0 )
+        {
+            $('#pout_laerror').text('Please Enter Latitude');
+            event.preventDefault();
+        }else{
+            $('#pout_laerror').text('');
+            ++n;
+        }
+
+        if( $.trim(pout_date).length == 0 )
+        {
+            $('#pdaerror').text('Please Enter date.');
+            event.preventDefault();
+        }else{
+            $('#pdaerror').text('');
+            ++n;
+        }
+       
+        if( $.trim(pout_longitude).length == 0 )
+        {
+            $('#pout_loerror').text('Please Enter Longitude.');
+            event.preventDefault();
+        }else{
+            $('#pout_loerror').text('');
+            ++n;
+        }
+
+        if( $.trim(pout_so).length == 0 )
+        {
+            $('#pout_soerror').text('Please Select OA.');
+            event.preventDefault();
+        }else{
+            $('#pout_soerror').text('');
+            ++n;
+        }
+
+        if( $.trim(pout_labour).length == 0 )
+        {
+            $('#pout_lerror').text('Please Select Technician.');
+            event.preventDefault();
+        }else{
+            $('#pout_lerror').text('');
+            ++n;
+        }
+    });
+
+    // For punch out Validation
+    var n =0;
+    $("#postPunchInform").submit(function(event) 
+    {
+        // alert('hi');
+        var pin_labour = $('#p_in_labour').val();
+        var pin_so= $('#p_in_so').val();
+        var pin_date = $('#p_in_date').val();
+        var pin_latitude= $('#p_in_latitude').val();
+        var pin_longitude = $('#p_in_longitude').val();
+        // var pin_img = $('#p_in_img').val();
+
+        // alert(pout_img)
+
+        n=0;   
+        // if( $.trim(pout_img).length == 0 )
+        // {
+        //     $('#pout_ierror').text('Please Take a Selfie.');
+        //     event.preventDefault();
+        // }else{
+        //     $('#pout_ierror').text('');
+        //     ++n;
+        // }
+
+        if( $.trim(pin_latitude).length == 0 )
+        {
+            $('#pin_laerror').text('Please Enter Latitude.');
+            event.preventDefault();
+        }else{
+            $('#pin_laerror').text('');
+            ++n;
+        }
+
+        if( $.trim(pin_date).length == 0 )
+        {
+            $('#pdaerror').text('Please Enter date.');
+            event.preventDefault();
+        }else{
+            $('#pdaerror').text('');
+            ++n;
+        }
+       
+        if( $.trim(pin_longitude).length == 0 )
+        {
+            $('#pin_loerror').text('Please Enter Longitude.');
+            event.preventDefault();
+        }else{
+            $('#pin_loerror').text('');
+            ++n;
+        }
+
+        if( $.trim(pin_so).length == 0 )
+        {
+            $('#pin_soerror').text('Please Select OA.');
+            event.preventDefault();
+        }else{
+            $('#pin_soerror').text('');
+            ++n;
+        }
+
+        if( $.trim(pin_labour).length == 0 )
+        {
+            $('#pin_lerror').text('Please Select Technician.');
+            event.preventDefault();
+        }else{
+            $('#pin_lerror').text('');
+            ++n;
+        }
+    });
+
     // For from date ,to date records
     $(document).on("click",'#pio_ftd_records',function()
     {           
@@ -623,13 +778,13 @@
                         content +="<tr>";
                         content +="<td>"+ ++i +"</td>";
                         content +="<td>"+pin_date+"</td>";
-                        content +="<td>"+row.pin_time+"<br><span class='badge badge-soft-primary pinhistry' data-pin_so_id='"+row.pin_so_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>View History</span></td>";
+                        content +="<td>"+row.pin_time+"<br><span class='badge badge-soft-primary pinhistry' data-pin_oth_id='"+row.pin_oth_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>View History</span></td>";
 
                         if(row.created_at == row.updated_at){ 
                             content +="<td> - </td>";
 
                         }else{
-                            content +="<td>"+row.pout_time+"<br><span class='badge badge-soft-primary pouthistry' data-pout_so_id='"+row.pout_so_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>View History</span> </td>";
+                            content +="<td>"+row.pout_time+"<br><span class='badge badge-soft-primary pouthistry' data-pout_oth_id='"+row.pout_oth_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>View History</span> </td>";
                         }
                                 
                         content +="<td>"+row.totalDuration+"</td>";
@@ -642,7 +797,19 @@
                 $("#pio_records").html(content); //For append html data
                 $('#datatable').dataTable();
 
-            }
+                $.each(data.s_obj,function(index,row){
+                    //For Add Material Modal
+                    // $('#edit_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
+                    $('#p_in_so').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
+                    // $('#p_in_soh').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
+                    
+                    $('#pout_so').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
+                    // $('#pout_soh').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
+                    
+                    
+                });
+
+            }   
         });
         
         
@@ -687,13 +854,13 @@
                         content +="<tr>";
                         content +="<td>"+ ++i +"</td>";
                         content +="<td>"+pin_date+"</td>";
-                        content +="<td>"+row.pin_time+"<br><span class='badge badge-soft-primary pinhistry' data-pin_so_id='"+row.pin_so_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>View History</span></td>";
+                        content +="<td>"+row.pin_time+"<br><span class='badge badge-soft-primary pinhistry' data-pin_oth_id='"+row.pin_oth_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>View History</span></td>";
 
                         if(row.created_at == row.updated_at){ 
                             content +="<td> - </td>";
 
                         }else{
-                            content +="<td>"+row.pout_time+"<br><span class='badge badge-soft-primary pouthistry' data-pout_so_id='"+row.pout_so_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>View History</span> </td>";
+                            content +="<td>"+row.pout_time+"<br><span class='badge badge-soft-primary pouthistry' data-pout_oth_id='"+row.pout_oth_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>View History</span> </td>";
                         }
                                 
                         content +="<td>"+row.totalDuration+"</td>";
@@ -705,6 +872,26 @@
 
                 $("#pio_records").html(content); //For append html data
                 $('#datatable').dataTable();
+
+                $.each(data.s_obj,function(index,row){
+                    //For Add Material Modal
+                    // $('#edit_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
+                    $('#p_in_so').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
+                    // $('#p_in_soh').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
+                    
+                    $('#pout_so').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
+                    // $('#pout_soh').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
+                });
+
+                $.each(data.u_obj,function(index,row){
+                    //For Add Material Modal
+                    // $('#edit_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
+                    $('#p_in_labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
+                    // $('#p_in_soh').append("<option value='"+row.oth_id+"' selected>"+row.name+"</option>");
+                    
+                    $('#pout_labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
+                    // $('#pout_soh').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
+                });
 
             }
         });
@@ -754,17 +941,17 @@
     $(document).on("click",'#pout_btn',function()
     {   
         var pin_u_id = $(this).data('pin_u_id');
-        var pin_so_id = $(this).data('pin_so_id');
+        var pin_oth_id = $(this).data('pin_oth_id');
 
         // alert(pin_so_id);
         //for multiple oa
-        var r=new Array();
-        if (pin_so_id.toString().indexOf(',')>-1)
-        { 
-            var r=pin_so_id.split(',');
-        }else{
-            r[0]=pin_so_id.toString();
-        }
+        // var r=new Array();
+        // if (pin_so_id.toString().indexOf(',')>-1)
+        // { 
+        //     var r=pin_so_id.split(',');
+        // }else{
+        //     r[0]=pin_so_id.toString();
+        // }
 
 
         // for multiple labour
@@ -776,13 +963,14 @@
             r1[0]=pin_u_id.toString();
         }
 
+        $('#pout_so option[value='+pin_oth_id+']').attr('selected','selected').change();
 
+        // $.each(r,function(index,value)
+        // {
+        //     $('#pout_so option[value='+value+']').attr('selected','selected').change();
+        // });
 
-        $.each(r,function(index,value)
-        {
-            $('#pout_so option[value='+value+']').attr('selected','selected').change();
-        });
-
+        // alert(r1);
         $.each(r1,function(index,value)
         {
             $('#pout_labour option[value='+value+']').attr('selected','selected').change();
@@ -796,31 +984,27 @@
     //For punch in history modal
     $(document).on("click",'.pinhistry',function()
     {   
-        var pin_so_id = $(this).data('pin_so_id');
+        var pin_oth_id = $(this).data('pin_oth_id');
         var pin_u_id = $(this).data('pin_u_id');
         var pin_remark = $(this).data('pin_remark');
         var pin_latitude = $(this).data('pin_latitude');
         var pin_longitude = $(this).data('pin_longitude');
         var pin_date = $(this).data('pin_date');
         var pin_img = $(this).data('pin_img');
+        // $('#p_in_soh option[value='+pin_oth_id+']').attr('selected','selected').change();    
+        // $("#p_in_soh option[value='"+pin_oth_id+"']").attr('selected','selected').change();              
+        $("#p_in_soh").val(pin_oth_id).trigger("change"); 
 
         $.ajax({    
             url:"{{url('get-pinh-labour')}}",
             type :'get',
-            data : {pin_date:pin_date,pin_so_id:pin_so_id},
+            data : {pin_date:pin_date,pin_oth_id:pin_oth_id},
             async: true,
             cache: true,
             dataType: 'json',
             success: function(response) 
             {
                 console.log(response);
-
-                //For Full Finish Invoice
-                // $('#labours').append("<option value='all' class='text-muted' selected>"+'ALL'+"</option>");
-                $.each(response.s_obj,function(index,row){
-
-                    $('#p_in_soh option[value='+row.id+']').attr('selected','selected').change();                    
-                });
 
                 $.each(response.l_obj,function(index,row){
 
@@ -829,41 +1013,13 @@
             }
         });
 
-        //for multiple oa
-        // var r=new Array();
-        // if (pin_so_id.toString().indexOf(',')>-1)
-        // { 
-        //     var r=pin_so_id.split(',');
-        // }else{
-        //     r[0]=pin_so_id.toString();
-        // }
-
-        // // for multiple labour
-        // var r1=new Array();
-        // if (pin_u_id.toString().indexOf(',')>-1)
-        // { 
-        //     var r1=pin_u_id.split(',');
-        // }else{
-        //     r1[0]=pin_u_id.toString();
-        // }
-
+  
         var  attachment="files/attendance/punchIn/"+pin_img;
         $('#p_in_remarkh').val(pin_remark);   
         $('#p_in_latitudeh').val(pin_latitude); 
         $('#p_in_longitudeh').val(pin_longitude); 
         $('#p_in_dateh').val(pin_date); 
         $('#attachment1').attr("href",attachment);
-
-
-        // $.each(r,function(index,value)
-        // {
-        //     $('#p_in_soh option[value='+value+']').attr('selected','selected').change();
-        // });
-
-        // $.each(r1,function(index,value)
-        // {
-        //     $('#p_in_labourh option[value='+value+']').attr('selected','selected').change();
-        // });
         
         $('#pinhistryModal').modal('show');
 
@@ -873,18 +1029,20 @@
     $(document).on("click",'.pouthistry',function()
     {   
         var pout_u_id = $(this).data('pout_u_id');
-        var pout_so_id = $(this).data('pout_so_id');
+        var pout_oth_id = $(this).data('pout_oth_id');
         var pout_date = $(this).data('pout_date');
         var pout_remark = $(this).data('pout_remark');
         var pout_work_desc = $(this).data('pout_work_desc');
         var pout_latitude = $(this).data('pout_latitude');
         var pout_longitude = $(this).data('pout_longitude');
         var pout_img = $(this).data('pout_img');
-
+        // $('#pout_soh option[value='+pout_oth_id+']').attr('selected','selected').change();      
+        // $("#pout_soh option[value='"+pout_oth_id+"']").attr('selected','selected').change();              
+        $("#pout_soh").val(pout_oth_id).trigger("change"); 
         $.ajax({    
             url:"{{url('get-pouth-labour')}}",
             type :'get',
-            data : {pout_date:pout_date,pout_so_id:pout_so_id},
+            data : {pout_date:pout_date},
             async: true,
             cache: true,
             dataType: 'json',
@@ -896,7 +1054,6 @@
                 // $('#labours').append("<option value='all' class='text-muted' selected>"+'ALL'+"</option>");
                 $.each(response.s_obj,function(index,row){
 
-                    $('#pout_soh option[value='+row.id+']').attr('selected','selected').change();                    
                 });
 
                 $.each(response.l_obj,function(index,row){
@@ -950,67 +1107,7 @@
         $('#pouthistryModal').modal('show');
 
     });
-
-
-    // From SO Validation
-    var n =0;
-    $("#add_labour_payment").click(function(event) 
-    {
-        // alert('hi');
-        var labour = $('#labour').val();
-        var so= $('#so').val();
-        var pay_desc = $('#pay_desc').val();
-        var payment_date= $('#payment_date').val();
-        var payment_amnt = $('#payment_amnt').val();
-
-        n=0;    
-        if( $.trim(payment_amnt).length == 0 )
-        {
-            $('#paerror').text('Please Enter Amount.');
-            event.preventDefault();
-        }else{
-            $('#paerror').text('');
-            ++n;
-        }
-
-        if( $.trim(payment_date).length == 0 )
-        {
-            $('#pdaerror').text('Please Enter date.');
-            event.preventDefault();
-        }else{
-            $('#pdaerror').text('');
-            ++n;
-        }
-       
-        if( $.trim(pay_desc).length == 0 )
-        {
-            $('#pderror').text('Please Enter Payment Description.');
-            event.preventDefault();
-        }else{
-            $('#pderror').text('');
-            ++n;
-        }
-
-        if( $.trim(so).length == 0 )
-        {
-            $('#soerror').text('Please Select SO.');
-            event.preventDefault();
-        }else{
-            $('#soerror').text('');
-            ++n;
-        }
-
-        if( $.trim(labour).length == 0 )
-        {
-            $('#lerror').text('Please Select Labour.');
-            event.preventDefault();
-        }else{
-            $('#lerror').text('');
-            ++n;
-        }
-    });
-
-   
+  
 
     // delete Product
     $(document).on("click",'.delI',function()

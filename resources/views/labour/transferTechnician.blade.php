@@ -178,31 +178,26 @@
                                 {!! Form::open(['class'=>"form-horizontal tpayment_form",'enctype'=>'multipart/form-data','files' => 'true' ,'id'=>'postPaymentform']) !!}
                                     <input type="hidden" name="edit_id" id="edit_id" value="">
                                     <div class="row">
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
-                                            <div class="form-group mb-3">
-                                                <label for="
-                                                " class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician <sup class="text-danger">*</sup></label>
-                                                <select class="form-control select2" id="labour" required name="labour">
-                                                    <option value="" disabled selected>Select</option>
-                                                    @foreach($u_obj as $u)
-                                                        <option value="{{$u->id}}">{{$u->name}}</option>
-                                                    @endforeach
-                                                </select>
-                                                <span class="text-danger error" id="lerror"></span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-5 col-sm-12 col-lg-5">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-group mb-3">
                                                 <label for="so" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA <sup class="text-danger">*</sup></label>
-                                                <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="so" name="so[]" placeholder="Select SO">
-                                                    <option value="all">All</option>
-                                                    @foreach($s_obj as $s)
-                                                        <option value="{{$s->id}}">{{$s->so_number}}</option>
-                                                    @endforeach
+                                                <select class="form-control select2" id="so" required name="so">
+                                                   
                                                 </select>
                                                 <span class="text-danger error" id="soerror"></span>
                                             </div>
                                         </div>
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
+                                            <div class="form-group mb-3">
+                                                <label for="labour" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician <sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="labour" required name="labour">
+                                                    
+                                                </select>
+                                                <span class="text-danger error" id="lerror"></span>
+                                            </div>
+                                        </div>
+                                        
+
                                         <?php $tdate=date("Y-m-d");?>
                                         <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
@@ -218,17 +213,19 @@
                                                 <span class="text-danger error" id="paerror"></span>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4 col-sm-12 col-lg-4">
                                             <div class="form-floating mb-3">
                                                 <textarea class="form-control" id="pay_desc" placeholder="Enter Payment Description" required name="pay_desc" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100"></textarea>
-                                                <label for="pay_desc">Payment Description</label>
+                                                <label for="pay_desc">Payment Description<sup class="text-danger">*</sup></label>
                                                 <span class="text-danger error" id="pderror"></span>
 
                                             </div>
                                         </div>
                                         
-                                        <div>
-                                            <button type="button" class="btn btn-primary waves-effect waves-light" id="add_labour_payment">Submit</button>
+                                        <div class="d-sm-flex flex-wrap">
+                                            <div class="ms-auto">
+                                                <button type="button" class="btn btn-primary btn-sm waves-effect waves-light" id="add_labour_payment">Submit</button>
+                                            </div>
                                         </div>
                                     </div> 
                                 {!! Form::close() !!}
@@ -868,7 +865,7 @@
                         content +="<td>"+row.amount+"</td>";
                         content +="<td>";
                             if(payment_date == $.datepicker.formatDate('dd-mm-yy', new Date())){
-                                content +="<a class='btn btn-outline-secondary btn-sm editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Technician' data-id='"+row.id+"' data-so='"+row.so_id+"' data-payment_date='"+row.p_date+"' data-p_desc='"+row.p_desc+"' data-amount='"+row.amount+"' data-labour='"+row.u_id+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete Technician' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+                                content +="<a class='btn btn-outline-secondary btn-sm editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Technician' data-id='"+row.id+"' data-oth_id='"+row.oth_id+"' data-payment_date='"+row.p_date+"' data-p_desc='"+row.p_desc+"' data-amount='"+row.amount+"' data-labour='"+row.u_id+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete Technician' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
                             }
                         content +="</td>";
                         content += "</tr>";
@@ -889,7 +886,7 @@
                 $.each(data.u_obj,function(index,row){
                     //For Add Material Modal
                     // $('#edit_labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
-                    $('#labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
+                    $('#labour').append("<option value='"+row.u_id+"'>"+row.name+"</option>");
                 });
 
                 //For so
@@ -897,7 +894,7 @@
                 $.each(data.s_obj,function(index,row){
                     //For Add Material Modal
                     // $('#edit_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
-                    $('#so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
+                    $('#so').append("<option value='"+row.oth_id+"'>"+row.so_number+"</option>");
 
                 });
 
@@ -935,14 +932,14 @@
             var pay_desc = $(this).data('p_desc');
             var payment_date = $(this).data('payment_date');
             var amount = $(this).data('amount');
-            var so= $(this).data('so');
-            var r=new Array();
-            if (so.toString().indexOf(',')>-1)
-            { 
-                var r=so.split(',');
-            }else{
-                r[0]=so.toString();
-            }
+            var so= $(this).data('oth_id');
+            // var r=new Array();
+            // if (so.toString().indexOf(',')>-1)
+            // { 
+            //     var r=so.split(',');
+            // }else{
+            //     r[0]=so.toString();
+            // }
             // ACTIVE PANE AND LINK
             $('.nav-tabs a[href="#update_tpayment"]').tab('show');
 
@@ -951,12 +948,14 @@
             $('#payment_date').val(payment_date); 
             $('#payment_amnt').val(amount); 
 
-            $.each(r,function(index,value)
-            {
-                // $("#so").find("option[value="+value+"]").prop("selected", "selected");
-            $('#so option[value='+value+']').attr('selected','selected').change();
+            // $.each(r,function(index,value)
+            // {
+            //     // $("#so").find("option[value="+value+"]").prop("selected", "selected");
+            // $('#so option[value='+value+']').attr('selected','selected').change();
 
-            });
+            // });
+
+            $('#so option[value='+so+']').attr('selected','selected').change();
 
             //  $("#labour").find("option[value="+labour+"]").prop("selected", "selected");
             $('#labour option[value='+labour+']').attr('selected','selected').change();

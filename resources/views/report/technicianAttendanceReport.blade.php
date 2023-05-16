@@ -112,14 +112,14 @@
                                     <small><span class="text-danger" id="tderror" style="font-size: 11px !important;"></span></small>
                                 </div>
                             </div>
-                            
-                            <div class="col-md-5 col-sm-12 col-lg-5">
+
+                            <div class="col-md-3 col-sm-12 col-lg-3">
                                 <div class="form-group mb-3">
-                                    <label for="so" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA <sup class="text-danger">*</sup></label>
-                                    <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="so" name="so[]" placeholder="Select SO">
-                                        <option value="all">All</option>
+                                    <label for="so" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA<sup class="text-danger">*</sup></label>
+                                    <select class="form-control select2" id="so" required name="so">
+                                        <option value="" disabled selected>Select</option>
                                         @foreach($s_obj as $s)
-                                            <option value="{{$s->id}}">{{$s->so_number}}</option>
+                                            <option value="{{$s->oth_id}}">{{$s->so_number}}</option>
                                         @endforeach
                                     </select>
                                     <span class="text-danger error" id="soerror"></span>
@@ -173,7 +173,7 @@
                                     <tr>
                                         <th scope="col" style="width: 20px;">Sr.No</th>
                                         <th scope="col" style="width: 100px">Date <br>(DD/MM/YY)</th>
-                                        <th scope="col" style="width: 100px">OA Name</th>
+                                        <th scope="col" style="width: 100px">OA Number</th>
                                         <th scope="col" style="width: 100px">Technician Name</th>
                                         <th scope="col" style="width: 100px">Punch In <br>(HH:MM:SS)</th>
                                         <th scope="col" style="width: 100px">Punch Out <br>(HH:MM:SS)</th>
@@ -469,13 +469,13 @@
                                 });
                                 content +="</td>";
                                 content +="<td>"+row.technician_name+"</td>";
-                                content +="<td class='pinhistry' data-pin_so_id='"+row.pin_so_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>"+row.pin_time+"</td>";
+                                content +="<td class='pinhistry' data-pin_oth_id='"+row.pin_oth_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>"+row.pin_time+"</td>";
 
                                 if(row.created_at == row.updated_at){ 
                                     content +="<td><span class='badge badge-soft-danger regularise_modal' data-id='"+row.id+"' data-tl_id='"+row.a_id+"' data-ptype='pout_record'>Regularise</span></td>";
 
                                 }else{
-                                    content +="<td class='pouthistry' data-pout_so_id='"+row.pout_so_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>"+row.pout_time+"</td>";
+                                    content +="<td class='pouthistry' data-pout_oth_id='"+row.pout_oth_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>"+row.pout_time+"</td>";
                                 }
                                         
                                 content +="<td>"+row.totalDuration+"</td>";
@@ -505,11 +505,11 @@
 
                                 }else{
 
-                                    content +="<td class='pinhistry' data-pin_so_id='"+row.pin_so_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>"+row.pin_time+"</td>";
+                                    content +="<td class='pinhistry' data-pin_oth_id='"+row.pin_oth_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>"+row.pin_time+"</td>";
 
                                 }
 
-                                content +="<td class='pouthistry' data-pout_so_id='"+row.pout_so_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>"+row.pout_time
+                                content +="<td class='pouthistry' data-pout_oth_id='"+row.pout_oth_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>"+row.pout_time
                                         
                                 content +="<td>"+row.totalDuration+"</td>";
                                 content +="<td>"+row.tl_name+"</td>";
@@ -691,13 +691,13 @@
                                 });
                                 content +="</td>";
                                 content +="<td>"+row.technician_name+"</td>";
-                                content +="<td class='pinhistry' data-pin_so_id='"+row.pin_so_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>"+row.pin_time+"</td>";
+                                content +="<td class='pinhistry' data-pin_oth_id='"+row.pin_oth_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>"+row.pin_time+"</td>";
 
                                 if(row.created_at == row.updated_at){ 
                                     content +="<td><span class='badge badge-soft-danger regularise_modal' data-id='"+row.id+"' data-tl_id='"+row.a_id+"' data-ptype='pout_record'>Regularise</span></td>";
 
                                 }else{
-                                    content +="<td class='pouthistry' data-pout_so_id='"+row.pout_so_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>"+row.pout_time+"</td>";
+                                    content +="<td class='pouthistry' data-pout_oth_id='"+row.pout_oth_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>"+row.pout_time+"</td>";
                                 }
                                         
                                 content +="<td>"+row.totalDuration+"</td>";
@@ -727,11 +727,11 @@
 
                                 }else{
 
-                                    content +="<td class='pinhistry' data-pin_so_id='"+row.pin_so_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>"+row.pin_time+"</td>";
+                                    content +="<td class='pinhistry' data-pin_oth_id='"+row.pin_oth_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>"+row.pin_time+"</td>";
 
                                 }
 
-                                content +="<td class='pouthistry' data-pout_so_id='"+row.pout_so_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>"+row.pout_time
+                                content +="<td class='pouthistry' data-pout_oth_id='"+row.pout_oth_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>"+row.pout_time
                                         
                                 content +="<td>"+row.totalDuration+"</td>";
                                 content +="<td>"+row.tl_name+"</td>";

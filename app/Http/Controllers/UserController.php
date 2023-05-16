@@ -13,8 +13,8 @@ use App\Http\Controllers\CommonController as Common;
 class UserController extends Controller
 {
     public function user_list()
-    {
-    	$u_obj=UserModel::where(['delete'=>0])->where('role','!=','0')->orderby('created_at','DESC')->get();
+    { $a_id=Session::get('USER_ID');
+    	$u_obj=UserModel::where(['delete'=>0,'a_id'=>$a_id])->where('role','!=','0')->orderby('created_at','DESC')->get();
 		// dd($u_obj);
     	return view('users.users_list',compact('u_obj'));
     }

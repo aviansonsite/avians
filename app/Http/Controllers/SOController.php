@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UserModel;
 use App\Models\SOModel;
+use App\Models\OATLHistoryModel;
 use Session;
 use Hash;
 use DB;
@@ -53,8 +54,44 @@ class SOController extends Controller
                 $u_obj->a_id=$a_id;
                 $res=$u_obj->update();
                 
+                $data=OATLHistoryModel::where(['so_id'=>$edit_id,'status'=>1])->orderby('created_at','DESC')->get();
+                if(count($data) == 0){
+
+                    $tl_obj=new OATLHistoryModel();
+                    $tl_obj->so_id=$edit_id;
+                    $tl_obj->lead_technician=$labour1;
+                    $tl_obj->a_id=$a_id;
+                    $res1=$tl_obj->save();
+
+                }else{
+                    if($data[0]->lead_technician != $labour1 ){
+
+                        $check_exist_tl=OATLHistoryModel::where(['so_id'=>$edit_id,'lead_technician'=>$labour1,'status'=>0])->orderby('created_at','DESC')->get();
+
+                        if(count($check_exist_tl) == 1){
+                            //status update previous tl
+                            $update_pr_tl=OATLHistoryModel::where(['so_id'=>$edit_id,'status'=> 1])->where('lead_technician', '!=', $labour1)->update(['status' => 0]);
+
+
+                            $new_pr_tl=OATLHistoryModel::where(['so_id'=>$edit_id,'lead_technician'=>$labour1,'status'=> 0])->update(['status' => 1]);
+
+                        }else{
+
+                            //status update previous tl
+                            $update_pr_tl=OATLHistoryModel::where(['so_id'=>$edit_id,'status'=> 1])->where('lead_technician', '!=', $labour1)->update(['status' => 0]);
+
+                            $tl_obj=new OATLHistoryModel();
+                            $tl_obj->so_id=$edit_id;
+                            $tl_obj->lead_technician=$labour1;
+                            $tl_obj->a_id=$a_id;
+                            $res2=$tl_obj->save();
+                        }
+                        
+                    }
+                }
+
                 if($res){
-                    return ['status' => true, 'message' => 'SO Update Successfully'];
+                    return ['status' => true, 'check_exist_tl'=>count($check_exist_tl),'message' => 'SO Update Successfully'];
                 }else{
                    return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
                 }
@@ -79,11 +116,20 @@ class SOController extends Controller
                 $u_obj->a_id=$a_id;
                 $res=$u_obj->save();
 
+                $so_id = $u_obj->id;
+                $data=OATLHistoryModel::where(['lead_technician'=>$labour1,'status'=>1])->orderby('created_at','DESC')->get();
 
-
+                if(count($data) == 0){
+                    $tl_obj=new OATLHistoryModel();
+                    $tl_obj->so_id=$so_id;
+                    $tl_obj->lead_technician=$labour1;
+                    $tl_obj->a_id=$a_id;
+                    $res=$tl_obj->save();
+                }
                 
+
                 if($res){
-                    return ['status' => true, 'message' => 'SO Add Successfully'];
+                    return ['status' => true, 'so_id'=>$so_id,'message' => 'SO Add Successfully'];
                 }else{
                    return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
                 }
@@ -98,16 +144,27 @@ class SOController extends Controller
     public function getSO(Request $req)
     {
         $roles=Session::get('ROLES');
-
+        $a_id=Session::get('USER_ID');
         // $data = SOModel::where(['delete'=>0])->orderby('updated_at','DESC')->get();
-        $data=DB::table('sales_orders as so')
+
+        if($roles == 0){
+            $data=DB::table('sales_orders as so')
             ->leftjoin('users as u','u.id','so.a_id')
             ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','u.name','u.delete as u_delete','u.is_active')
             ->where(['so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
             ->orderby('updated_at','DESC')
             ->get();
+        }else{
+            $data=DB::table('sales_orders as so')
+            ->leftjoin('users as u','u.id','so.a_id')
+            ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','u.name','u.delete as u_delete','u.is_active')
+            ->where(['so.a_id'=>$a_id,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            ->orderby('updated_at','DESC')
+            ->get();
+        }
+        
         // User Data
-        $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+        $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'a_id'=>$a_id])->orderby('created_at','DESC')->get();
         if(!empty($data)){
             return json_encode(array('status' => true ,'data' => $data,'u_obj' => $u_obj,'roles' => $roles ,'message' => 'Data Found'));
          }else{
@@ -167,5 +224,36 @@ class SOController extends Controller
         }else{
            return ['status' => false, 'message' => 'SO Deletion Unsuccessfull...!'];
         }
+    }
+
+    public function checkTlStatus(Request $req)
+    {
+        $roles=Session::get('ROLES');
+        $u_id = $req->get('id');
+        $so_id = $req->get('so_id');
+        $a_id=Session::get('USER_ID');
+ 
+        $data=OATLHistoryModel::where(['lead_technician'=>$u_id,'status'=>1])->orderby('created_at','DESC')->get();
+        $count = count($data);
+        
+        $oa_number = "";
+        $d_so_id = 0 ;
+        
+            foreach($data as $d){
+                $s_obj=SOModel::where(['delete'=>0,'id'=>$d->so_id,'a_id'=>$a_id,])->orderby('created_at','DESC')->get();
+                foreach($s_obj as $s){
+                    $oa_number = $s->so_number;
+                }
+                $d_so_id = $d->so_id;
+            }
+ 
+        // User Data
+        $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'a_id'=>$a_id])->where('id', '!=',$u_id)->orderby('created_at','DESC')->get();
+        if(!empty($data)){
+            return json_encode(array('status' => true ,'data' => $data,'u_obj' => $u_obj,'count' => $count,'so_id' => $so_id,'d_so_id' => $d_so_id,'roles' => $roles,'oa_number' =>$oa_number ,'message' => 'Data Found'));
+         }else{
+            return ['status' => false, 'message' => 'No Data Found'];
+         }
+
     }
 }

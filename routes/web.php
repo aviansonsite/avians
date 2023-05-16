@@ -59,7 +59,7 @@ Route::group(['middleware' => 'login'], function ()
     Route::get('/get_so', [SOController::class, 'getSO']);
     Route::get('/edit-so', [SOController::class, 'editSO']);
     Route::get('/delete_so', [SOController::class, 'soDelete']);
-
+    Route::get('/check_tl_status', [SOController::class, 'checkTlStatus']);
 
     // ****** Start Accountant **********
 
