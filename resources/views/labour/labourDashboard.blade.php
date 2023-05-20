@@ -77,6 +77,7 @@
     <div class="container-fluid">
 
         <!-- start page title -->
+        
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -90,8 +91,20 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="card">
+            <div class="card-header">
+                <div class="text-muted">
+                    @foreach($s_obj as $s)
+                        <div>
+                            <strong>OA Number : </strong>{{$s->so_number}} , <strong>Project Name : </strong>{{$s->project_name}} , <strong>Client Name : </strong>{{$s->client_name}} , <strong>Address : </strong>{{$s->address}}
+                        </div>                        
+                    @endforeach
+                </div>
+            </div>
+        </div>
 
+
+        <div class="row">
             <div class="col-md-3">
                 <div class="card mini-stats-wid">
                     <div class="card-body">
@@ -345,7 +358,95 @@
         </div>
     </div>
 </div>
+<!-- OA history modal content -->
+<div id="oaHistoryModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">OA History</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 col-lg-6">
+                        <div class="form-group mb-3">
+                            <label for="labours" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Lead Technician Support<sup class="text-danger">*</sup></label>
+                            <select class="form-control select2" id="labours" required name="labours" disabled>
+                            @foreach($us_obj as $u)
+                                <option value="{{$u->id}}">{{$u->name}}</option>
+                            @endforeach
+                            </select>
+                            <span class="text-danger error" id="lerror"></span>
+                            
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-lg-6">
+                        <div class="form-group mb-3">
+                            <label for="p_in_soh" class="form-label" style="font-size: 11px;margin-bottom: 2px;">OA Number<sup class="text-danger">*</sup></label>
+                            <select class="form-control select2" id="p_in_soh" required name="p_in_soh" disabled>
+                            @foreach($s_obj1 as $so)
+                                <option value="{{$so->oth_id}}">{{$so->so_number}}</option>
+                            @endforeach
+                            </select>
+                            <span class="text-danger error" id="esoerror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="client_name" placeholder="Enter Client Name" name="client_name" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50" disabled>
+                            <label for="client_name">Client Name<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="cnerror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="project_name" placeholder="Enter Project Name" name="project_name" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50" disabled>
+                            <label for="project_name">Project Name<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="pnerror"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="cp_name" placeholder="Enter CP Name" name="cp_name"required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50" disabled>
+                            <label for="cp_name">CP Name<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="cpnerror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="cp_ph_no" placeholder="Enter CP Phone" name="cp_ph_no" required maxlength="10" disabled>
+                            <label for="cp_ph_no">CP Phone<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="cpperror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-sm-12 col-lg-8">
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" id="address" placeholder="Enter Address" required name="address" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" disabled></textarea>
+                            <label for="address">Project Address<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="aerror"></span>
 
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        <div class="form-group mb-3">
+                            <label for="labour" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Support Technician<sup class="text-danger">*</sup></label>
+                            <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="labour" name="labour[]" placeholder="Support Technician" disabled>
+                             @foreach($us_obj as $u)
+                                    <option value="{{$u->id}}">{{$u->name}}</option>
+                                @endforeach
+                            </select>
+                            <span class="text-danger error" id="slerror"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 @stop
 @push('datatable_js')
     {!! Html::script('assets/libs/datatables.net/js/jquery.dataTables.min.js') !!}
@@ -371,6 +472,10 @@
         $('#exp_type,#exp_so').select2();
         $("#taccdata").hide();
         $("#tothdata").hide();
+
+        $('#labour,#labours,#oa_hit').select2({ 
+            dropdownParent: $('#oaHistoryModal') 
+        });
     });
 
     // For avians acc from date ,to date records
@@ -501,7 +606,35 @@
                 //table footer
                 $(".t_accamount").html(t_accamount+".00");
 
+                $.each(data.s_obj,function(index,row){
+    
+  
+                    $('#client_name').val(row.client_name); 
+                    $('#project_name').val(row.project_name); 
+                    $('#address').val(row.address); 
+                    $('#cp_name').val(row.cp_name); 
+                    $('#cp_ph_no').val(row.cp_ph_no);
 
+
+                    var r=new Array();
+                    if (row.labour.toString().indexOf(',')>-1)
+                    { 
+                        var r=row.labour.split(',');
+                    }
+                    else
+                    {
+                        r[0]=row.labour.toString();
+                    }
+
+                    $.each(r,function(index,value)
+                    {
+                        $("#labour option[value='"+value+"']").attr('selected','selected').change();
+                    });
+
+                    $("#labours option[value='"+row.lead_technician+"']").attr('selected','selected').change();   
+
+
+                });
             }
         });
     }

@@ -86,6 +86,17 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
+                    @if($roles == 3)
+                        <div class="card-header">
+                            <div class="text-muted">
+                                @foreach($s_obj as $s)
+                                    <div>
+                                        <strong>OA Number : </strong>{{$s->so_number}} , <strong>Project Name : </strong>{{$s->project_name}} , <strong>Client Name : </strong>{{$s->client_name}} , <strong>Address : </strong>{{$s->address}}
+                                    </div>                        
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                     <div class="card-body">
                         <div class="d-sm-flex flex-wrap">     
                            <h4 class="card-title mb-4">Manage Travel Expense</h4>
@@ -186,6 +197,10 @@
                                                 @if($roles != 0)
                                                     <th scope="col" style="width: 100px">Action</th>
                                                 @endif
+                                                @if($roles != 3)
+                                                    <th scope="col" style="width: 100px">Technician Name</th>
+                                                    <th scope="col" style="width: 100px">Project Admin</th>
+                                                @endif
                                                 <th scope="col" style="width: 100px">Travel Mode</th>
                                                 <th scope="col" style="width: 100px">From Location</th>
                                                 <th scope="col" style="width: 100px">To Location</th>
@@ -221,6 +236,10 @@
                                                 @if($roles == 0)
                                                     <th scope="col" style="width: 100px">Action</th>
                                                 @endif
+                                                @if($roles != 3)
+                                                    <th scope="col" style="width: 100px">Technician Name</th>
+                                                    <th scope="col" style="width: 100px">Project Admin</th>
+                                                @endif
                                                 <th scope="col" style="white-space: normal;">Travel Mode</th>
                                                 <th scope="col" style="white-space: normal;">From Location</th>
                                                 <th scope="col" style="white-space: normal;">To Location</th>
@@ -254,6 +273,10 @@
                                             <tr>
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">Travel Date</th>
+                                                @if($roles != 3)
+                                                    <th scope="col" style="width: 100px">Technician Name</th>
+                                                    <th scope="col" style="width: 100px">Project Admin</th>
+                                                @endif
                                                 <th scope="col" style="white-space: normal;">Travel Mode</th>
                                                 <th scope="col" style="white-space: normal;">From Location</th>
                                                 <th scope="col" style="white-space: normal;">To Location</th>
@@ -287,6 +310,10 @@
                                                 <th scope="col" style="white-space: normal;">Travel Date</th>
                                                 @if($roles == 0)
                                                     <th scope="col">Action</th>
+                                                @endif
+                                                @if($roles != 3)
+                                                    <th scope="col" style="width: 100px">Technician Name</th>
+                                                    <th scope="col" style="width: 100px">Project Admin</th>
                                                 @endif
                                                 <th scope="col" style="width: 100px">Travel Mode</th>
                                                 <th scope="col" style="width: 100px">From Location</th>
@@ -638,6 +665,95 @@
     </div>
 </div>
 
+<!-- OA history modal content -->
+<div id="oaHistoryModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">OA History</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 col-lg-6">
+                        <div class="form-group mb-3">
+                            <label for="labours" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Lead Technician Support<sup class="text-danger">*</sup></label>
+                            <select class="form-control select2" id="labours" required name="labours" disabled>
+                            @foreach($us_obj as $u)
+                                <option value="{{$u->id}}">{{$u->name}}</option>
+                            @endforeach
+                            </select>
+                            <span class="text-danger error" id="lerror"></span>
+                            
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-lg-6">
+                        <div class="form-group mb-3">
+                            <label for="oa_hit" class="form-label" style="font-size: 11px;margin-bottom: 2px;">OA Number<sup class="text-danger">*</sup></label>
+                            <select class="form-control select2" id="oa_hit" required name="oa_hit" disabled>
+                            @foreach($s_obj1 as $so)
+                                <option value="{{$so->oth_id}}">{{$so->so_number}}</option>
+                            @endforeach
+                            </select>
+                            <span class="text-danger error" id="esoerror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="client_name" placeholder="Enter Client Name" name="client_name" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50" disabled>
+                            <label for="client_name">Client Name<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="cnerror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="project_name" placeholder="Enter Project Name" name="project_name" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50" disabled>
+                            <label for="project_name">Project Name<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="pnerror"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="cp_name" placeholder="Enter CP Name" name="cp_name"required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50" disabled>
+                            <label for="cp_name">CP Name<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="cpnerror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="cp_ph_no" placeholder="Enter CP Phone" name="cp_ph_no" required maxlength="10" disabled>
+                            <label for="cp_ph_no">CP Phone<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="cpperror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-sm-12 col-lg-8">
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" id="address" placeholder="Enter Address" required name="address" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" disabled></textarea>
+                            <label for="address">Project Address<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="aerror"></span>
+
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        <div class="form-group mb-3">
+                            <label for="labour1" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Support Technician<sup class="text-danger">*</sup></label>
+                            <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="labour1" name="labour1[]" placeholder="Support Technician" disabled>
+                             @foreach($us_obj as $u)
+                                    <option value="{{$u->id}}">{{$u->name}}</option>
+                                @endforeach
+                            </select>
+                            <span class="text-danger error" id="slerror"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 @include('common.delete_modal')    
 @stop
 @push('datatable_js')
@@ -675,6 +791,10 @@
         $("#bike_rate").hide();     // on change bike rate 
         $("#car_rate").hide();      // on change car rate
         $("#km_div").hide();     // on change car 
+
+        $('#labour1,#labours,#oa_hit').select2({ 
+            dropdownParent: $('#oaHistoryModal') 
+        });
     });
 
     // mode of travel on change fields
@@ -790,6 +910,7 @@
                 dataType: 'json',                 
                 success:function(data){
                     console.log(data.data);
+                    
                     if (data.status==true) 
                     { 
                         $("#expDatatable").DataTable().destroy();
@@ -832,17 +953,24 @@
                                     content +="<tr>";
                                     content +="<td>"+ ++i +"</td>";
                                     content +="<td>"+travel_date+"</td>";
+
                                     if(data.role != 0){
                                         content +="<td>";
                                             if((travel_date == $.datepicker.formatDate('dd-mm-yy', new Date())) && (data.role == 3)){
                                                 content +="<a class='btn btn-outline-secondary btn-sm exp_editT' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delT' rel='tooltip' data-bs-placement='top' title='Delete Travel Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
                                             }
                                             if((data.role == 1)){
-                                                content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"' data-ad_remark='"+row.ad_remark+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
+                                                content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"' data-ad_remark='"+row.ad_remark+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
                                                 
                                             }
                                         content +="</td>";
                                     }
+
+                                    if(data.role != 3){
+                                        content +="<td>"+row.labour_name+"</td>";
+                                        content +="<td>"+row.project_admin+"</td>";
+                                    }
+
                                     if(row.mode_travel == "Shared_Auto"){
                                         content +="<td> Shared Auto </td>";
                                     }else if(row.mode_travel == "Private_Auto"){
@@ -853,20 +981,22 @@
                                 
                                     content +="<td>"+row.from_location+"</td>";
                                     content +="<td>"+row.to_location+"</td>";
+
                                     if(row.total_km != null){
                                         content +="<td>"+row.total_km+"</td>";
                                     }else{
                                         content +="<td class='text-center'> - </td>";
                                     }
+
                                     
                                     if(row.attachment != null){
                                         content +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
                                     }else{
                                         content +="<td>"+row.travel_amount+"</td>";
-                                    }   
+                                    } 
 
+                                        
                                     content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-
                                     if(row.travel_desc != null){
                                         content +="<td>"+row.travel_desc+"</td>";
                                     }else{
@@ -890,20 +1020,26 @@
                                     var travel_date = " - "
                                 }
 
-                                t_cllamount+=Number(row.travel_amount);           //total of amount
+                                t_cllamount+=Number(row.aprvd_amount);           //total of amount
 
                                 var d = new Date();
                                 var current_date = d.getDate();
                                     content1 +="<tr>";
-                                    content1 +="<td>"+ ++i +"</td>";
+                                    content1 +="<td>"+ ++j +"</td>";
                                     content1 +="<td>"+travel_date+"</td>";
                                 
                                     if(data.role == 0){
                                         content1 +="<td>";
-                                        content1 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
+                                        content1 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
                                         content1 +="</td>";
 
                                     }
+
+                                    if(data.role != 3){
+                                        content1 +="<td>"+row.labour_name+"</td>";
+                                        content1 +="<td>"+row.project_admin+"</td>";
+                                    }
+
                                     if(row.mode_travel == "Shared_Auto"){
                                         content1 +="<td> Shared Auto </td>";
                                     }else if(row.mode_travel == "Private_Auto"){
@@ -911,8 +1047,10 @@
                                     }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
                                         content1 +="<td>"+row.mode_travel+"</td>";
                                     }
+
                                     content1 +="<td>"+row.from_location+"</td>";
                                     content1 +="<td>"+row.to_location+"</td>";
+
                                     if(row.total_km != null){
                                         content1 +="<td>"+row.total_km+"</td>";
                                     }else{
@@ -920,16 +1058,19 @@
                                     }
 
                                     if(row.attachment != null){
-                                        content1 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                        content1 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
                                     }else{
-                                        content1 +="<td>"+row.travel_amount+"</td>";
-                                    }   
+                                        content1 +="<td>"+row.aprvd_amount+"</td>";
+                                    } 
+
                                     content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+
                                     if(row.ad_remark != null){
                                         content1 +="<td>"+row.ad_remark+"</td>";
                                     }else{
                                         content1 +="<td class='text-center'> - </td>";
                                     }
+
                                     if(row.travel_desc != null){
                                         content1 +="<td>"+row.travel_desc+"</td>";
                                     }else{
@@ -938,8 +1079,7 @@
                                     content1 += "</tr>";
                             }
 
-                            if(row.status == 'Approved')
-                            {
+                            if(row.status == 'Approved'){
 
                                 //date convert into dd/mm/yyyy
                                 function formatDate (input) {
@@ -954,13 +1094,18 @@
                                     var travel_date = " - "
                                 }
 
-                                t_apprvdamount+=Number(row.travel_amount);           //total of amount
+                                t_apprvdamount+=Number(row.aprvd_amount);           //total of amount
 
                                 var d = new Date();
                                 var current_date = d.getDate();
                                     content3 +="<tr>";
-                                    content3 +="<td>"+ ++i +"</td>";
+                                    content3 +="<td>"+ ++k +"</td>";
                                     content3 +="<td>"+travel_date+"</td>";
+                                    if(data.role != 3){
+                                        content3 +="<td>"+row.labour_name+"</td>";
+                                        content3 +="<td>"+row.project_admin+"</td>";
+                                    }
+
                                     if(row.mode_travel == "Shared_Auto"){
                                         content3 +="<td> Shared Auto </td>";
                                     }else if(row.mode_travel == "Private_Auto"){
@@ -970,6 +1115,7 @@
                                     }
                                     content3 +="<td>"+row.from_location+"</td>";
                                     content3 +="<td>"+row.to_location+"</td>";
+
                                     if(row.total_km != null){
                                         content3 +="<td>"+row.total_km+"</td>";
                                     }else{
@@ -977,10 +1123,10 @@
                                     }
 
                                     if(row.attachment != null){
-                                        content3 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                        content3 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
                                     }else{
-                                        content3 +="<td>"+row.travel_amount+"</td>";
-                                    }   
+                                        content3 +="<td>"+row.aprvd_amount+"</td>";
+                                    } 
 
                                     content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
 
@@ -1026,9 +1172,20 @@
                                 var d = new Date();
                                 var current_date = d.getDate();
                                     content2 +="<tr>";
-                                    content2 +="<td>"+ ++i +"</td>";
+                                    content2 +="<td>"+ ++l +"</td>";
                                     content2 +="<td>"+travel_date+"</td>";
 
+                                    if(data.role == 0){
+                                        content2 +="<td>";
+                                        content2 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
+                                        content2 +="</td>";
+
+                                    }
+
+                                    if(data.role != 3){
+                                        content2 +="<td>"+row.labour_name+"</td>";
+                                        content2 +="<td>"+row.project_admin+"</td>";
+                                    }
                                     if(row.mode_travel == "Shared_Auto"){
                                         content2 +="<td> Shared Auto </td>";
                                     }else if(row.mode_travel == "Private_Auto"){
@@ -1038,6 +1195,7 @@
                                     }
                                     content2 +="<td>"+row.from_location+"</td>";
                                     content2 +="<td>"+row.to_location+"</td>";
+
                                     if(row.total_km != null){
                                         content2 +="<td>"+row.total_km+"</td>";
                                     }else{
@@ -1049,7 +1207,6 @@
                                     }else{
                                         content2 +="<td>"+row.travel_amount+"</td>";
                                     } 
-
                                     content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                                     if(row.travel_desc != null){
                                         content2 +="<td>"+row.travel_desc+"</td>";
@@ -1179,6 +1336,12 @@
                                     }
                                 content +="</td>";
                             }
+
+                            if(data.role != 3){
+                                content +="<td>"+row.labour_name+"</td>";
+                                content +="<td>"+row.project_admin+"</td>";
+                            }
+
                             if(row.mode_travel == "Shared_Auto"){
                                 content +="<td> Shared Auto </td>";
                             }else if(row.mode_travel == "Private_Auto"){
@@ -1243,6 +1406,11 @@
 
                             }
 
+                            if(data.role != 3){
+                                content1 +="<td>"+row.labour_name+"</td>";
+                                content1 +="<td>"+row.project_admin+"</td>";
+                            }
+
                             if(row.mode_travel == "Shared_Auto"){
                                 content1 +="<td> Shared Auto </td>";
                             }else if(row.mode_travel == "Private_Auto"){
@@ -1304,6 +1472,11 @@
                             content3 +="<tr>";
                             content3 +="<td>"+ ++k +"</td>";
                             content3 +="<td>"+travel_date+"</td>";
+                            if(data.role != 3){
+                                content3 +="<td>"+row.labour_name+"</td>";
+                                content3 +="<td>"+row.project_admin+"</td>";
+                            }
+
                             if(row.mode_travel == "Shared_Auto"){
                                 content3 +="<td> Shared Auto </td>";
                             }else if(row.mode_travel == "Private_Auto"){
@@ -1380,6 +1553,10 @@
 
                             }
 
+                            if(data.role != 3){
+                                content2 +="<td>"+row.labour_name+"</td>";
+                                content2 +="<td>"+row.project_admin+"</td>";
+                            }
                             if(row.mode_travel == "Shared_Auto"){
                                 content2 +="<td> Shared Auto </td>";
                             }else if(row.mode_travel == "Private_Auto"){
@@ -1437,6 +1614,31 @@
                     //For Add Material Modal
                     // $('#edit_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
                     $('#exp_so').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
+
+                    
+                    $('#client_name').val(row.client_name); 
+                    $('#project_name').val(row.project_name); 
+                    $('#address').val(row.address); 
+                    $('#cp_name').val(row.cp_name); 
+                    $('#cp_ph_no').val(row.cp_ph_no);
+
+
+                    var r=new Array();
+                    if (row.labour.toString().indexOf(',')>-1)
+                    { 
+                        var r=row.labour.split(',');
+                    }
+                    else
+                    {
+                        r[0]=row.labour.toString();
+                    }
+
+                    $.each(r,function(index,value)
+                    {
+                        $("#labour1 option[value='"+value+"']").attr('selected','selected').change();
+                    });
+
+                    $("#labours option[value='"+row.lead_technician+"']").attr('selected','selected').change(); 
                 });
             }
         });

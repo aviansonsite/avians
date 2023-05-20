@@ -113,13 +113,13 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3 col-sm-12 col-lg-3">
+                            <div class="col-md-5 col-sm-12 col-lg-5">
                                 <div class="form-group mb-3">
                                     <label for="so" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA<sup class="text-danger">*</sup></label>
                                     <select class="form-control select2" id="so" required name="so">
-                                        <option value="" disabled selected>Select</option>
+                                        <option value="" disabled selected>Select OA Name - ( Client Name , Project Name)</option>
                                         @foreach($s_obj as $s)
-                                            <option value="{{$s->oth_id}}">{{$s->so_number}}</option>
+                                            <option value="{{$s->oth_id}}">{{$s->so_number}} - ( {{ $s->client_name}} , {{$s->project_name}} )</option>
                                         @endforeach
                                     </select>
                                     <span class="text-danger error" id="soerror"></span>
@@ -243,7 +243,95 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<!-- OA history modal content -->
+<div id="oaHistoryModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">OA History</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 col-lg-6">
+                        <div class="form-group mb-3">
+                            <label for="hist_labours" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Lead Technician Support<sup class="text-danger">*</sup></label>
+                            <select class="form-control select2" id="hist_labours" required name="hist_labours" disabled>
+                            @foreach($u_obj as $u)
+                                <option value="{{$u->id}}">{{$u->name}}</option>
+                            @endforeach
+                            </select>
+                            <span class="text-danger error" id="lerror"></span>
+                            
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-lg-6">
+                        <div class="form-group mb-3">
+                            <label for="oa_hit" class="form-label" style="font-size: 11px;margin-bottom: 2px;">OA Number<sup class="text-danger">*</sup></label>
+                            <select class="form-control select2" id="oa_hit" required name="oa_hit" disabled>
+                            @foreach($s_obj as $s)
+                                <option value="{{$s->oth_id}}">{{$s->so_number}}</option>
+                            @endforeach
+                            </select>
+                            <span class="text-danger error" id="esoerror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="client_name" placeholder="Enter Client Name" name="client_name" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50" disabled>
+                            <label for="client_name">Client Name<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="cnerror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="project_name" placeholder="Enter Project Name" name="project_name" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50" disabled>
+                            <label for="project_name">Project Name<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="pnerror"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="cp_name" placeholder="Enter CP Name" name="cp_name"required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50" disabled>
+                            <label for="cp_name">CP Name<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="cpnerror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="cp_ph_no" placeholder="Enter CP Phone" name="cp_ph_no" required maxlength="10" disabled>
+                            <label for="cp_ph_no">CP Phone<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="cpperror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-sm-12 col-lg-8">
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" id="address" placeholder="Enter Address" required name="address" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" disabled></textarea>
+                            <label for="address">Project Address<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="aerror"></span>
 
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        <div class="form-group mb-3">
+                            <label for="hist_labour" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Support Technician<sup class="text-danger">*</sup></label>
+                            <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="hist_labour" name="hist_labour[]" placeholder="Support Technician" disabled>
+                            @foreach($us_obj as $us)
+                                <option value="{{$us->id}}">{{$us->name}}</option>
+                            @endforeach
+                            </select>
+                            <span class="text-danger error" id="slerror"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 @stop
 @push('page_js')
 {!! Html::script('assets/libs/datatables.net/js/jquery.dataTables.min.js') !!}
@@ -314,6 +402,9 @@
         });
 
         $("#labours").prop('disabled', true);     //buyer div on load disabled
+        $('#hist_labour,#hist_labours,#oa_hit').select2({ 
+            dropdownParent: $('#oaHistoryModal') 
+        });
     });      
 
     $('#so').change(function(e)
@@ -465,7 +556,7 @@
                                 content +="<td>";
                                 $.each(row.s_obj,function(index,row)
                                 {   
-                                    content += row.so_number+",";
+                                    content += row.so_number+"<br> <span class='badge badge-soft-primary oa_hist'data-id='"+row.id+"' data-so_number='"+row.so_number+"' data-client_name='"+row.client_name+"' data-project_name='"+row.project_name+"' data-address='"+row.address+"' data-cp_name='"+row.cp_name+"' data-cp_ph_no='"+row.cp_ph_no+"' data-lead_technician='"+row.lead_technician+"' data-labour='"+row.labour+"' data-bs-toggle='modal'>OA History</span>";
                                 });
                                 content +="</td>";
                                 content +="<td>"+row.technician_name+"</td>";
@@ -495,7 +586,7 @@
                                 content +="<td>";
                                 $.each(row.s_obj,function(index,row)
                                 {   
-                                    content += row.so_number+",";
+                                    content += row.so_number+"<br> <span class='badge badge-soft-primary oa_hist'data-id='"+row.id+"' data-so_number='"+row.so_number+"' data-client_name='"+row.client_name+"' data-project_name='"+row.project_name+"' data-address='"+row.address+"' data-cp_name='"+row.cp_name+"' data-cp_ph_no='"+row.cp_ph_no+"' data-lead_technician='"+row.lead_technician+"' data-labour='"+row.labour+"' data-bs-toggle='modal'>OA History</span>";
                                 });
                                 content +="</td>";
                                 content +="<td>"+row.technician_name+"</td>";
@@ -518,7 +609,32 @@
                                 
                         });
 
-                            
+                        $.each(data.s_obj,function(index,row){
+
+                            $('#client_name').val(row.client_name); 
+                            $('#project_name').val(row.project_name); 
+                            $('#address').val(row.address); 
+                            $('#cp_name').val(row.cp_name); 
+                            $('#cp_ph_no').val(row.cp_ph_no);
+
+
+                            var r=new Array();
+                            if (row.labour.toString().indexOf(',')>-1)
+                            { 
+                                var r=row.labour.split(',');
+                            }
+                            else
+                            {
+                                r[0]=row.labour.toString();
+                            }
+
+                            $.each(r,function(index,value)
+                            {
+                                $("#hist_labour option[value='"+value+"']").attr('selected','selected').change();
+                            });
+
+                            $("#hist_labours option[value='"+row.lead_technician+"']").attr('selected','selected').change(); 
+                        });     
 
                         $("#att_table").html(content); //For append html data
 
@@ -590,7 +706,51 @@
         }
     });  
 
-    //For punch in history modal
+    //For OA history modal
+    $(document).on("click",'.oa_hist',function()
+    {   
+        var id = $(this).data('id');
+        // var so_number = $(this).data('so_number');
+        var client_name = $(this).data('client_name');
+        var project_name = $(this).data('project_name');
+        var address = $(this).data('address');
+        var cp_name = $(this).data('cp_name');
+        var cp_ph_no = $(this).data('cp_ph_no');
+        var labour= $(this).data('labour');
+        var lead_technician= $(this).data('lead_technician');
+        
+        // alert(labour);
+        var r=new Array();
+        if (labour.toString().indexOf(',')>-1)
+        { 
+            var r=labour.split(',');
+        }
+        else
+        {
+            r[0]=labour.toString();
+        }
+
+
+        $('#oa_hit').val(id);   
+        // $('#oa_hit').val(so_number); 
+        $('#client_name').val(client_name); 
+        $('#project_name').val(project_name); 
+        $('#address').val(address); 
+        $('#cp_name').val(cp_name); 
+        $('#cp_ph_no').val(cp_ph_no);
+        
+        $.each(r,function(index,value)
+        {
+            $("#hist_labour option[value='"+value+"']").attr('selected','selected').change();
+        });
+
+        $("#hist_labours option[value='"+lead_technician+"']").attr('selected','selected').change();
+
+        $('#oaHistoryModal').modal('show');
+
+    });
+
+    //For regularise modal
     $(document).on("click",'.regularise_modal',function()
     {   
         var id = $(this).data('id');
@@ -687,9 +847,9 @@
                                 content +="<td>";
                                 $.each(row.s_obj,function(index,row)
                                 {   
-                                    content += row.so_number+",";
+                                    content += row.so_number;
                                 });
-                                content +="</td>";
+                                content +="<br> <span class='badge badge-soft-primary' data-id='"+row.id+"' data-tl_id='"+row.a_id+"'>OA History</span></td>";
                                 content +="<td>"+row.technician_name+"</td>";
                                 content +="<td class='pinhistry' data-pin_oth_id='"+row.pin_oth_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>"+row.pin_time+"</td>";
 

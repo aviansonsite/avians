@@ -151,9 +151,9 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3 col-sm-12 col-lg-3">
-                                            <button type="button" class="btn btn-primary btn-sm waves-effect waves-light w-sm" id="tech_pay_ftd_records">Search</button>
-                                        </div>
+                                        <button type="button" class="btn btn-primary btn-sm waves-effect waves-light w-sm" id="tech_pay_ftd_records">Search</button>
                                     </div>
+                                </div>
                                 {!! Form::close() !!} 
                                 <div class="table-responsive">
                                     <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="datatable"> 
@@ -228,10 +228,6 @@
                                             <div class="ms-auto labour_change">
                                                 <button type="button" class="btn btn-primary btn-sm waves-effect waves-light" id="add_labour_payment">Submit</button>
                                             </div>
-                                        </div>
-
-                                        <div>
-                                            
                                         </div>
                                     </div> 
                                 {!! Form::close() !!}

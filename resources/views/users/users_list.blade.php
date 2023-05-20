@@ -424,6 +424,7 @@ $roles=Session::get('ROLES');
                                                 <th scope="col" style="white-space: normal;">User Id</th>
                                                 <th scope="col">Active</th>
                                                 <th scope="col" style="white-space: normal;">Full Name</th>
+                                                <th scope="col">Project Admin</th>
                                                 <th scope="col">Email</th>
                                                 <th scope="col">Mobile</th>
                                                 
@@ -432,7 +433,7 @@ $roles=Session::get('ROLES');
                                         <tbody id="user_records">
                                             <?php $i=0; $roless=Session::get('ROLES'); ?>
                                             @foreach($u_obj as $u)
-                                                @if($roless==0 && $u->role==3)
+                                                @if($u->role==3)
                                                     <tr>
                                                         <td>{{++$i}}</td>
                                                         <td>{{$u->emp_number}}</td>
@@ -481,6 +482,7 @@ $roles=Session::get('ROLES');
                                                                 )
                                                             </small></h5>
                                                         </td>
+                                                        <td>{{$u->project_admin}}</td>
                                                         <td>{{$u->email}}</td>
                                                         <td>{{$u->mobile}}</td>
                                                         

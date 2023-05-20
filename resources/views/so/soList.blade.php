@@ -128,6 +128,7 @@
                                                 @if($roles==1)
                                                     <th scope="col">Action</th>
                                                 @endif
+                                                <th scope="col" style="width: 100px">Status</th>
                                                 <th scope="col" style="width: 100px">Project Admin</th>
                                                 <th scope="col" style="width: 100px">Client Name</th>
                                                 <th scope="col" style="width: 100px">Project Name</th>
@@ -236,7 +237,39 @@
         </div>
     </div>
 </div>    
+<!-- Remove TL Modal -->
+<div id="remove_tl_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Remove Technician Leader</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            {!! Form::open(['class'=>"form-horizontal",'method'=>"post",'url'=>'remove_tl','id'=>'add_dn_form']) !!}
 
+                <div class="modal-body">
+                    <strong>Do you really wants to Remove this OA Technician Leader..? </strong>
+                    <!-- <strong>Do you really want to Reset Password For this Account..? </strong> -->
+
+                    <div class="form-group">
+                        <div class="col-md-4">
+                        <input type="hidden" id="oth_id" name="oth_id" class="form-control"/>
+                        <input type="hidden" id="oth_status" name="oth_status" class="form-control"/>
+                        <input type="hidden" id="oth_so_id" name="oth_so_id" class="form-control"/>
+
+                        
+                        </div>
+                    </div>
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                </div>
+                <div class="modal-footer"> 
+                    <button type="button" class="btn btn-secondary waves-effect btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary text-white btn-sm " id="update_tl_rec"><i class="fe fe-check mr-2"></i>Update</button>
+                </div>
+            {!! Form::close() !!}
+        </div>
+    </div>
+</div>
 @include('common.delete_modal')    
 @stop
 @push('datatable_js')
@@ -322,7 +355,19 @@
                         content +="<td>"+ ++i  +"</td>";
                         content +="<td>"+row.so_number+"</td>";
                         if(data.roles == 1){
-                            content +="<td><a class='btn btn-outline-secondary btn-sm editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit SO' data-id='"+row.id+"' data-so_number='"+row.so_number+"' data-client_name='"+row.client_name+"' data-project_name='"+row.project_name+"' data-address='"+row.address+"' data-cp_name='"+row.cp_name+"' data-cp_ph_no='"+row.cp_ph_no+"' data-lead_technician='"+row.lead_technician+"' data-labour='"+row.labour+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete SO' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button></td>"
+                            content +="<td>";
+                            content +="<a class='btn btn-outline-secondary btn-sm editU' rel='tooltip' data-bs-placement='top' title='Edit OA' data-id='"+row.id+"' data-so_number='"+row.so_number+"' data-client_name='"+row.client_name+"' data-project_name='"+row.project_name+"' data-address='"+row.address+"' data-cp_name='"+row.cp_name+"' data-cp_ph_no='"+row.cp_ph_no+"' data-lead_technician='"+row.lead_technician+"' data-labour='"+row.labour+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete OA' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>";
+                            
+                            if(row.oth_status == 1){
+                                content += " <a class='btn btn-outline-secondary btn-sm removeTL'  rel='tooltip' data-bs-placement='top' title='Remove TL' data-oth_so_id='"+row.id+"' data-oth_id='"+row.oth_id+"' data-oth_status='"+row.oth_status+"' data-bs-toggle='modal'><i class='fas fa-ban'></i></a>";
+                            }
+                            content += "</td>";
+                        }
+                        if(row.oth_status == 1){
+                            content +="<td><span class='badge badge-soft-success'>ACTIVE</span></td>";
+
+                        }else{
+                            content +="<td><span class='badge badge-soft-danger'>IN-ACTIVE</span></td>";
                         }
                         content +="<td>"+row.name+"</td>";
                         content +="<td>"+row.client_name+"</td>";
@@ -348,8 +393,6 @@
                     $('#labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
                     $('#labours').append("<option value='"+row.id+"'>"+row.name+"</option>");
                 });
-
-                
             }
         });
     }
@@ -360,8 +403,8 @@
         var id = $(this).val();
         var so_id= $('#edit_id').val();
         
-        // alert(so_id);
-       
+        // alert(id);
+      
         $.ajax({
             headers:{
                 'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
@@ -383,7 +426,7 @@
                     }else{
                         $(".lerror_msg").show();     // on labour change check status
                         $(".labour_change").hide();     // on labour change 
-                        $("#lerror_msg").html("This Technician Already Exist in "+data.oa_number+" ,Please Select Another OA For Further Operation.");
+                        $("#lerror_msg").html("This Technician Already Exist in <strong>"+data.oa_number+"</strong> ,Please Select Another OA For Further Operation.");
                     }
                 }else{
                     if (((data.count == 1) && (data.so_id == data.d_so_id)) || ((data.count == 0) && (data.d_so_id == 0)) ) 
@@ -394,7 +437,7 @@
                     }else{
                         $(".lerror_msg").show();     // on labour change check status
                         $(".labour_change").hide();     // on labour change 
-                        $("#lerror_msg").html("This Technician Already Exist in "+data.oa_number+" ,Please Select Another OA For Further Operation.");
+                        $("#lerror_msg").html("This Technician Already Exist in <strong>"+data.oa_number+"</strong> ,Please Select Another OA For Further Operation.");
                     }
                 }
                  
@@ -439,7 +482,8 @@
             var cp_ph_no = $(this).data('cp_ph_no');
             var labour= $(this).data('labour');
             var lead_technician= $(this).data('lead_technician');
-        
+            
+            // alert(lead_technician);
             var r=new Array();
             if (labour.toString().indexOf(',')>-1)
             { 
@@ -452,6 +496,7 @@
             // ACTIVE PANE AND LINK
             $('.nav-tabs a[href="#update_so"]').tab('show');
 
+            
             $('#edit_id').val(id);   
             $('#so_number').val(so_number); 
             $('#client_name').val(client_name); 
@@ -462,12 +507,18 @@
             
             $.each(r,function(index,value)
             {
-                
                 $("#labour option[value='"+value+"']").attr('selected','selected').change();
-
             });
 
-            $("#labours option[value='"+lead_technician+"']").attr('selected','selected').change();
+            if(lead_technician == 0){
+                $(".lerror_msg").show();     // on labour change check status
+                $(".labour_change").hide();     // on labour change 
+                $("#lerror_msg").html("Please Select Technician Leader For this <strong>"+so_number+"</strong> For Further Operation.");
+            }else{
+                
+                $("#labours option[value='"+lead_technician+"']").attr('selected','selected').change();
+
+            }
 
         }
 
@@ -696,5 +747,22 @@
         
     });
 
+
+    //  Remove TL
+    $(document).on("click",'.removeTL',function()
+    {
+        var oth_id = $(this).data('oth_id');
+        var oth_status = $(this).data('oth_status');
+        var oth_so_id = $(this).data('oth_so_id');
+
+        
+        $('#oth_id').val(oth_id);
+        $('#oth_status').val(oth_status);
+        $('#oth_so_id').val(oth_so_id);
+
+
+        // $('#remove_tl_modal form').attr("action","remove_tl/"+id);
+        $('#remove_tl_modal').modal('show');
+    });
 </script>
 @endpush

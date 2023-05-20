@@ -81,6 +81,12 @@ $count=count($role);
                                     <span key="t-dashboards">Transfer other Technician</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="waves-effect nav-link" id="oa_hist" data-bs-toggle="modal" data-bs-target="#oaHistoryModal">
+                                    <i class="bx bx-file"></i>
+                                    <span key="t-dashboards">OA History</span>
+                                </a>
+                            </li>
                         @endif
                         <!--Not Accountant -->
                         @if($roles!=2)

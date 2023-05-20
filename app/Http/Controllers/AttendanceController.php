@@ -30,7 +30,7 @@ class AttendanceController extends Controller
         $s_obj=DB::table('oa_tl_history as oth')
             ->leftjoin('users as u','u.id','oth.lead_technician')
             ->leftjoin('sales_orders as so','so.id','oth.so_id')
-            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
             ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
             ->orderby('oth.updated_at','DESC')
             ->get();
@@ -38,7 +38,7 @@ class AttendanceController extends Controller
         $s_obj1=DB::table('oa_tl_history as oth')
         ->leftjoin('users as u','u.id','oth.lead_technician')
         ->leftjoin('sales_orders as so','so.id','oth.so_id')
-        ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+        ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
         ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
         ->orderby('oth.updated_at','DESC')
         ->get();
@@ -297,7 +297,7 @@ class AttendanceController extends Controller
             $s_obj=DB::table('oa_tl_history as oth')
             ->leftjoin('users as u','u.id','oth.lead_technician')
             ->leftjoin('sales_orders as so','so.id','oth.so_id')
-            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
             ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
             ->orderby('oth.updated_at','DESC')
             ->get();
@@ -352,7 +352,7 @@ class AttendanceController extends Controller
             $s_obj=DB::table('oa_tl_history as oth')
             ->leftjoin('users as u','u.id','oth.lead_technician')
             ->leftjoin('sales_orders as so','so.id','oth.so_id')
-            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
             ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
             ->orderby('oth.updated_at','DESC')
             ->get();
@@ -405,11 +405,11 @@ class AttendanceController extends Controller
             $s_obj=DB::table('oa_tl_history as oth')
             ->leftjoin('users as u','u.id','oth.lead_technician')
             ->leftjoin('sales_orders as so','so.id','oth.so_id')
-            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
             ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
             ->orderby('oth.updated_at','DESC')
             ->get();
-
+            $us_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
         }else{
             //only project admin wise OA Records access
 
@@ -418,10 +418,11 @@ class AttendanceController extends Controller
             $s_obj=DB::table('oa_tl_history as oth')
             ->leftjoin('users as u','u.id','oth.lead_technician')
             ->leftjoin('sales_orders as so','so.id','oth.so_id')
-            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.a_id','u.name','u.delete as u_delete','u.is_active')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.a_id','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
             ->where(['so.a_id'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
             ->orderby('oth.updated_at','DESC')
             ->get();
+            $us_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
         }
 
 
@@ -447,7 +448,7 @@ class AttendanceController extends Controller
         }   
         
     	// return view('labour.test',compact('u_obj','s_obj'));
-    	return view('report.technicianAttendanceReport',compact('u_obj','s_obj','t_count','p_obj','p_id'));
+    	return view('report.technicianAttendanceReport',compact('u_obj','s_obj','us_obj','t_count','p_obj','p_id'));
 
     }
 
@@ -500,6 +501,7 @@ class AttendanceController extends Controller
         
                     $s_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->orderby('created_at','DESC')->get();
                     $p->s_obj = $s_obj;
+
                 }
             }else{
 
@@ -576,6 +578,7 @@ class AttendanceController extends Controller
                     
                     $s_obj=SOModel::where(['delete'=>0,'id'=>$oth_obj[0]->so_id])->orderby('created_at','DESC')->get();
                     $p->s_obj = $s_obj;
+                    
                 }
             }
             else
@@ -614,6 +617,7 @@ class AttendanceController extends Controller
             }
         }
 
+        
         if(!empty($p_obj)){
             return json_encode(array('status' => true ,'data' => $p_obj,'fdate' =>$from_date ,'labours' =>$labours,'message' => 'Data Found'));
         }else{
@@ -686,7 +690,7 @@ class AttendanceController extends Controller
         $l_obj=DB::table('punch_in_out as pio')
             ->leftjoin('users as u','u.id','pio.pout_u_id')
             ->select('u.id','pio.pin_date','pio.delete','u.name','u.delete as u_delete','u.is_active')
-            ->where(['pio.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'pio.pin_date'=>$pout_date])
+            ->where(['pio.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'pio.pout_date'=>$pout_date])
             ->orderby('u.created_at','DESC')
             ->get();
 

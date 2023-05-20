@@ -13,9 +13,23 @@ use App\Http\Controllers\CommonController as Common;
 class UserController extends Controller
 {
     public function user_list()
-    { $a_id=Session::get('USER_ID');
-    	$u_obj=UserModel::where(['delete'=>0,'a_id'=>$a_id])->where('role','!=','0')->orderby('created_at','DESC')->get();
-		// dd($u_obj);
+    { 
+		$role=Session::get('ROLES');
+		$a_id=Session::get('USER_ID');
+		if($role == 0){
+			
+			$u_obj=UserModel::where(['delete'=>0])->where('role','!=','0')->orderby('created_at','DESC')->get();
+			foreach($u_obj as $u){
+				$u_obj1=UserModel::where(['delete'=>0,'id'=>$u->a_id])->where('role','!=','0')->orderby('created_at','DESC')->get();
+				foreach($u_obj1 as $u1){
+				$u->project_admin = $u1->name;
+				}
+			}
+			
+		}else{
+			$u_obj=UserModel::where(['delete'=>0,'a_id'=>$a_id])->where('role','!=','0')->orderby('created_at','DESC')->get();
+
+		}
     	return view('users.users_list',compact('u_obj'));
     }
 

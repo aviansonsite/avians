@@ -128,7 +128,7 @@
                                                     <option value="{{$u->id}}">{{$u->name}}</option>
                                                 @endforeach
                                             </select>
-                                            <span class="text-danger error" id="lerror"></span>
+                                            <small><span class="text-danger" id="slerror" style="font-size: 11px !important;"></span></small>
                                         </div>
                                     </div>
                                     <div class="col-md-3 col-sm-12 col-lg-3">
@@ -172,6 +172,7 @@
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">Expense Date</th>
                                                 <th scope="col" style="width: 100px">Technician Name</th>
+                                                <th scope="col" style="width: 100px">Project Admin</th>
                                                 <th scope="col" style="width: 100px">Expense Type</th>
                                                 <th scope="col" style="width: 100px">Description</th>
                                                 <th scope="col" style="width: 100px">Admin Remark</th>
@@ -187,7 +188,7 @@
                                         </tbody>
                                         <tfoot id="tucledata">
                                             <tr>
-                                                <th colspan="7" class="text-center"><strong>Total</strong></th>
+                                                <th colspan="8" class="text-center"><strong>Total</strong></th>
                                                 <th id="t_ucleamount"></th>
                                                 @if($roles == 1)
                                                     <th></th>
@@ -206,6 +207,7 @@
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">Expense Date</th>
                                                 <th scope="col" style="width: 100px">Technician Name</th>
+                                                <th scope="col" style="width: 100px">Project Admin</th>
                                                 <th scope="col" style="width: 100px">Expense Type</th>
                                                 <th scope="col" style="width: 100px">Description</th>
                                                 <th scope="col" style="width: 100px">Admin Remark</th>
@@ -222,7 +224,7 @@
                                         </tbody>
                                         <tfoot id="tclldata">
                                             <tr>
-                                                <th colspan="7" class="text-center"><strong>Total</strong></th>
+                                                <th colspan="8" class="text-center"><strong>Total</strong></th>
                                                 <th id="t_cllamount"></th>
                                                 @if($roles == 0)
                                                     <th></th>
@@ -241,6 +243,7 @@
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">Expense Date</th>
                                                 <th scope="col" style="width: 100px">Technician Name</th>
+                                                <th scope="col" style="width: 100px">Project Admin</th>
                                                 <th scope="col" style="width: 100px">Expense Type</th>
                                                 <th scope="col" style="width: 100px">Description</th>
                                                 <th scope="col" style="width: 100px">Admin Remark</th>
@@ -254,7 +257,7 @@
                                         </tbody>
                                         <tfoot id="taprdata">
                                             <tr>
-                                                <th colspan="8" class="text-center"><strong>Total</strong></th>
+                                                <th colspan="9" class="text-center"><strong>Total</strong></th>
                                                 <th id="t_apprvdamount"></th>
                                             </tr>
                                         </tfoot>
@@ -270,6 +273,7 @@
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">Expense Date</th>
                                                 <th scope="col" style="width: 100px">Technician Name</th>
+                                                <th scope="col" style="width: 100px">Project Admin</th>
                                                 <th scope="col" style="width: 100px">Expense Type</th>
                                                 <th scope="col" style="width: 100px">Description</th>
                                                 <th scope="col" style="width: 100px">Admin Remark</th>
@@ -285,7 +289,7 @@
                                         </tbody>
                                         <tfoot id="tcaldata">
                                             <tr>
-                                                <th colspan="7" class="text-center"><strong>Total</strong></th>
+                                                <th colspan="8" class="text-center"><strong>Total</strong></th>
                                                 <th id="t_calamount"></th>
                                                 @if($roles == 0)
                                                     <th></th>
@@ -467,13 +471,52 @@
     });
     var $body = $("body");
 
+     // For serch record Validation
+     var n =0;
+    $("#exp_req_ftd_records").click(function(event) 
+    {
+
+        var from_date = $('#from_date').val();
+        var to_date = $('#to_date').val();
+        var labours= $('#labours').val();
+
+        n=0;    
+        if( $.trim(from_date).length == 0 )
+        {
+            $('#fderror').text('Please Select From Date.');
+            event.preventDefault();
+        }else{
+            $('#fderror').text('');
+            ++n;
+        }
+
+        if( $.trim(to_date).length == 0 )
+        {
+            $('#tderror').text('Please Select To Date.');
+            event.preventDefault();
+        }else{
+            $('#tderror').text('');
+            ++n;
+        }
+       
+        if( $.trim(labours).length == 0 )
+        {
+            $('#slerror').text('Please Select Technician');
+            event.preventDefault();
+        }else{
+            $('#slerror').text('');
+            ++n;
+        }
+
+    });
+
     // For from date ,to date records
     $(document).on("click",'#exp_req_ftd_records',function()
     {           
         var from_date = $('#from_date').val();
         var to_date = $('#to_date').val();
         var labours = $('#labours').val();
-
+        // alert(labours);
         $.ajax({
             headers:{
                 'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
@@ -485,216 +528,253 @@
             dataType: 'json',                 
             success:function(data){
                 console.log(data.data);
-                $("#expDatatable").DataTable().destroy();
-                $("#clearedDatatable").DataTable().destroy();
-                $("#cancelDatatable").DataTable().destroy();
-                $("#apprvdDatatable").DataTable().destroy();
+                if (data.status==true) 
+                { 
+                    $("#expDatatable").DataTable().destroy();
+                    $("#clearedDatatable").DataTable().destroy();
+                    $("#cancelDatatable").DataTable().destroy();
+                    $("#apprvdDatatable").DataTable().destroy();
 
 
-                $("#tucledata").show();
-                $("#tclldata").show();
-                $("#tcaldata").show();
-                $("#taprdata").show();
+                    $("#tucledata").show();
+                    $("#tclldata").show();
+                    $("#tcaldata").show();
+                    $("#taprdata").show();
 
-                var t_ucleamount=t_cllamount=t_calamount=t_apprvdamount=0; 
-                content ="";
-                content1 ="";
-                content2 ="";
-                content3 ="";
-                var i=j=k=l= 0;       
-                // $("#labour").empty();            
-                // $("#so").empty();        
-                $.each(data.data,function(index,row){
+                    var t_ucleamount=t_cllamount=t_calamount=t_apprvdamount=0; 
+                    content ="";
+                    content1 ="";
+                    content2 ="";
+                    content3 ="";
+                    var i=j=k=l= 0;       
+                    // $("#labour").empty();            
+                    // $("#so").empty();        
+                    $.each(data.data,function(index,row){
 
-                    if(row.status == 'Uncleared'){
-                        //date convert into dd/mm/yyyy
-                        function formatDate (input) {
-                            var datePart = input.match(/\d+/g),
-                            year = datePart[0].substring(0), // get only two digits
-                            month = datePart[1], day = datePart[2];
-                            return day+'-'+month+'-'+year;
-                        }
-                        if(row.exp_date != null){
-                            var exp_date = formatDate (row.exp_date); // "18/01/10"
-                        }else{
-                            var exp_date = " - "
-                        }
-                        t_ucleamount+=Number(row.amount);           //total of amount
-                        var d = new Date();
-                        var current_date = d.getDate();
-                            content +="<tr>";
-                            content +="<td>"+ ++i +"</td>";
-                            content +="<td>"+exp_date+"</td>";
-                            content +="<td>"+row.labour_name+"</td>";
-                            if(row.exp_type == "Material_Purchase"){
-                                content +="<td> Material Purchase </td>";
-                            }else if(row.exp_type == "Labour_Hired"){
-                                content +="<td> Labour Hired </td>";
-                            }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                content +="<td>"+row.exp_type+"</td>";
+                        if(row.status == 'Uncleared')
+                        {
+                            //date convert into dd/mm/yyyy
+                            function formatDate (input) {
+                                var datePart = input.match(/\d+/g),
+                                year = datePart[0].substring(0), // get only two digits
+                                month = datePart[1], day = datePart[2];
+                                return day+'-'+month+'-'+year;
                             }
-                            content +="<td>"+row.exp_desc+"</td>";
-                            if(row.acc_remark != null){
-                                content +="<td>"+row.acc_remark+"</td>";
+                            if(row.exp_date != null){
+                                var exp_date = formatDate (row.exp_date); // "18/01/10"
                             }else{
-                                content +="<td class='text-center'> - </td>";
+                                var exp_date = " - "
                             }
-                            
-                            content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            content +="<td>"+row.amount+"</td>";
-                            if(data.role == 1){
-                                content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                            t_ucleamount+=Number(row.amount);           //total of amount
+                            var d = new Date();
+                            var current_date = d.getDate();
+                                content +="<tr>";
+                                content +="<td>"+ ++i +"</td>";
+                                content +="<td>"+exp_date+"</td>";
+                                content +="<td>"+row.labour_name+"</td>";
+                                content +="<td>"+row.project_admin+"</td>";
+                                if(row.exp_type == "Material_Purchase"){
+                                    content +="<td> Material Purchase </td>";
+                                }else if(row.exp_type == "Labour_Hired"){
+                                    content +="<td> Labour Hired </td>";
+                                }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
+                                    content +="<td>"+row.exp_type+"</td>";
+                                }
+                                content +="<td>"+row.exp_desc+"</td>";
+                                if(row.acc_remark != null){
+                                    content +="<td>"+row.acc_remark+"</td>";
+                                }else{
+                                    content +="<td class='text-center'> - </td>";
+                                }
+                                
+                                content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                                content +="<td>"+row.amount+"</td>";
+                                if(data.role == 1){
+                                    content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                }
+                                content += "</tr>";
+
+                        }   
+
+                        if(row.status == 'Cleared')
+                        {
+
+                            //date convert into dd/mm/yyyy
+                            function formatDate (input) {
+                                var datePart = input.match(/\d+/g),
+                                year = datePart[0].substring(0), // get only two digits
+                                month = datePart[1], day = datePart[2];
+                                return day+'-'+month+'-'+year;
                             }
-                            content += "</tr>";
-
-                    }   
-
-                    if(row.status == 'Cleared'){
-
-                        //date convert into dd/mm/yyyy
-                        function formatDate (input) {
-                            var datePart = input.match(/\d+/g),
-                            year = datePart[0].substring(0), // get only two digits
-                            month = datePart[1], day = datePart[2];
-                            return day+'-'+month+'-'+year;
-                        }
-                        if(row.exp_date != null){
-                            var exp_date = formatDate (row.exp_date); // "18/01/10"
-                        }else{
-                            var exp_date = " - "
-                        }
-
-                        t_cllamount+=Number(row.aprvd_amount);           //total of amount
-
-                        var d = new Date();
-                        var current_date = d.getDate();
-                            content1 +="<tr>";
-                            content1 +="<td>"+ ++j +"</td>";
-                            content1 +="<td>"+exp_date+"</td>";
-                            content1 +="<td>"+row.labour_name+"</td>";
-                            if(row.exp_type == "Material_Purchase"){
-                                content1 +="<td> Material Purchase </td>";
-                            }else if(row.exp_type == "Labour_Hired"){
-                                content1 +="<td> Labour Hired </td>";
-                            }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                content1 +="<td>"+row.exp_type+"</td>";
-                            }
-                            content1 +="<td>"+row.exp_desc+"</td>";
-                            if(row.acc_remark != null){
-                                content1 +="<td>"+row.acc_remark+"</td>";
+                            if(row.exp_date != null){
+                                var exp_date = formatDate (row.exp_date); // "18/01/10"
                             }else{
-                                content1 +="<td class='text-center'> - </td>";
+                                var exp_date = " - "
                             }
-                            content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            content1 +="<td>"+row.aprvd_amount+"</td>";
-                            if(data.role == 0){
-                                content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
-                            }
-                            content1 += "</tr>";
-                    }
 
-                    if(row.status == 'Approved'){
+                            t_cllamount+=Number(row.aprvd_amount);           //total of amount
 
-                        //date convert into dd/mm/yyyy
-                        function formatDate (input) {
-                            var datePart = input.match(/\d+/g),
-                            year = datePart[0].substring(0), // get only two digits
-                            month = datePart[1], day = datePart[2];
-                            return day+'-'+month+'-'+year;
+                            var d = new Date();
+                            var current_date = d.getDate();
+                                content1 +="<tr>";
+                                content1 +="<td>"+ ++j +"</td>";
+                                content1 +="<td>"+exp_date+"</td>";
+                                content1 +="<td>"+row.labour_name+"</td>";
+                                content +="<td>"+row.project_admin+"</td>";
+                                if(row.exp_type == "Material_Purchase"){
+                                    content1 +="<td> Material Purchase </td>";
+                                }else if(row.exp_type == "Labour_Hired"){
+                                    content1 +="<td> Labour Hired </td>";
+                                }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
+                                    content1 +="<td>"+row.exp_type+"</td>";
+                                }
+                                content1 +="<td>"+row.exp_desc+"</td>";
+                                if(row.acc_remark != null){
+                                    content1 +="<td>"+row.acc_remark+"</td>";
+                                }else{
+                                    content1 +="<td class='text-center'> - </td>";
+                                }
+                                content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                                content1 +="<td>"+row.aprvd_amount+"</td>";
+                                if(data.role == 0){
+                                    content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                }
+                                content1 += "</tr>";
                         }
-                        if(row.exp_date != null){
-                            var exp_date = formatDate (row.exp_date); // "18/01/10"
-                        }else{
-                            var exp_date = " - "
-                        }
-                        t_apprvdamount+=Number(row.aprvd_amount);           //total of amount
-                        var d = new Date();
-                        var current_date = d.getDate();
-                            content3 +="<tr>";
-                            content3 +="<td>"+ ++l +"</td>";
-                            content3 +="<td>"+exp_date+"</td>";
-                            content3 +="<td>"+row.labour_name+"</td>";
-                            if(row.exp_type == "Material_Purchase"){
-                                content3 +="<td> Material Purchase </td>";
-                            }else if(row.exp_type == "Labour_Hired"){
-                                content3 +="<td> Labour Hired </td>";
-                            }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                content3 +="<td>"+row.exp_type+"</td>";
+
+                        if(row.status == 'Approved')
+                        {
+
+                            //date convert into dd/mm/yyyy
+                            function formatDate (input) {
+                                var datePart = input.match(/\d+/g),
+                                year = datePart[0].substring(0), // get only two digits
+                                month = datePart[1], day = datePart[2];
+                                return day+'-'+month+'-'+year;
                             }
-                            content3 +="<td>"+row.exp_desc+"</td>";
-                            if(row.acc_remark != null){
-                                content3 +="<td>"+row.acc_remark+"</td>";
+                            if(row.exp_date != null){
+                                var exp_date = formatDate (row.exp_date); // "18/01/10"
                             }else{
-                                content3 +="<td class='text-center'> - </td>";
+                                var exp_date = " - "
                             }
-                            if(row.sa_remark != null){
-                                content3 +="<td>"+row.sa_remark+"</td>";
-                            }else{
-                                content3 +="<td class='text-center'> - </td>";
-                            }
-                            content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            content3 +="<td>"+row.aprvd_amount+"</td>";
-                            content3 += "</tr>";
+                            t_apprvdamount+=Number(row.aprvd_amount);           //total of amount
+                            var d = new Date();
+                            var current_date = d.getDate();
+                                content3 +="<tr>";
+                                content3 +="<td>"+ ++l +"</td>";
+                                content3 +="<td>"+exp_date+"</td>";
+                                content3 +="<td>"+row.labour_name+"</td>";
+                                content +="<td>"+row.project_admin+"</td>";
 
+                                if(row.exp_type == "Material_Purchase"){
+                                    content3 +="<td> Material Purchase </td>";
+                                }else if(row.exp_type == "Labour_Hired"){
+                                    content3 +="<td> Labour Hired </td>";
+                                }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
+                                    content3 +="<td>"+row.exp_type+"</td>";
+                                }
+                                content3 +="<td>"+row.exp_desc+"</td>";
+                                if(row.acc_remark != null){
+                                    content3 +="<td>"+row.acc_remark+"</td>";
+                                }else{
+                                    content3 +="<td class='text-center'> - </td>";
+                                }
+                                if(row.sa_remark != null){
+                                    content3 +="<td>"+row.sa_remark+"</td>";
+                                }else{
+                                    content3 +="<td class='text-center'> - </td>";
+                                }
 
-                    }
-
-                    if(row.status == 'Cancelled'){
-
-                        //date convert into dd/mm/yyyy
-                        function formatDate (input) {
-                            var datePart = input.match(/\d+/g),
-                            year = datePart[0].substring(0), // get only two digits
-                            month = datePart[1], day = datePart[2];
-                            return day+'-'+month+'-'+year;
+                                content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                                content3 +="<td>"+row.aprvd_amount+"</td>";
+                                content3 += "</tr>";
                         }
-                        if(row.exp_date != null){
-                            var exp_date = formatDate (row.exp_date); // "18/01/10"
-                        }else{
-                            var exp_date = " - "
-                        }
-                        t_calamount+=Number(row.amount);       // total of amount
-                        var d = new Date();
-                        var current_date = d.getDate();
-                            content2 +="<tr>";
-                            content2 +="<td>"+ ++k +"</td>";
-                            content2 +="<td>"+exp_date+"</td>";
-                            content2 +="<td>"+row.labour_name+"</td>";
-                            if(row.exp_type == "Material_Purchase"){
-                                content2 +="<td> Material Purchase </td>";
-                            }else if(row.exp_type == "Labour_Hired"){
-                                content2 +="<td> Labour Hired </td>";
-                            }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                content2 +="<td>"+row.exp_type+"</td>";
-                            }
-                            content2 +="<td>"+row.exp_desc+"</td>";
-                            if(row.acc_remark != null){
-                                content2 +="<td>"+row.acc_remark+"</td>";
-                            }else{
-                                content2 +="<td class='text-center'> - </td>";
-                            }
-                            content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            content2 +="<td>"+row.amount+"</td>";
-                            if(data.role == 0){
-                                content2 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
-                            }
-                            content2 += "</tr>";
 
-                    }
+                        if(row.status == 'Cancelled')
+                        {
+
+                            //date convert into dd/mm/yyyy
+                            function formatDate (input) {
+                                var datePart = input.match(/\d+/g),
+                                year = datePart[0].substring(0), // get only two digits
+                                month = datePart[1], day = datePart[2];
+                                return day+'-'+month+'-'+year;
+                            }
+                            if(row.exp_date != null){
+                                var exp_date = formatDate (row.exp_date); // "18/01/10"
+                            }else{
+                                var exp_date = " - "
+                            }
+
+                            t_calamount+=Number(row.amount);       // total of amount
+                            var d = new Date();
+                            var current_date = d.getDate();
+                                content2 +="<tr>";
+                                content2 +="<td>"+ ++k +"</td>";
+                                content2 +="<td>"+exp_date+"</td>";
+                                content2 +="<td>"+row.labour_name+"</td>";
+                                content +="<td>"+row.project_admin+"</td>";
+
+                                if(row.exp_type == "Material_Purchase"){
+                                    content2 +="<td> Material Purchase </td>";
+                                }else if(row.exp_type == "Labour_Hired"){
+                                    content2 +="<td> Labour Hired </td>";
+                                }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
+                                    content2 +="<td>"+row.exp_type+"</td>";
+                                }
+                                content2 +="<td>"+row.exp_desc+"</td>";
+                                if(row.acc_remark != null){
+                                    content2 +="<td>"+row.acc_remark+"</td>";
+                                }else{
+                                    content2 +="<td class='text-center'> - </td>";
+                                }
+                                content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                                content2 +="<td>"+row.amount+"</td>";
+                                if(data.role == 0){
+                                    content2 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                }
+                                content2 += "</tr>";
+
+                        }
+
+                    });
+
+                    $("#exp_pay_records").html(content); //For append html data
+                    $('#expDatatable').dataTable();
+
+                    $("#cll_records").html(content1); //For append html data
+                    $('#clearedDatatable').dataTable();
+
+                    $("#cal_records").html(content2); //For append html data
+                    $('#cancelDatatable').dataTable();     
                     
-                });
-
-                $("#exp_pay_records").html(content); //For append html data
-                $('#expDatatable').dataTable();
-
-                $("#cll_records").html(content1); //For append html data
-                $('#clearedDatatable').dataTable();
-
-                $("#cal_records").html(content2); //For append html data
-                $('#cancelDatatable').dataTable();     
+                    $("#apprvd_records").html(content3); //For append html data
+                    $('#apprvdDatatable').dataTable(); 
+                    
+                    // ACTIVE PANE AND LINK
+                    $('.nav-tabs a[href="#epayment_list"]').tab('show');
+                        //For Notification
+                        toastr.options.timeOut = 5000;
+                        toastr.options.positionClass = 'toast-top-right';
+                        toastr.options.showEasing= 'swing';
+                        toastr.options.hideEasing= 'linear';
+                        toastr.options.showMethod= 'fadeIn';
+                        toastr.options.hideMethod= 'fadeOut';
+                        toastr.options.closeButton= true;
+                        toastr.success(data.message);
                 
-                $("#apprvd_records").html(content3); //For append html data
-                $('#apprvdDatatable').dataTable();    
+                }else{
+
+                    //For Notification
+                    toastr.options.timeOut = 5000;
+                    toastr.options.positionClass = 'toast-top-right';
+                    toastr.options.showEasing= 'swing';
+                    toastr.options.hideEasing= 'linear';
+                    toastr.options.showMethod= 'fadeIn';
+                    toastr.options.hideMethod= 'fadeOut';
+                    toastr.options.closeButton= true;
+                    toastr.error(data.message);
+                }
             }
         });
     });
@@ -713,223 +793,232 @@
             dataType: 'json',                 
             success:function(data){
                 console.log(data.data);
-                $("#expDatatable").DataTable().destroy();
-                $("#clearedDatatable").DataTable().destroy();
-                $("#cancelDatatable").DataTable().destroy();
-                $("#apprvdDatatable").DataTable().destroy();
-
-                
-                $("#tucledata").show();
-                $("#tclldata").show();
-                $("#tcaldata").show();
-                $("#taprdata").show();
-
-                var t_ucleamount=t_cllamount=t_calamount=t_apprvdamount=0; 
-                content ="";
-                content1 ="";
-                content2 ="";
-                content3 ="";
-                var i=j=k=l= 0;       
-                // $("#labour").empty();            
-                // $("#so").empty();        
-                $.each(data.data,function(index,row){
-
-                    if(row.status == 'Uncleared'){
-                        //date convert into dd/mm/yyyy
-                        function formatDate (input) {
-                            var datePart = input.match(/\d+/g),
-                            year = datePart[0].substring(0), // get only two digits
-                            month = datePart[1], day = datePart[2];
-                            return day+'-'+month+'-'+year;
-                        }
-                        if(row.exp_date != null){
-                            var exp_date = formatDate (row.exp_date); // "18/01/10"
-                        }else{
-                            var exp_date = " - "
-                        }
-                        t_ucleamount+=Number(row.amount);           //total of amount
-                        var d = new Date();
-                        var current_date = d.getDate();
-                            content +="<tr>";
-                            content +="<td>"+ ++i +"</td>";
-                            content +="<td>"+exp_date+"</td>";
-                            content +="<td>"+row.labour_name+"</td>";
-                            if(row.exp_type == "Material_Purchase"){
-                                content +="<td> Material Purchase </td>";
-                            }else if(row.exp_type == "Labour_Hired"){
-                                content +="<td> Labour Hired </td>";
-                            }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                content +="<td>"+row.exp_type+"</td>";
-                            }
-                            content +="<td>"+row.exp_desc+"</td>";
-                            if(row.acc_remark != null){
-                                content +="<td>"+row.acc_remark+"</td>";
-                            }else{
-                                content +="<td class='text-center'> - </td>";
-                            }
-                            
-                            content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            content +="<td>"+row.amount+"</td>";
-                            if(data.role == 1){
-                                content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
-                            }
-                            content += "</tr>";
-
-                    }   
-
-                    if(row.status == 'Cleared'){
-
-                        //date convert into dd/mm/yyyy
-                        function formatDate (input) {
-                            var datePart = input.match(/\d+/g),
-                            year = datePart[0].substring(0), // get only two digits
-                            month = datePart[1], day = datePart[2];
-                            return day+'-'+month+'-'+year;
-                        }
-                        if(row.exp_date != null){
-                            var exp_date = formatDate (row.exp_date); // "18/01/10"
-                        }else{
-                            var exp_date = " - "
-                        }
-
-                        t_cllamount+=Number(row.aprvd_amount);           //total of amount
-
-                        var d = new Date();
-                        var current_date = d.getDate();
-                            content1 +="<tr>";
-                            content1 +="<td>"+ ++j +"</td>";
-                            content1 +="<td>"+exp_date+"</td>";
-                            content1 +="<td>"+row.labour_name+"</td>";
-                            if(row.exp_type == "Material_Purchase"){
-                                content1 +="<td> Material Purchase </td>";
-                            }else if(row.exp_type == "Labour_Hired"){
-                                content1 +="<td> Labour Hired </td>";
-                            }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                content1 +="<td>"+row.exp_type+"</td>";
-                            }
-                            content1 +="<td>"+row.exp_desc+"</td>";
-                            if(row.acc_remark != null){
-                                content1 +="<td>"+row.acc_remark+"</td>";
-                            }else{
-                                content1 +="<td class='text-center'> - </td>";
-                            }
-                            content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            content1 +="<td>"+row.aprvd_amount+"</td>";
-                            if(data.role == 0){
-                                content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
-                            }
-                            content1 += "</tr>";
-                    }
-
-                    if(row.status == 'Approved'){
-
-                        //date convert into dd/mm/yyyy
-                        function formatDate (input) {
-                            var datePart = input.match(/\d+/g),
-                            year = datePart[0].substring(0), // get only two digits
-                            month = datePart[1], day = datePart[2];
-                            return day+'-'+month+'-'+year;
-                        }
-                        if(row.exp_date != null){
-                            var exp_date = formatDate (row.exp_date); // "18/01/10"
-                        }else{
-                            var exp_date = " - "
-                        }
-                        t_apprvdamount+=Number(row.aprvd_amount);           //total of amount
-                        var d = new Date();
-                        var current_date = d.getDate();
-                            content3 +="<tr>";
-                            content3 +="<td>"+ ++l +"</td>";
-                            content3 +="<td>"+exp_date+"</td>";
-                            content3 +="<td>"+row.labour_name+"</td>";
-                            if(row.exp_type == "Material_Purchase"){
-                                content3 +="<td> Material Purchase </td>";
-                            }else if(row.exp_type == "Labour_Hired"){
-                                content3 +="<td> Labour Hired </td>";
-                            }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                content3 +="<td>"+row.exp_type+"</td>";
-                            }
-                            content3 +="<td>"+row.exp_desc+"</td>";
-                            if(row.acc_remark != null){
-                                content3 +="<td>"+row.acc_remark+"</td>";
-                            }else{
-                                content3 +="<td class='text-center'> - </td>";
-                            }
-                            if(row.sa_remark != null){
-                                content3 +="<td>"+row.sa_remark+"</td>";
-                            }else{
-                                content3 +="<td class='text-center'> - </td>";
-                            }
-                            content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            content3 +="<td>"+row.aprvd_amount+"</td>";
-                            content3 += "</tr>";
 
 
-                    }
+                    $("#expDatatable").DataTable().destroy();
+                    $("#clearedDatatable").DataTable().destroy();
+                    $("#cancelDatatable").DataTable().destroy();
+                    $("#apprvdDatatable").DataTable().destroy();
 
-                    if(row.status == 'Cancelled'){
-
-                        //date convert into dd/mm/yyyy
-                        function formatDate (input) {
-                            var datePart = input.match(/\d+/g),
-                            year = datePart[0].substring(0), // get only two digits
-                            month = datePart[1], day = datePart[2];
-                            return day+'-'+month+'-'+year;
-                        }
-                        if(row.exp_date != null){
-                            var exp_date = formatDate (row.exp_date); // "18/01/10"
-                        }else{
-                            var exp_date = " - "
-                        }
-                        t_calamount+=Number(row.amount);       // total of amount
-                        var d = new Date();
-                        var current_date = d.getDate();
-                            content2 +="<tr>";
-                            content2 +="<td>"+ ++k +"</td>";
-                            content2 +="<td>"+exp_date+"</td>";
-                            content2 +="<td>"+row.labour_name+"</td>";
-                            if(row.exp_type == "Material_Purchase"){
-                                content2 +="<td> Material Purchase </td>";
-                            }else if(row.exp_type == "Labour_Hired"){
-                                content2 +="<td> Labour Hired </td>";
-                            }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                content2 +="<td>"+row.exp_type+"</td>";
-                            }
-                            content2 +="<td>"+row.exp_desc+"</td>";
-                            if(row.acc_remark != null){
-                                content2 +="<td>"+row.acc_remark+"</td>";
-                            }else{
-                                content2 +="<td class='text-center'> - </td>";
-                            }
-                            content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                            content2 +="<td>"+row.amount+"</td>";
-                            if(data.role == 0){
-                                content2 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
-                            }
-                            content2 += "</tr>";
-
-                    }
                     
-                });
-                
+                    $("#tucledata").show();
+                    $("#tclldata").show();
+                    $("#tcaldata").show();
+                    $("#taprdata").show();
 
-                $("#exp_pay_records").html(content); //For append html data
-                $('#expDatatable').dataTable();
+                    var t_ucleamount=t_cllamount=t_calamount=t_apprvdamount=0; 
+                    content ="";
+                    content1 ="";
+                    content2 ="";
+                    content3 ="";
+                    var i=j=k=l= 0;       
+                    // $("#labour").empty();            
+                    // $("#so").empty();        
+                    $.each(data.data,function(index,row){
 
-                $("#cll_records").html(content1); //For append html data
-                $('#clearedDatatable').dataTable();
+                        if(row.status == 'Uncleared'){
+                            //date convert into dd/mm/yyyy
+                            function formatDate (input) {
+                                var datePart = input.match(/\d+/g),
+                                year = datePart[0].substring(0), // get only two digits
+                                month = datePart[1], day = datePart[2];
+                                return day+'-'+month+'-'+year;
+                            }
+                            if(row.exp_date != null){
+                                var exp_date = formatDate (row.exp_date); // "18/01/10"
+                            }else{
+                                var exp_date = " - "
+                            }
+                            t_ucleamount+=Number(row.amount);           //total of amount
+                            var d = new Date();
+                            var current_date = d.getDate();
+                                content +="<tr>";
+                                content +="<td>"+ ++i +"</td>";
+                                content +="<td>"+exp_date+"</td>";
+                                content +="<td>"+row.labour_name+"</td>";
+                                content +="<td>"+row.project_admin+"</td>";
+                                if(row.exp_type == "Material_Purchase"){
+                                    content +="<td> Material Purchase </td>";
+                                }else if(row.exp_type == "Labour_Hired"){
+                                    content +="<td> Labour Hired </td>";
+                                }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
+                                    content +="<td>"+row.exp_type+"</td>";
+                                }
+                                content +="<td>"+row.exp_desc+"</td>";
+                                if(row.acc_remark != null){
+                                    content +="<td>"+row.acc_remark+"</td>";
+                                }else{
+                                    content +="<td class='text-center'> - </td>";
+                                }
+                                
+                                content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                                content +="<td>"+row.amount+"</td>";
+                                if(data.role == 1){
+                                    content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                }
+                                content += "</tr>";
 
-                $("#cal_records").html(content2); //For append html data
-                $('#cancelDatatable').dataTable();   
-                
-                $("#apprvd_records").html(content3); //For append html data
-                $('#apprvdDatatable').dataTable();    
-                
-                //table footer
-                $("#t_ucleamount").html(t_ucleamount+".00");
-                $("#t_cllamount").html(t_cllamount+".00");
-                $("#t_calamount").html(t_calamount+".00");
-                $("#t_apprvdamount").html(t_apprvdamount+".00");
+                        }   
+
+                        if(row.status == 'Cleared'){
+
+                            //date convert into dd/mm/yyyy
+                            function formatDate (input) {
+                                var datePart = input.match(/\d+/g),
+                                year = datePart[0].substring(0), // get only two digits
+                                month = datePart[1], day = datePart[2];
+                                return day+'-'+month+'-'+year;
+                            }
+                            if(row.exp_date != null){
+                                var exp_date = formatDate (row.exp_date); // "18/01/10"
+                            }else{
+                                var exp_date = " - "
+                            }
+
+                            t_cllamount+=Number(row.aprvd_amount);           //total of amount
+
+                            var d = new Date();
+                            var current_date = d.getDate();
+                                content1 +="<tr>";
+                                content1 +="<td>"+ ++j +"</td>";
+                                content1 +="<td>"+exp_date+"</td>";
+                                content1 +="<td>"+row.labour_name+"</td>";
+                                content1 +="<td>"+row.project_admin+"</td>";
+                                if(row.exp_type == "Material_Purchase"){
+                                    content1 +="<td> Material Purchase </td>";
+                                }else if(row.exp_type == "Labour_Hired"){
+                                    content1 +="<td> Labour Hired </td>";
+                                }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
+                                    content1 +="<td>"+row.exp_type+"</td>";
+                                }
+                                content1 +="<td>"+row.exp_desc+"</td>";
+                                if(row.acc_remark != null){
+                                    content1 +="<td>"+row.acc_remark+"</td>";
+                                }else{
+                                    content1 +="<td class='text-center'> - </td>";
+                                }
+                                content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                                content1 +="<td>"+row.aprvd_amount+"</td>";
+                                if(data.role == 0){
+                                    content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                }
+                                content1 += "</tr>";
+                        }
+
+                        if(row.status == 'Approved'){
+
+                            //date convert into dd/mm/yyyy
+                            function formatDate (input) {
+                                var datePart = input.match(/\d+/g),
+                                year = datePart[0].substring(0), // get only two digits
+                                month = datePart[1], day = datePart[2];
+                                return day+'-'+month+'-'+year;
+                            }
+                            if(row.exp_date != null){
+                                var exp_date = formatDate (row.exp_date); // "18/01/10"
+                            }else{
+                                var exp_date = " - "
+                            }
+                            t_apprvdamount+=Number(row.aprvd_amount);           //total of amount
+                            var d = new Date();
+                            var current_date = d.getDate();
+                                content3 +="<tr>";
+                                content3 +="<td>"+ ++l +"</td>";
+                                content3 +="<td>"+exp_date+"</td>";
+                                content3 +="<td>"+row.labour_name+"</td>";
+                                content3 +="<td>"+row.project_admin+"</td>";
+
+                                if(row.exp_type == "Material_Purchase"){
+                                    content3 +="<td> Material Purchase </td>";
+                                }else if(row.exp_type == "Labour_Hired"){
+                                    content3 +="<td> Labour Hired </td>";
+                                }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
+                                    content3 +="<td>"+row.exp_type+"</td>";
+                                }
+                                content3 +="<td>"+row.exp_desc+"</td>";
+                                if(row.acc_remark != null){
+                                    content3 +="<td>"+row.acc_remark+"</td>";
+                                }else{
+                                    content3 +="<td class='text-center'> - </td>";
+                                }
+                                if(row.sa_remark != null){
+                                    content3 +="<td>"+row.sa_remark+"</td>";
+                                }else{
+                                    content3 +="<td class='text-center'> - </td>";
+                                }
+                                content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                                content3 +="<td>"+row.aprvd_amount+"</td>";
+                                content3 += "</tr>";
+
+
+                        }
+
+                        if(row.status == 'Cancelled'){
+
+                            //date convert into dd/mm/yyyy
+                            function formatDate (input) {
+                                var datePart = input.match(/\d+/g),
+                                year = datePart[0].substring(0), // get only two digits
+                                month = datePart[1], day = datePart[2];
+                                return day+'-'+month+'-'+year;
+                            }
+                            if(row.exp_date != null){
+                                var exp_date = formatDate (row.exp_date); // "18/01/10"
+                            }else{
+                                var exp_date = " - "
+                            }
+                            t_calamount+=Number(row.amount);       // total of amount
+                            var d = new Date();
+                            var current_date = d.getDate();
+                                content2 +="<tr>";
+                                content2 +="<td>"+ ++k +"</td>";
+                                content2 +="<td>"+exp_date+"</td>";
+                                content2 +="<td>"+row.labour_name+"</td>";
+                                content2 +="<td>"+row.project_admin+"</td>";
+
+                                if(row.exp_type == "Material_Purchase"){
+                                    content2 +="<td> Material Purchase </td>";
+                                }else if(row.exp_type == "Labour_Hired"){
+                                    content2 +="<td> Labour Hired </td>";
+                                }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
+                                    content2 +="<td>"+row.exp_type+"</td>";
+                                }
+                                content2 +="<td>"+row.exp_desc+"</td>";
+                                if(row.acc_remark != null){
+                                    content2 +="<td>"+row.acc_remark+"</td>";
+                                }else{
+                                    content2 +="<td class='text-center'> - </td>";
+                                }
+                                content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                                content2 +="<td>"+row.amount+"</td>";
+                                if(data.role == 0){
+                                    content2 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                }
+                                content2 += "</tr>";
+
+                        }
+                        
+                    });
+                    
+
+                    $("#exp_pay_records").html(content); //For append html data
+                    $('#expDatatable').dataTable();
+
+                    $("#cll_records").html(content1); //For append html data
+                    $('#clearedDatatable').dataTable();
+
+                    $("#cal_records").html(content2); //For append html data
+                    $('#cancelDatatable').dataTable();   
+                    
+                    $("#apprvd_records").html(content3); //For append html data
+                    $('#apprvdDatatable').dataTable();    
+                    
+                    //table footer
+                    $("#t_ucleamount").html(t_ucleamount+".00");
+                    $("#t_cllamount").html(t_cllamount+".00");
+                    $("#t_calamount").html(t_calamount+".00");
+                    $("#t_apprvdamount").html(t_apprvdamount+".00");
+
             }
         });
     }

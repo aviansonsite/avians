@@ -32,11 +32,20 @@ class LabourPaymentController extends Controller
     {
     	$a_id=Session::get('USER_ID');
 
+        $us_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+
         $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$a_id])->orderby('created_at','DESC')->get();
         $l_obj = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->orderby('updated_at','DESC')->get();
-        $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+        $s_obj=SOModel::where(['delete'=>0,'lead_technician'=>$a_id])->orderby('created_at','DESC')->get();
         $data = TransferPaymentModel::where(['delete'=>0,'u_id'=>$a_id])->orderby('updated_at','DESC')->get();
 
+        $s_obj1=DB::table('oa_tl_history as oth')
+        ->leftjoin('users as u','u.id','oth.lead_technician')
+        ->leftjoin('sales_orders as so','so.id','oth.so_id')
+        ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
+        ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+        ->orderby('oth.updated_at','DESC')
+        ->get();
         // Avians account Payment
         $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->sum('payment_amnt');
         // fot - from other technician
@@ -81,7 +90,7 @@ class LabourPaymentController extends Controller
             $l->s_obj = $so_obj;
         }
 
-        return view('labour.labourDashboard',compact('u_obj','l_obj','s_obj','data','accountant_payment','fot','total_wallet','technician_expenses','ttot','total_expense','cleared_pay','uncleared_pay','balance','total_tech_expense'));
+        return view('labour.labourDashboard',compact('u_obj','l_obj','s_obj','s_obj1','data','accountant_payment','fot','total_wallet','technician_expenses','ttot','total_expense','cleared_pay','us_obj','uncleared_pay','balance','total_tech_expense'));
 
     }
 
@@ -99,9 +108,17 @@ class LabourPaymentController extends Controller
 
             $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$a_id])->orderby('created_at','DESC')->get();
             $l_obj = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->orderby('updated_at','DESC')->get();
-            $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+            // $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
             // $data = TransferPaymentModel::where(['delete'=>0,'u_id'=>$a_id])->orderby('updated_at','DESC')->get();
-    
+            
+            $s_obj=DB::table('oa_tl_history as oth')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
+            ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            ->orderby('oth.updated_at','DESC')
+            ->get();
+            
             // Avians account Payment
             $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->sum('payment_amnt');
             // fot - from other technician
@@ -304,8 +321,17 @@ class LabourPaymentController extends Controller
 
     	$u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$a_id])->orderby('created_at','DESC')->get();
         $l_obj = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->orderby('updated_at','DESC')->get();
-        $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+        $s_obj=SOModel::where(['delete'=>0,'lead_technician'=>$a_id])->orderby('created_at','DESC')->get();
         $data = TransferPaymentModel::where(['delete'=>0,'u_id'=>$a_id])->orderby('updated_at','DESC')->get();
+
+        $us_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+        $s_obj1=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
+                ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('oth.updated_at','DESC')
+                ->get();
 
         // Avians account Payment
         $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->sum('payment_amnt');
@@ -341,7 +367,7 @@ class LabourPaymentController extends Controller
             $l->s_obj = $so_obj;
         }
 
-        return view('labour.expense',compact('u_obj','l_obj','s_obj','data','accountant_payment','fot','total_wallet','technician_expenses','ttot','total_expense','cleared_pay','uncleared_pay','balance'));
+        return view('labour.expense',compact('u_obj','l_obj','s_obj','us_obj','s_obj1','data','accountant_payment','fot','total_wallet','technician_expenses','ttot','total_expense','cleared_pay','uncleared_pay','balance'));
 
     }
 
@@ -356,7 +382,7 @@ class LabourPaymentController extends Controller
         $s_obj=DB::table('oa_tl_history as oth')
             ->leftjoin('users as u','u.id','oth.lead_technician')
             ->leftjoin('sales_orders as so','so.id','oth.so_id')
-            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
             ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
             ->orderby('oth.updated_at','DESC')
             ->get();
@@ -369,6 +395,15 @@ class LabourPaymentController extends Controller
             ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
             ->orderby('oth.updated_at','DESC')
             ->get();
+
+        $us_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+        $s_obj1=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
+                ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('oth.updated_at','DESC')
+                ->get();
 
         $data = TransferPaymentModel::where(['delete'=>0,'u_id'=>$a_id])->orderby('updated_at','DESC')->get();
 
@@ -406,7 +441,7 @@ class LabourPaymentController extends Controller
             $l->s_obj = $so_obj;
         }
 
-        return view('labour.transferTechnician',compact('u_obj','l_obj','s_obj','data'));
+        return view('labour.transferTechnician',compact('u_obj','l_obj','s_obj','data','s_obj1','us_obj'));
 
     }
 
@@ -492,12 +527,14 @@ class LabourPaymentController extends Controller
             $u_obj=DB::table('oa_tl_history as oth')
             ->leftjoin('users as u','u.id','oth.lead_technician')
             ->leftjoin('sales_orders as so','so.id','oth.so_id')
-            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
             ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
             ->orderby('oth.updated_at','DESC')
             ->get();
             //SO data
             $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+            
+
 
             if(!empty($data)){
                 return json_encode(array('status' => true ,'data' => $data,'u_obj' => $u_obj,'s_obj' => $s_obj ,'role'=>$role ,'message' => 'Data Found'));
@@ -593,7 +630,7 @@ class LabourPaymentController extends Controller
         $a_id=Session::get('USER_ID');
         $from_date = $req->get('from_date');
         $to_date = $req->get('to_date');
-
+        $role=Session::get('ROLES');
         if ($from_date == null && $to_date == null) 
         {
             $data = TransferPaymentModel::where(['delete'=>0,'a_id'=>$a_id])->orderby('updated_at','DESC')->get();
@@ -604,29 +641,37 @@ class LabourPaymentController extends Controller
             }
 
             // User Data
-            $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,])->where('id', '!=', $a_id)->orderby('created_at','DESC')->get();
+            // $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,])->where('id', '!=', $a_id)->orderby('created_at','DESC')->get();
             //SO data
             // $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
 
             $s_obj=DB::table('oa_tl_history as oth')
                 ->leftjoin('users as u','u.id','oth.lead_technician')
                 ->leftjoin('sales_orders as so','so.id','oth.so_id')
-                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
                 ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
                 ->orderby('so.updated_at','DESC')
                 ->get();
+        
+            $u_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active','u.created_at')
+                ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('u.created_at','ASC')
+                ->get();    
 
             // $u_obj=DB::table('oa_tl_history as oth')
             //     ->leftjoin('users as u','u.id','oth.lead_technician')
             //     ->leftjoin('sales_orders as so','so.id','oth.so_id')
             //     ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.id as u_id','u.name','u.delete as u_delete','u.is_active')
             //     ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
-            //     ->where('u.id', '!=', $a_id)
+            //     
             //     ->orderby('oth.updated_at','DESC')
             //     ->get();
 
             if(!empty($data)){
-                return json_encode(array('status' => true ,'data' => $data,'u_obj' => $u_obj,'s_obj' => $s_obj ,'message' => 'Data Found'));
+                return json_encode(array('status' => true ,'data' => $data,'u_obj' => $u_obj,'s_obj' => $s_obj ,'a_id' => $a_id ,'message' => 'Data Found'));
             }else{
             return ['status' => false, 'message' => 'No Data Found'];
             }
@@ -640,7 +685,7 @@ class LabourPaymentController extends Controller
             }
 
             // User Data
-            $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,])->where('id', '!=', $a_id)->orderby('created_at','DESC')->get();
+            // $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,])->where('id', '!=', $a_id)->orderby('created_at','DESC')->get();
             //SO data
             // $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
             $s_obj=DB::table('oa_tl_history as oth')
@@ -651,6 +696,13 @@ class LabourPaymentController extends Controller
                 ->orderby('so.updated_at','DESC')
                 ->get();
 
+                 $u_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active','u.created_at')
+                ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('u.created_at','ASC')
+                ->get(); 
             if(!empty($data)){
                 return json_encode(array('status' => true ,'data' => $data,'u_obj' => $u_obj,'s_obj' => $s_obj,'fdate' =>$from_date ,'message' => 'Data Found'));
             }else{
@@ -866,7 +918,7 @@ class LabourPaymentController extends Controller
             $s_obj=DB::table('oa_tl_history as oth')
             ->leftjoin('users as u','u.id','oth.lead_technician')
             ->leftjoin('sales_orders as so','so.id','oth.so_id')
-            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
             ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
             ->orderby('oth.updated_at','DESC')
             ->get();
@@ -944,19 +996,32 @@ class LabourPaymentController extends Controller
             if($role == 0){
                 $data=DB::table('technician_expenses as te')
                 ->leftjoin('users as u','u.id','te.a_id')
-                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount')
+                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount')
                 ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
                 ->orderby('u.created_at','DESC')
                 ->get();
+
+                foreach($data as $d){
+                    $u_obj=UserModel::where(['delete'=>0,'id'=>$d->u_a_id])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                    foreach($u_obj as $u){
+                        $d->project_admin = $u->name;
+                    }
+                }
     
             }else{
+
                 $data=DB::table('technician_expenses as te')
                 ->leftjoin('users as u','u.id','te.a_id')
-                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount')
+                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount')
                 ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'u.a_id'=>$a_id])
                 ->orderby('u.created_at','DESC')
                 ->get();
-    
+                foreach($data as $d){
+                    $u_obj=UserModel::where(['delete'=>0,'id'=>$d->u_a_id])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                    foreach($u_obj as $u){
+                        $d->project_admin = $u->name;
+                    }
+                }
             }
 
            
@@ -982,17 +1047,33 @@ class LabourPaymentController extends Controller
 
         }else{
 
-            $data = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$labours])->whereDate('exp_date', '>=' ,$from_date)->whereDate('exp_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
-            foreach($data as $d){
-                $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
-                foreach($u_obj as $u){
-                    $d->labour_name = $u->name;
-                    $d->emp_number = $u->emp_number;
+            $data=DB::table('technician_expenses as te')
+                ->leftjoin('users as u','u.id','te.a_id')
+                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount')
+                ->whereDate('exp_date', '>=' ,$from_date)
+                ->whereDate('exp_date', '<=' ,$to_date)
+                ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'te.a_id'=>$labours])
+                ->orderby('u.created_at','DESC')
+                ->get();
 
+            foreach($data as $d){
+                $u_obj=UserModel::where(['delete'=>0,'id'=>$d->u_a_id])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $d->project_admin = $u->name;
                 }
             }
 
-            if(!empty($data)){
+            // $data = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$labours])->whereDate('exp_date', '>=' ,$from_date)->whereDate('exp_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+            // foreach($data as $d){
+            //     $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
+            //     foreach($u_obj as $u){
+            //         $d->labour_name = $u->name;
+            //         $d->emp_number = $u->emp_number;
+
+            //     }
+            // }
+
+            if(count($data)>0){
                 return json_encode(array('status' => true ,'data' => $data,'role'=> $role,'message' => 'Data Found'));
             }else{
                 return ['status' => false, 'message' => 'No Data Found'];
@@ -1066,13 +1147,31 @@ class LabourPaymentController extends Controller
         $a_id=Session::get('USER_ID');
         if($role == 0){
     	    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+    	    $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+            $us_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+            $s_obj1=DB::table('oa_tl_history as oth')
+                    ->leftjoin('users as u','u.id','oth.lead_technician')
+                    ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                    ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
+                    ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                    ->orderby('oth.updated_at','DESC')
+                    ->get();
 
         }else{
     	    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'a_id'=>$a_id])->orderby('created_at','DESC')->get();
+    	    $s_obj=SOModel::where(['delete'=>0,'lead_technician'=>$a_id])->orderby('created_at','DESC')->get();
+            $us_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+            $s_obj1=DB::table('oa_tl_history as oth')
+                    ->leftjoin('users as u','u.id','oth.lead_technician')
+                    ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                    ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
+                    ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                    ->orderby('oth.updated_at','DESC')
+                    ->get();
 
+       
         }
-    	$s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
-    	return view('labour.travelExpense',compact('u_obj','s_obj'));
+    	return view('labour.travelExpense',compact('u_obj','s_obj','us_obj','s_obj1'));
 
     }
 
@@ -1214,36 +1313,42 @@ class LabourPaymentController extends Controller
                     }
                 }
 
-                $s_obj=DB::table('oa_tl_history as oth')
+            $s_obj=DB::table('oa_tl_history as oth')
                 ->leftjoin('users as u','u.id','oth.lead_technician')
                 ->leftjoin('sales_orders as so','so.id','oth.so_id')
-                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
                 ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
                 ->orderby('oth.updated_at','DESC')
                 ->get();
 
             }else
             {
-                
                 if($role == 0){
                     
                     $date = Carbon::now()->subDays(60);  // get last 7 days record
-                    $data = TravelExpenseModel::where(['delete'=>0])->where('created_at', '>=', $date)->orderby('updated_at','DESC')->get();
+
+                    $data=DB::table('travel_expenses as te')
+                        ->leftjoin('users as u','u.id','te.a_id')
+                        ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id','u.emp_number','u.a_id as u_a_id','te.id','te.oth_id','te.ad_id','te.sa_id','te.mode_travel','te.from_location','te.to_location','te.total_km','te.travel_date','te.travel_desc','te.ad_remark','te.sa_remark','te.attachment','te.no_of_person','te.travel_amount','te.aprvd_amount','te.status','te.a_id','te.delete','te.created_at')
+                        ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                        ->where('te.created_at', '>=', $date)
+                        ->orderby('te.updated_at','DESC')
+                        ->get();
+
                     foreach($data as $d)
                     {
-                        $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
-                        foreach($u_obj as $u)
-                        {
-                            $d->labour_name = $u->name;
-                            $d->emp_number = $u->emp_number;
-        
+                        
+                        $u_obj=UserModel::where(['delete'=>0,'id'=>$d->u_a_id])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                        foreach($u_obj as $u){
+                            $d->project_admin = $u->name;
                         }
                     }
 
-                    $s_obj=DB::table('oa_tl_history as oth')
+
+                $s_obj=DB::table('oa_tl_history as oth')
                     ->leftjoin('users as u','u.id','oth.lead_technician')
                     ->leftjoin('sales_orders as so','so.id','oth.so_id')
-                    ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+                    ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
                     ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
                     ->orderby('oth.updated_at','DESC')
                     ->get();
@@ -1252,17 +1357,7 @@ class LabourPaymentController extends Controller
                 }else{
                     
                     $date = Carbon::now()->subDays(60);  // get last 7 days record
-                    // $data = TravelExpenseModel::where(['delete'=>0])->where('created_at', '>=', $date)->orderby('updated_at','DESC')->get();
-                    // foreach($data as $d)
-                    // {
-                    //     $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
-                    //     foreach($u_obj as $u)
-                    //     {
-                    //         $d->labour_name = $u->name;
-                    //         $d->emp_number = $u->emp_number;
-        
-                    //     }
-                    // }
+
 
                     $data=DB::table('travel_expenses as te')
                         ->leftjoin('users as u','u.id','te.a_id')
@@ -1276,7 +1371,7 @@ class LabourPaymentController extends Controller
                     $s_obj=DB::table('oa_tl_history as oth')
                     ->leftjoin('users as u','u.id','oth.lead_technician')
                     ->leftjoin('sales_orders as so','so.id','oth.so_id')
-                    ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active','u.a_id')
+                    ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active','u.a_id')
                     ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
                     ->orderby('oth.updated_at','DESC')
                     ->get();  
@@ -1316,15 +1411,34 @@ class LabourPaymentController extends Controller
             }else{
 
                 if($role == 0){
-                    $data = TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours])->whereDate('travel_date', '>=' ,$from_date)->whereDate('travel_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
-                    foreach($data as $d){
-                        $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
+
+                    $data=DB::table('travel_expenses as te')
+                        ->leftjoin('users as u','u.id','te.a_id')
+                        ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id','u.emp_number','u.a_id as u_a_id','te.id','te.oth_id','te.ad_id','te.sa_id','te.mode_travel','te.from_location','te.to_location','te.total_km','te.travel_date','te.travel_desc','te.ad_remark','te.sa_remark','te.attachment','te.no_of_person','te.travel_amount','te.aprvd_amount','te.status','te.a_id','te.delete','te.created_at')
+                        ->whereDate('travel_date', '>=' ,$from_date)
+                        ->whereDate('travel_date', '<=' ,$to_date)
+                        ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'te.a_id'=>$labours])
+                        ->orderby('te.updated_at','DESC')
+                        ->get();
+
+                    foreach($data as $d)
+                    {
+                        
+                        $u_obj=UserModel::where(['delete'=>0,'id'=>$d->u_a_id])->where('role','!=','0')->orderby('created_at','DESC')->get();
                         foreach($u_obj as $u){
-                            $d->labour_name = $u->name;
-                            $d->emp_number = $u->emp_number;
-        
+                            $d->project_admin = $u->name;
                         }
                     }
+
+                    // $data = TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours])->whereDate('travel_date', '>=' ,$from_date)->whereDate('travel_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+                    // foreach($data as $d){
+                    //     $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
+                    //     foreach($u_obj as $u){
+                    //         $d->labour_name = $u->name;
+                    //         $d->emp_number = $u->emp_number;
+        
+                    //     }
+                    // }
 
                     $s_obj=DB::table('oa_tl_history as oth')
                     ->leftjoin('users as u','u.id','oth.lead_technician')

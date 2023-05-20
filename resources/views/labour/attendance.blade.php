@@ -91,6 +91,15 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
+                <div class="card-header">
+                        <div class="text-muted">
+                            @foreach($s_obj as $s)
+                                <div>
+                                    <strong>OA Number : </strong>{{$s->so_number}} , <strong>Project Name : </strong>{{$s->project_name}} , <strong>Client Name : </strong>{{$s->client_name}} , <strong>Address : </strong>{{$s->address}}
+                                </div>                        
+                            @endforeach
+                        </div>
+                    </div>
                     <div class="card-body">
                         <div class="d-sm-flex flex-wrap">     
                            <h4 class="card-title mb-4">Attendance Management</h4>
@@ -548,6 +557,185 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<!-- punch in history modal content -->
+<div id="pinhistryModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Punch In History</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        <div class="form-group mb-3">
+                            <label for="p_in_soh" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA<sup class="text-danger">*</sup></label>
+                            <select class="form-control select2" id="p_in_soh" required name="p_in_soh" disabled>
+                            @foreach($s_obj1 as $so)
+                                <option value="{{$so->oth_id}}">{{$so->so_number}}</option>
+                            @endforeach
+                            </select>
+                            <span class="text-danger error" id="esoerror"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        <div class="form-group mb-3">
+                            <label for="p_in_labourh" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician<sup class="text-danger">*</sup></label>
+                            <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="p_in_labourh" name="p_in_labourh[]" placeholder="Select Technician" disabled>
+                                <option value="all">All</option>
+                                @foreach($us_obj as $u)
+                                    <option value="{{$u->id}}">{{$u->name}}</option>
+                                @endforeach
+                            </select>
+                            <span class="text-danger error" id="lerror"></span>
+                        </div>
+                    </div>
+                      
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        <div class="form-group mb-3">
+                            <label for="p_in_remarkh">Enter Remark</label>
+                            <textarea class="form-control" id="p_in_remarkh" placeholder="Enter Remark" name="p_in_remarkh" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" readonly rows="3"></textarea>
+                            <span class="text-danger error" id="pderror"></span>
+
+                        </div>
+                    </div>
+                    <!-- <div class="col-md-12 col-sm-12 col-lg-12">
+                        <div class="form-group mb-3">
+                            <textarea class="form-control" id="p_in_work_desc" placeholder="Enter Work Description" required name="p_in_work_desc" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100"></textarea>
+                            <label for="p_in_work_desc">Work Description</label>
+                            <span class="text-danger error" id="pderror"></span>
+
+                        </div>
+                    </div> -->
+                    <?php $tdate=date("Y-m-d");?>
+                    <div class="col-md-6 col-sm-12 col-lg-6">
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control" id="p_in_dateh" placeholder="Punch In Date" name="p_in_dateh" required max="{{$tdate}}" value="{{$tdate}}" readonly>
+                            <label for="p_in_dateh">Date<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="pdaerror"></span>
+                        </div>
+                    </div>
+                  
+                    <div class="col-md-6 col-sm-12 col-lg-6">
+                        <a href="" id="attachment1" target="_blank"><i class="fa fa-eye"></i> View Photo</a>
+                    </div>
+
+                    <div class="col-md-6 col-sm-12 col-lg-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="p_in_latitudeh" placeholder="Latitude" name="p_in_latitudeh" maxlength="10" required readonly>
+                            <label for="p_in_latitudeh">Latitude<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="uaerror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-lg-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="p_in_longitudeh" placeholder="Longitude" name="p_in_longitudeh" maxlength="10" required readonly>
+                            <label for="p_in_longitudeh">Longitude<sup class="text-danger">*</sup></label>
+                            <!-- <span class="text-danger error" id="uaerror"></span> -->
+                        </div>
+                    </div>
+                    <!-- <p id="demo"></p> -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!-- OA history modal content -->
+<div id="oaHistoryModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">OA History</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 col-lg-6">
+                        <div class="form-group mb-3">
+                            <label for="labours" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Lead Technician Support<sup class="text-danger">*</sup></label>
+                            <select class="form-control select2" id="labours" required name="labours" disabled>
+                            @foreach($us_obj as $u)
+                                <option value="{{$u->id}}">{{$u->name}}</option>
+                            @endforeach
+                            </select>
+                            <span class="text-danger error" id="lerror"></span>
+                            
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-lg-6">
+                        <div class="form-group mb-3">
+                            <label for="oa_hit" class="form-label" style="font-size: 11px;margin-bottom: 2px;">OA Number<sup class="text-danger">*</sup></label>
+                            <select class="form-control select2" id="oa_hit" required name="oa_hit" disabled>
+                            @foreach($s_obj1 as $so)
+                                <option value="{{$so->oth_id}}">{{$so->so_number}}</option>
+                            @endforeach
+                            </select>
+                            <span class="text-danger error" id="esoerror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="client_name" placeholder="Enter Client Name" name="client_name" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50" disabled>
+                            <label for="client_name">Client Name<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="cnerror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="project_name" placeholder="Enter Project Name" name="project_name" required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50" disabled>
+                            <label for="project_name">Project Name<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="pnerror"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="cp_name" placeholder="Enter CP Name" name="cp_name"required onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="50" disabled>
+                            <label for="cp_name">CP Name<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="cpnerror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="cp_ph_no" placeholder="Enter CP Phone" name="cp_ph_no" required maxlength="10" disabled>
+                            <label for="cp_ph_no">CP Phone<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="cpperror"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-sm-12 col-lg-8">
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" id="address" placeholder="Enter Address" required name="address" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" disabled></textarea>
+                            <label for="address">Project Address<sup class="text-danger">*</sup></label>
+                            <span class="text-danger error" id="aerror"></span>
+
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        <div class="form-group mb-3">
+                            <label for="labour" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Support Technician<sup class="text-danger">*</sup></label>
+                            <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="labour" name="labour[]" placeholder="Support Technician" disabled>
+                             @foreach($us_obj as $u)
+                                    <option value="{{$u->id}}">{{$u->name}}</option>
+                                @endforeach
+                            </select>
+                            <span class="text-danger error" id="slerror"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 @include('common.delete_modal')    
 @stop
 @push('datatable_js')
@@ -578,8 +766,13 @@
         $('#p_in_soh,#p_in_labourh').select2({ 
             dropdownParent: $('#pinhistryModal') 
         });
+
         $('#pout_soh,#pout_labourh').select2({ 
             dropdownParent: $('#pouthistryModal') 
+        });
+
+        $('#labour,#labours,#oa_hit').select2({ 
+            dropdownParent: $('#oaHistoryModal') 
         });
     });
     var $body = $("body");
@@ -878,9 +1071,34 @@
                     // $('#edit_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
                     $('#p_in_so').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
                     // $('#p_in_soh').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
-                    
                     $('#pout_so').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
                     // $('#pout_soh').append("<option value='"+row.oth_id+"' selected>"+row.so_number+"</option>");
+  
+                    $('#client_name').val(row.client_name); 
+                    $('#project_name').val(row.project_name); 
+                    $('#address').val(row.address); 
+                    $('#cp_name').val(row.cp_name); 
+                    $('#cp_ph_no').val(row.cp_ph_no);
+
+
+                    var r=new Array();
+                    if (row.labour.toString().indexOf(',')>-1)
+                    { 
+                        var r=row.labour.split(',');
+                    }
+                    else
+                    {
+                        r[0]=row.labour.toString();
+                    }
+
+                    $.each(r,function(index,value)
+                    {
+                        $("#labour option[value='"+value+"']").attr('selected','selected').change();
+                    });
+
+                    $("#labours option[value='"+row.lead_technician+"']").attr('selected','selected').change();   
+
+
                 });
 
                 $.each(data.u_obj,function(index,row){
@@ -1024,6 +1242,7 @@
         $('#pinhistryModal').modal('show');
 
     });
+
 
     //For punch out history modal
     $(document).on("click",'.pouthistry',function()
