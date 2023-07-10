@@ -4,7 +4,7 @@
     $role=explode(',',$roles);
     $count=count($role);
 ?>
-@section('title',"OA Management | $title")
+@section('title',"Visit OA Management | $title")
 @push('datatable_css')
 {!! Html::style('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') !!}
 @endpush
@@ -77,7 +77,7 @@
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item active">Dashboard</li>
+                            <!-- <li class="breadcrumb-item active">Dashboard</li> -->
                         </ol>
                     </div>
                 </div>
@@ -88,7 +88,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-sm-flex flex-wrap">     
-                           <h4 class="card-title mb-4">OA Management</h4>
+                           <h4 class="card-title mb-4">Visit OA Management</h4>
                            <div class="ms-auto">
                                 <!-- <button type="button" class="btn btn-primary btn-sm waves-effect waves-light w-sm" data-bs-toggle="modal" data-bs-target="#addModal" style="margin-left: 10px;">
                                 <i class="mdi mdi-plus font-size-11"></i> Add OA
@@ -136,12 +136,12 @@
                                                 @endif
                                                 <th scope="col" style="width: 100px">Status</th>
                                                 <th scope="col" style="width: 100px">Project Admin</th>
-                                                <th scope="col" style="width: 100px">Lead Technician</th>
                                                 <th scope="col" style="width: 100px">Client Name</th>
                                                 <th scope="col" style="width: 100px">Project Name</th>
                                                 <th scope="col" style="width: 100px">Project Address</th>
                                                 <th scope="col" style="width: 100px">Client Person</th>
                                                 <th scope="col" style="width: 100px">Client Phone No</th>
+                                               
                                             </tr>
                                         </thead>
                                         <tbody id="so_records">
@@ -181,7 +181,7 @@
 
                                     <input type="hidden" name="edit_id" id="edit_id" value="">
                                     <input type="hidden" name="role" id="role" value="{{$roles}}">
-                                    <input type="hidden" name="oa_type" id="oa_type" value="normal">
+                                    <input type="hidden" name="oa_type" id="oa_type" value="visit">
                                     <div class="row">
                                         <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-group mb-3">
@@ -267,7 +267,8 @@
             </div>
         </div>
     </div>
-</div>    
+</div>  
+
 <!-- Remove TL Modal -->
 <div id="remove_tl_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm">
@@ -383,7 +384,7 @@
                 var i=j= 0;        
                 $("#labour").empty();         
                 $.each(data.data,function(index,row){
-                    if(row.oa_type == 1 )
+                    if(row.oa_type == 0)
                     {
                         if(row.oth_status == 1 )
                         {
@@ -406,7 +407,6 @@
                                 content +="<td><span class='badge badge-soft-danger'>IN-ACTIVE</span></td>";
                             }
                             content +="<td>"+row.name+"</td>";
-                            content +="<td>"+row.lead_technician_name+"</td>";
                             content +="<td>"+row.client_name+"</td>";
                             content +="<td>"+row.project_name+"</td>";
                             content +="<td>"+row.address+"</td>";
@@ -496,7 +496,7 @@
                     }else{
                         $(".lerror_msg").show();     // on labour change check status
                         $(".labour_change").hide();     // on labour change 
-                        $("#lerror_msg").html("This Technician Already Exist in <strong>"+data.oa_status+" - "+data.oa_number+"</strong> ,Please Select Another Technician For Further Process.");
+                        $("#lerror_msg").html("This Technician Already Exist in <strong>"+data.oa_number+"</strong> ,Please Select Another OA For Further Operation.");
                     }
                 }else{
                     if (((data.count == 1) && (data.so_id == data.d_so_id)) || ((data.count == 0) && (data.d_so_id == 0)) ) 
@@ -507,7 +507,7 @@
                     }else{
                         $(".lerror_msg").show();     // on labour change check status
                         $(".labour_change").hide();     // on labour change 
-                        $("#lerror_msg").html("This Technician Already Exist in <strong>"+data.oa_status+" - "+data.oa_number+"</strong> ,Please Select Another Technician For Further Process.");
+                        $("#lerror_msg").html("This Technician Already Exist in <strong>"+data.oa_number+"</strong> ,Please Select Another OA For Further Operation.");
                     }
                 }
                  
@@ -827,7 +827,6 @@
         
     });
 
-
     //  Remove TL
     $(document).on("click",'.removeTL',function()
     {
@@ -844,5 +843,6 @@
         // $('#remove_tl_modal form').attr("action","remove_tl/"+id);
         $('#remove_tl_modal').modal('show');
     });
+
 </script>
 @endpush

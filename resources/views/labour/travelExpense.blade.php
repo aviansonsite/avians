@@ -91,7 +91,7 @@
                             <div class="text-muted">
                                 @foreach($s_obj as $s)
                                     <div>
-                                        <strong>OA Number : </strong>{{$s->so_number}} , <strong>Project Name : </strong>{{$s->project_name}} , <strong>Client Name : </strong>{{$s->client_name}} , <strong>Address : </strong>{{$s->address}}
+                                        <strong>OA Number : </strong>{{$s->so_number}} , <strong>Client Name : </strong>{{$s->client_name}} , <strong>Project Name : </strong>{{$s->project_name}}
                                     </div>                        
                                 @endforeach
                             </div>
@@ -135,8 +135,8 @@
                                     @if($roles == 1 || $roles == 0)
                                         <div class="col-md-3 col-sm-12 col-lg-3">
                                             <div class="form-group mb-3">
-                                                <label for="labours" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician <sup class="text-danger">*</sup></label>
-                                                <select class="form-control select2" id="labours" required name="labours">
+                                                <label for="slabours" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician <sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="slabours" required name="slabours">
                                                     <option value="" disabled selected>Select</option>
                                                     @foreach($u_obj as $u)
                                                         <option value="{{$u->id}}">{{$u->name}}</option>
@@ -174,16 +174,17 @@
                             <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#calpayment" role="tab">
                                     <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
-                                    <span class="d-none d-sm-block">Cancelled Payment List</span> 
+                                    <span class="d-none d-sm-block">Disapproved Payment List</span> 
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#update_epayment" role="tab">
-                                    <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
-                                    <span class="d-none d-sm-block">ADD / Update Travel Expense</span> 
-                                </a>
-                            </li>
-                      
+                            @if($roles == 3)
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#update_epayment" role="tab">
+                                        <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                        <span class="d-none d-sm-block">ADD / Update Travel Expense</span> 
+                                    </a>
+                                </li>
+                            @endif
                         </ul>
                         <div class="tab-content p-3 text-muted">
                             <div class="tab-pane active" id="ucpayment_list" role="tabpanel">
@@ -198,6 +199,9 @@
                                                     <th scope="col" style="width: 100px">Action</th>
                                                 @endif
                                                 @if($roles != 3)
+                                                    <th scope="col" style="width: 100px">OA Number</th>
+                                                    <th scope="col" style="width: 100px">Client Name</th>
+                                                    <th scope="col" style="width: 100px">Project Name</th>
                                                     <th scope="col" style="width: 100px">Technician Name</th>
                                                     <th scope="col" style="width: 100px">Project Admin</th>
                                                 @endif
@@ -237,6 +241,9 @@
                                                     <th scope="col" style="width: 100px">Action</th>
                                                 @endif
                                                 @if($roles != 3)
+                                                    <th scope="col" style="width: 100px">OA Number</th>
+                                                    <th scope="col" style="width: 100px">Client Name</th>
+                                                    <th scope="col" style="width: 100px">Project Name</th>
                                                     <th scope="col" style="width: 100px">Technician Name</th>
                                                     <th scope="col" style="width: 100px">Project Admin</th>
                                                 @endif
@@ -274,6 +281,9 @@
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">Travel Date</th>
                                                 @if($roles != 3)
+                                                    <th scope="col" style="width: 100px">OA Number</th>
+                                                    <th scope="col" style="width: 100px">Client Name</th>
+                                                    <th scope="col" style="width: 100px">Project Name</th>
                                                     <th scope="col" style="width: 100px">Technician Name</th>
                                                     <th scope="col" style="width: 100px">Project Admin</th>
                                                 @endif
@@ -312,6 +322,9 @@
                                                     <th scope="col">Action</th>
                                                 @endif
                                                 @if($roles != 3)
+                                                    <th scope="col" style="width: 100px">OA Number</th>
+                                                    <th scope="col" style="width: 100px">Client Name</th>
+                                                    <th scope="col" style="width: 100px">Project Name</th>
                                                     <th scope="col" style="width: 100px">Technician Name</th>
                                                     <th scope="col" style="width: 100px">Project Admin</th>
                                                 @endif
@@ -372,14 +385,14 @@
                                         </div>
                                         <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="from_location" placeholder="From Location" name="from_location" maxlength="10" required>
+                                                <input type="text" class="form-control" id="from_location" placeholder="From Location" name="from_location" maxlength="200" required>
                                                 <label for="from_location">From Location<sup class="text-danger">*</sup></label>
                                                 <span class="text-danger error" id="flerror"></span>
                                             </div>
                                         </div>
                                         <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="to_location" placeholder="To Location" name="to_location" maxlength="10" required>
+                                                <input type="text" class="form-control" id="to_location" placeholder="To Location" name="to_location" maxlength="200" required>
                                                 <label for="to_location">To Location<sup class="text-danger">*</sup></label>
                                                 <span class="text-danger error" id="tlerror"></span>
                                             </div>
@@ -419,13 +432,15 @@
 
                                         <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
-                                                <input type="file" class="form-control" id="attachment" placeholder="Enter photo File" name="attachment">
+                                                <input type="file" class="form-control" id="attachment" placeholder="Enter photo File" name="attachment" onchange="previewFile(this);">
                                                 <label for="attachment">Attachment</label>
+                                                
                                                 <!-- For Extension an Encoding File  -->
                                                 <textarea class="form-control" style="display: none" id="payment_encodedfile"></textarea> 
                                                 <input type="hidden" name="payment_extension" id="payment_extension">
                                                 <!-- END For Extension an Encoding File  -->
-                                                
+                                                <a id="attachment2"><i class="fa fa-eye"></i> View Previous File</a>
+                                                <span id="a2error"></span>
                                                 <a href="" id="attachment1" target="_blank"><i class="fa fa-eye"></i> View Previous File</a>
                                                 <span id="aerror"></span>
                                             </div>
@@ -433,7 +448,7 @@
 
                                         <div class="col-md-6">
                                             <div class="form-floating mb-3">
-                                                <textarea class="form-control" id="travel_desc" placeholder="Enter Travel Description" required name="travel_desc" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100"></textarea>
+                                                <textarea class="form-control" id="travel_desc" placeholder="Enter Travel Description" required name="travel_desc" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="500"></textarea>
                                                 <label for="travel_desc">Travel Description</label>
                                                 <span class="text-danger error" id="tdeerror"></span>
 
@@ -502,7 +517,7 @@
                             @if($roles == 1)
                                 <option value="" disabled selected>Select</option>
                                 <option value="Cleared">Cleared</option>
-                                <option value="Cancelled">Cancelled</option>
+                                <option value="Disapproved">Disapproved</option>
                             @else
                                 <option value="Approved" selected>Approved</option>
                             @endif
@@ -646,7 +661,7 @@
 
 <!-- Image Modal -->
 <div id="imageModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
+    <div class="modal-dialog modal-md">
         <div class="modal-content">
             <form  class="form-horizontal">
                 <div class="modal-header">
@@ -655,6 +670,34 @@
                 </div>
                 <div class="modal-body">
                     <div class="row" id="image_div">
+                       
+                    </div>
+                </div>
+                <div class="modal-footer"> 
+                    <button type="button" class="btn btn-secondary waves-effect btn-sm" data-bs-dismiss="modal" id="image_close">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div id="imageModal2" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <form  class="form-horizontal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Travel Expense Attachment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" id="pdf">
+                        <!-- <img id="previewImg" src="" alt="Placeholder"> -->
+                        <iframe src="" id="previewImgpdf" style="width: 500px; height: 500px;"></iframe>
+                    </div>
+                    <div class="row" id="img">
+                        <!-- <img id="previewImg" src="" alt="Placeholder"> -->
+                        <img src="" id="previewImg" style="width: 500px; height: 500px;">
                     </div>
                 </div>
                 <div class="modal-footer"> 
@@ -776,7 +819,31 @@
 @push('page_js')
 {!! Html::script('assets/libs/select2/js/select2.min.js') !!}
 
-
+<script>
+    // view preview file without upload
+    function previewFile(input){
+        var file = $("input[type=file]").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                var src = $('#attachment').val();
+                var ext = src.split('.').pop();
+                $("#pdf,#img").hide();
+                if(ext == "pdf"){
+                    $("#previewImgpdf").attr("src", reader.result);
+                    $("#pdf").show();
+                }else{
+                    $("#previewImg").attr("src", reader.result);
+                    $("#img").show();
+                }
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
 
 <script>
     
@@ -795,6 +862,9 @@
         $('#labour1,#labours,#oa_hit').select2({ 
             dropdownParent: $('#oaHistoryModal') 
         });
+
+        $("#attachment2").hide();
+        $("#pdf,#img").hide();
     });
 
     // mode of travel on change fields
@@ -832,6 +902,26 @@
   
     });
 
+    // attachment on change fields
+    $('#attachment').change(function(e)
+    {
+        var src = $('#attachment').val();
+        $("#attachment2").hide();
+        if(src){
+            $("#attachment2").show();     // on change car 
+        }
+       
+    });
+
+    //For preview image show Modal  
+    $(document).on("click", "#attachment2", function ()
+    {   
+        var src = $('#attachment').val();
+        if(src){
+            $("#imageModal2").modal("show");
+        }
+    });
+
     // // mode of travel on change fields
     $('#total_km').blur(function(e)
     {
@@ -860,7 +950,7 @@
 
         var from_date = $('#from_date').val();
         var to_date = $('#to_date').val();
-        var labours= $('#labours').val();
+        var labours= $('#slabours').val();
 
         n=0;    
         if( $.trim(from_date).length == 0 )
@@ -898,7 +988,7 @@
  
             var from_date = $('#from_date').val();
             var to_date = $('#to_date').val();
-            var labours = $('#labours').val();
+            var labours = $('#slabours').val();
             $.ajax({
                 headers:{
                     'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
@@ -926,8 +1016,8 @@
                         var t_ucleamount=t_cllamount=t_calamount=0; 
                         content ="";        //For Uncleared datatable
                         content1 ="";        //For Cleared datatable
-                        content2 ="";        //For Cancelled datatable
-                        content3 ="";        //For Cancelled datatable
+                        content2 ="";        //For Disapproved datatable
+                        content3 ="";        //For Disapproved datatable
                         var i = 0;       
         
                         
@@ -956,7 +1046,7 @@
 
                                     if(data.role != 0){
                                         content +="<td>";
-                                            if((travel_date == $.datepicker.formatDate('dd-mm-yy', new Date())) && (data.role == 3)){
+                                            if((row.diffHours <= 24) && (data.role == 3)){
                                                 content +="<a class='btn btn-outline-secondary btn-sm exp_editT' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delT' rel='tooltip' data-bs-placement='top' title='Delete Travel Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
                                             }
                                             if((data.role == 1)){
@@ -967,6 +1057,9 @@
                                     }
 
                                     if(data.role != 3){
+                                        content +="<td>"+row.so_number+"</td>";
+                                        content +="<td>"+row.client_name+"</td>";
+                                        content +="<td>"+row.project_name+"</td>";
                                         content +="<td>"+row.labour_name+"</td>";
                                         content +="<td>"+row.project_admin+"</td>";
                                     }
@@ -1036,6 +1129,9 @@
                                     }
 
                                     if(data.role != 3){
+                                        content1 +="<td>"+row.so_number+"</td>";
+                                        content1 +="<td>"+row.client_name+"</td>";
+                                        content1 +="<td>"+row.project_name+"</td>";
                                         content1 +="<td>"+row.labour_name+"</td>";
                                         content1 +="<td>"+row.project_admin+"</td>";
                                     }
@@ -1102,6 +1198,9 @@
                                     content3 +="<td>"+ ++k +"</td>";
                                     content3 +="<td>"+travel_date+"</td>";
                                     if(data.role != 3){
+                                        content3 +="<td>"+row.so_number+"</td>";
+                                        content3 +="<td>"+row.client_name+"</td>";
+                                        content3 +="<td>"+row.project_name+"</td>";
                                         content3 +="<td>"+row.labour_name+"</td>";
                                         content3 +="<td>"+row.project_admin+"</td>";
                                     }
@@ -1152,7 +1251,7 @@
 
                             }
 
-                            if(row.status == 'Cancelled')
+                            if(row.status == 'Disapproved')
                             {
                                 //date convert into dd/mm/yyyy
                                 function formatDate (input) {
@@ -1183,6 +1282,9 @@
                                     }
 
                                     if(data.role != 3){
+                                        content2 +="<td>"+row.so_number+"</td>";
+                                        content2 +="<td>"+row.client_name+"</td>";
+                                        content2 +="<td>"+row.project_name+"</td>";
                                         content2 +="<td>"+row.labour_name+"</td>";
                                         content2 +="<td>"+row.project_admin+"</td>";
                                     }
@@ -1224,7 +1326,7 @@
                         $("#cll_records").html(content1); //For append Cleared datatable html data 
                         $('#clearedDatatable').dataTable();
 
-                        $("#cal_records").html(content2); //For append Cancelled datatable html data
+                        $("#cal_records").html(content2); //For append Disapproved datatable html data
                         $('#cancelDatatable').dataTable();
 
                         $("#apprvd_records").html(content3); //For append html data
@@ -1297,7 +1399,7 @@
                 var t_ucleamount=t_cllamount=t_calamount=t_apprvdamount=0; 
                 content ="";        //For Uncleared datatable
                 content1 ="";        //For Cleared datatable
-                content2 ="";        //For Cancelled datatable
+                content2 ="";        //For Disapproved datatable
                 content3 ="";        //For Approved datatable
                 var i=j=k=l= 0;   
                   
@@ -1327,8 +1429,8 @@
 
                             if(data.role != 0){
                                 content +="<td>";
-                                    if((travel_date == $.datepicker.formatDate('dd-mm-yy', new Date())) && (data.role == 3)){
-                                        content +="<a class='btn btn-outline-secondary btn-sm exp_editT' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delT' rel='tooltip' data-bs-placement='top' title='Delete Travel Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+                                    if((row.diffHours <= 24) && (data.role == 3)){
+                                        content +="<a class='btn btn-outline-secondary btn-sm exp_editT' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-no_of_person='"+row.no_of_person+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delT' rel='tooltip' data-bs-placement='top' title='Delete Travel Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
                                     }
                                     if((data.role == 1)){
                                         content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"' data-ad_remark='"+row.ad_remark+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
@@ -1338,6 +1440,9 @@
                             }
 
                             if(data.role != 3){
+                                content +="<td>"+row.so_number+"</td>";
+                                content +="<td>"+row.client_name+"</td>";
+                                content +="<td>"+row.project_name+"</td>";
                                 content +="<td>"+row.labour_name+"</td>";
                                 content +="<td>"+row.project_admin+"</td>";
                             }
@@ -1407,6 +1512,9 @@
                             }
 
                             if(data.role != 3){
+                                content1 +="<td>"+row.so_number+"</td>";
+                                content1 +="<td>"+row.client_name+"</td>";
+                                content1 +="<td>"+row.project_name+"</td>";
                                 content1 +="<td>"+row.labour_name+"</td>";
                                 content1 +="<td>"+row.project_admin+"</td>";
                             }
@@ -1473,6 +1581,9 @@
                             content3 +="<td>"+ ++k +"</td>";
                             content3 +="<td>"+travel_date+"</td>";
                             if(data.role != 3){
+                                content3 +="<td>"+row.so_number+"</td>";
+                                content3 +="<td>"+row.client_name+"</td>";
+                                content3 +="<td>"+row.project_name+"</td>";
                                 content3 +="<td>"+row.labour_name+"</td>";
                                 content3 +="<td>"+row.project_admin+"</td>";
                             }
@@ -1523,7 +1634,7 @@
 
                     }
 
-                    if(row.status == 'Cancelled')
+                    if(row.status == 'Disapproved')
                     {
                         //date convert into dd/mm/yyyy
                         function formatDate (input) {
@@ -1554,6 +1665,9 @@
                             }
 
                             if(data.role != 3){
+                                content2 +="<td>"+row.so_number+"</td>";
+                                content2 +="<td>"+row.client_name+"</td>";
+                                content2 +="<td>"+row.project_name+"</td>";
                                 content2 +="<td>"+row.labour_name+"</td>";
                                 content2 +="<td>"+row.project_admin+"</td>";
                             }
@@ -1596,7 +1710,7 @@
                 $("#cll_records").html(content1); //For append Cleared datatable html data 
                 $('#clearedDatatable').dataTable();
 
-                $("#cal_records").html(content2); //For append Cancelled datatable html data
+                $("#cal_records").html(content2); //For append Disapproved datatable html data
                 $('#cancelDatatable').dataTable();
 
                 $("#apprvd_records").html(content3); //For append html data
@@ -1658,8 +1772,15 @@
     //For image show Modal  
     $(document).on("click", ".view_attachment", function ()
     {   
-        $src = $(this).data('attachment');
-        $("#image_div").html('<img src="files/user/travel_expense/'+$src+'" id="imagepreview" style="width: 400px; height: 264px;">');
+        var src = $(this).data('attachment');
+        var ext = src.split('.').pop();
+        if(ext == "pdf"){
+            $("#image_div").html('<iframe src="files/user/travel_expense/'+src+'" id="imagepreview" style="width: 500px; height: 500px;"></iframe>');
+        }else{
+            $("#image_div").html('<img src="files/user/travel_expense/'+src+'" id="imagepreview" style="width: 500px; height: 500px;">');
+        }
+
+        // $("#image_div").html('<img src="files/user/travel_expense/'+$src+'" id="imagepreview" style="width: 400px; height: 264px;">');
         // here asign the image to the modal when the user click the enlarge link
         $("#imageModal").modal("show");
     });
@@ -1678,8 +1799,9 @@
         // $("#exp_type option:selected").removeAttr("selected").change();
         // ("#exp_type option:selected").prop("selected", false);
         // $('#exp_type option:selected').removeAttr('selected','selected').change();
-
+        $("#attachment2").hide();
         $('#attachment1').hide();
+        $("#pdf,#img").hide();
         // getLabourExpenses();
         $("#mode_travel").val("").trigger("change");      // for when use select options are not dynamically print 
 
@@ -1690,15 +1812,20 @@
     {          
         // $("#exp_so").empty();
         // getLabourExpenses();
+
+        $("#attachment2").hide();
+        $("#pdf,#img").hide();
     });
 
     //For Edit Operation
     $(document).on("click",'.exp_editT',function()
     {
         var id = $(this).data('id');
+        $("#pdf,#img").hide();
         // $('#exp_type option:selected').remove();
         // $("#exp_type option:selected").removeAttr("selected");
         if(id !=""){
+            $("#attachment2").hide();
             $('#attachment1').show();
             var travel_date = $(this).data('travel_date');
             var mode_travel = $(this).data('mode_travel');
@@ -1707,10 +1834,13 @@
             var total_km = $(this).data('total_km');
             var travel_amount = $(this).data('travel_amount');
             var travel_desc = $(this).data('travel_desc');
+            var no_of_person = $(this).data('no_of_person');
             var attachment = $(this).data('attachment');
             // ACTIVE PANE AND LINK
             $('.nav-tabs a[href="#update_epayment"]').tab('show');
-
+            if(attachment == null){
+                $("#attachment1").hide();
+            }
             var  attachment="files/user/travel_expense/"+attachment;
             $('#exp_edit_id').val(id);   
             $('#travel_date').val(travel_date); 
@@ -1719,6 +1849,7 @@
             $('#total_km').val(total_km); 
             $('#travel_amnt').val(travel_amount); 
             $('#travel_desc').val(travel_desc); 
+            $('#no_of_person').val(no_of_person); 
             $('#attachment1').attr("href",attachment);
 
             //  $("#labour").find("option[value="+labour+"]").prop("selected", "selected");
@@ -1819,10 +1950,10 @@
         // }
 
         var ext1 = $('#attachment').val().split('.').pop().toLowerCase();
-        if($.inArray(ext1, ['png','jpg','jpeg']) == -1 && ext1 != '')
+        if($.inArray(ext1, ['png','jpg','jpeg','pdf','docx']) == -1 && ext1 != '')
         {
-            $('#aerror').html('Only .jpg, .jpeg, .png allowed').css('color','red');
-            e.preventDefault();
+            $('#aerror').html('Only .jpg, .jpeg, .png, .pdf, .docx allowed').css('color','red');
+            event.preventDefault();
              return false;
         }
     });
@@ -1989,7 +2120,7 @@
 <script>
     $(document).ready(function(){
         var $body = $("body");
-        $('#labours').select2();
+        $('#slabours').select2();
         $('#a_mode_travel,#status_change').select2({ dropdownParent: $('#editPaymentModal') });
 
         $("#abike_rate").hide();     // on change bike rate 
@@ -2122,6 +2253,8 @@
             // alert(aprvd_amount);
             if(attachment == null){
                 $("#attachment2").hide();
+            }else{
+                $("#attachment2").show();
             }
             var  attachment="files/user/travel_expense/"+attachment;
   

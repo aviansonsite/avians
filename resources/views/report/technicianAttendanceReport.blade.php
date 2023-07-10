@@ -731,7 +731,7 @@
         }
 
 
-        $('#oa_hit').val(id);   
+        // $('#oa_hit').val(id);   
         // $('#oa_hit').val(so_number); 
         $('#client_name').val(client_name); 
         $('#project_name').val(project_name); 
@@ -739,6 +739,7 @@
         $('#cp_name').val(cp_name); 
         $('#cp_ph_no').val(cp_ph_no);
         
+        $("#oa_hit option[value='"+id+"']").attr('selected','selected').change();
         $.each(r,function(index,value)
         {
             $("#hist_labour option[value='"+value+"']").attr('selected','selected').change();
@@ -825,7 +826,8 @@
 
                     if (data.status==true) {
                         $("#f_rec").DataTable().destroy();  //For using 
-                        
+                        $("#reg_remark").val('');
+                        $("#reg_status").val("").trigger("change");      // for when use select options are not dynamically print 
                         content ="";
                         var i = 0;
 

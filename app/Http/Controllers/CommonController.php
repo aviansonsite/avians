@@ -47,4 +47,26 @@ class CommonController extends Controller
     {
         return date("d-m-Y",strtotime($date));
     }
+
+    static function decode_ids($id)
+    {
+        $sid1=base64_decode($id);
+        $nid1=str_rot13($sid1);
+        $bid1=explode('IsIpl',$nid1);
+        $id1=base64_decode($bid1[0]);
+        $olddata=explode('-',$id1);
+
+        return $olddata[0];
+    }
+
+    static function encode_ids($id)
+    {
+        $id3=$id.'-'.time();
+        $bid=base64_encode($id3);
+        $nid=$bid.'IsIpl'.rand(10,1000);
+        $sid=str_rot13($nid);
+        $j_id=base64_encode($sid);
+
+        return $j_id;
+    }
 }

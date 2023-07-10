@@ -95,7 +95,7 @@
                         <div class="text-muted">
                             @foreach($s_obj as $s)
                                 <div>
-                                    <strong>OA Number : </strong>{{$s->so_number}} , <strong>Project Name : </strong>{{$s->project_name}} , <strong>Client Name : </strong>{{$s->client_name}} , <strong>Address : </strong>{{$s->address}}
+                                <strong>OA Number : </strong>{{$s->so_number}} , <strong>Client Name : </strong>{{$s->client_name}} , <strong>Project Name : </strong>{{$s->project_name}} 
                                 </div>                        
                             @endforeach
                         </div>
@@ -104,13 +104,10 @@
                         <div class="d-sm-flex flex-wrap">     
                            <h4 class="card-title mb-4">Attendance Management</h4>
                            <div class="ms-auto">
-                           @foreach($p_id as $p)
-                           <?php 
-                                $pout_date = $p->pout_date;
-                           ?>
-                               
-                           @endforeach
-                           @if($t_count == 0)
+                                @foreach($p_id as $p)
+                                <?php $pout_date = $p->pout_date; ?>
+                                @endforeach
+                                @if($t_count == 0)
                                     <button type="button" class="btn btn-primary btn-sm waves-effect waves-light w-sm" data-bs-toggle="modal" data-bs-target="#punchInModal" style="margin-left: 10px;">
                                     <i class="mdi mdi-plus font-size-11"></i> Punch In
                                     </button> 
@@ -120,7 +117,6 @@
                                     <i class="mdi mdi-plus font-size-11"></i> Punch Out
                                     </button>
                                 @endif
-
                             </div>
                         </div>
                         
@@ -219,7 +215,7 @@
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
                             <label for="p_in_remark">Enter Remark</label>
-                            <textarea class="form-control" id="p_in_remark" placeholder="Enter Remark" name="p_in_remark" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" rows="3"></textarea>
+                            <textarea class="form-control" id="p_in_remark" placeholder="Enter Remark" name="p_in_remark" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="500" rows="3"></textarea>
                             <span class="text-danger error" id="pderror"></span>
 
                         </div>
@@ -544,95 +540,6 @@
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="pout_longitudeh" placeholder="Longitude" name="pout_longitudeh" maxlength="10" required readonly>
                             <label for="pout_longitudeh">Longitude<sup class="text-danger">*</sup></label>
-                            <!-- <span class="text-danger error" id="uaerror"></span> -->
-                        </div>
-                    </div>
-                    <!-- <p id="demo"></p> -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<!-- punch in history modal content -->
-<div id="pinhistryModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="myModalLabel">Punch In History</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    
-                    <div class="col-md-12 col-sm-12 col-lg-12">
-                        <div class="form-group mb-3">
-                            <label for="p_in_soh" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA<sup class="text-danger">*</sup></label>
-                            <select class="form-control select2" id="p_in_soh" required name="p_in_soh" disabled>
-                            @foreach($s_obj1 as $so)
-                                <option value="{{$so->oth_id}}">{{$so->so_number}}</option>
-                            @endforeach
-                            </select>
-                            <span class="text-danger error" id="esoerror"></span>
-                        </div>
-                    </div>
-
-                    <div class="col-md-12 col-sm-12 col-lg-12">
-                        <div class="form-group mb-3">
-                            <label for="p_in_labourh" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician<sup class="text-danger">*</sup></label>
-                            <select class="select2 form-control" multiple="multiple" data-placeholder="Choose ..." id="p_in_labourh" name="p_in_labourh[]" placeholder="Select Technician" disabled>
-                                <option value="all">All</option>
-                                @foreach($us_obj as $u)
-                                    <option value="{{$u->id}}">{{$u->name}}</option>
-                                @endforeach
-                            </select>
-                            <span class="text-danger error" id="lerror"></span>
-                        </div>
-                    </div>
-                      
-                    <div class="col-md-12 col-sm-12 col-lg-12">
-                        <div class="form-group mb-3">
-                            <label for="p_in_remarkh">Enter Remark</label>
-                            <textarea class="form-control" id="p_in_remarkh" placeholder="Enter Remark" name="p_in_remarkh" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100" readonly rows="3"></textarea>
-                            <span class="text-danger error" id="pderror"></span>
-
-                        </div>
-                    </div>
-                    <!-- <div class="col-md-12 col-sm-12 col-lg-12">
-                        <div class="form-group mb-3">
-                            <textarea class="form-control" id="p_in_work_desc" placeholder="Enter Work Description" required name="p_in_work_desc" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100"></textarea>
-                            <label for="p_in_work_desc">Work Description</label>
-                            <span class="text-danger error" id="pderror"></span>
-
-                        </div>
-                    </div> -->
-                    <?php $tdate=date("Y-m-d");?>
-                    <div class="col-md-6 col-sm-12 col-lg-6">
-                        <div class="form-floating mb-3">
-                            <input type="date" class="form-control" id="p_in_dateh" placeholder="Punch In Date" name="p_in_dateh" required max="{{$tdate}}" value="{{$tdate}}" readonly>
-                            <label for="p_in_dateh">Date<sup class="text-danger">*</sup></label>
-                            <span class="text-danger error" id="pdaerror"></span>
-                        </div>
-                    </div>
-                  
-                    <div class="col-md-6 col-sm-12 col-lg-6">
-                        <a href="" id="attachment1" target="_blank"><i class="fa fa-eye"></i> View Photo</a>
-                    </div>
-
-                    <div class="col-md-6 col-sm-12 col-lg-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="p_in_latitudeh" placeholder="Latitude" name="p_in_latitudeh" maxlength="10" required readonly>
-                            <label for="p_in_latitudeh">Latitude<sup class="text-danger">*</sup></label>
-                            <span class="text-danger error" id="uaerror"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-12 col-lg-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="p_in_longitudeh" placeholder="Longitude" name="p_in_longitudeh" maxlength="10" required readonly>
-                            <label for="p_in_longitudeh">Longitude<sup class="text-danger">*</sup></label>
                             <!-- <span class="text-danger error" id="uaerror"></span> -->
                         </div>
                     </div>
@@ -1094,6 +1001,7 @@
                     $.each(r,function(index,value)
                     {
                         $("#labour option[value='"+value+"']").attr('selected','selected').change();
+                        
                     });
 
                     $("#labours option[value='"+row.lead_technician+"']").attr('selected','selected').change();   
@@ -1144,12 +1052,14 @@
             $.each(r,function(index,value)
             {
                 // $("#so").find("option[value="+value+"]").prop("selected", "selected");
-            $('#so option[value='+value+']').attr('selected','selected').change();
-
+                // $('#so option[value='+value+']').attr('selected','selected').change();
+                $("#so option[value='"+value+"']").attr('selected','selected').change();
             });
 
             //  $("#labour").find("option[value="+labour+"]").prop("selected", "selected");
-            $('#labour option[value='+labour+']').attr('selected','selected').change();
+            // $('#labour option[value='+labour+']').attr('selected','selected').change();
+            $("#labour option[value='"+labour+"']").attr('selected','selected').change();
+            
         }
         
 
@@ -1161,7 +1071,7 @@
         var pin_u_id = $(this).data('pin_u_id');
         var pin_oth_id = $(this).data('pin_oth_id');
 
-        // alert(pin_so_id);
+        // alert(pin_u_id);
         //for multiple oa
         // var r=new Array();
         // if (pin_so_id.toString().indexOf(',')>-1)
@@ -1181,17 +1091,16 @@
             r1[0]=pin_u_id.toString();
         }
 
-        $('#pout_so option[value='+pin_oth_id+']').attr('selected','selected').change();
+        // $('#pout_so option[value='+pin_oth_id+']').attr('selected','selected').change();
+        $("#pout_so option[value='"+pin_oth_id+"']").attr('selected','selected').change();
 
-        // $.each(r,function(index,value)
-        // {
-        //     $('#pout_so option[value='+value+']').attr('selected','selected').change();
-        // });
 
         // alert(r1);
         $.each(r1,function(index,value)
         {
-            $('#pout_labour option[value='+value+']').attr('selected','selected').change();
+            // $('#pout_labour option[value='+value+']').attr('selected','selected').change();
+            $("#pout_labour option[value='"+value+"']").attr('selected','selected').change();
+            // $("#pout_labour").val(value).trigger("change");
         });
         
         $('#punchOutModal').modal('show');
@@ -1226,7 +1135,9 @@
 
                 $.each(response.l_obj,function(index,row){
 
-                    $('#p_in_labourh option[value='+row.id+']').attr('selected','selected').change();                    
+                    // $('#p_in_labourh option[value='+row.id+']').attr('selected','selected').change();  
+                    $("#p_in_labourh option[value='"+row.id+"']").attr('selected','selected').change();
+
                 });
             }
         });
@@ -1261,7 +1172,7 @@
         $.ajax({    
             url:"{{url('get-pouth-labour')}}",
             type :'get',
-            data : {pout_date:pout_date},
+            data : {pout_date:pout_date,pout_oth_id:pout_oth_id},
             async: true,
             cache: true,
             dataType: 'json',
@@ -1269,40 +1180,15 @@
             {
                 console.log(response);
 
-                //For Full Finish Invoice
-                // $('#labours').append("<option value='all' class='text-muted' selected>"+'ALL'+"</option>");
-                $.each(response.s_obj,function(index,row){
-
-                });
-
                 $.each(response.l_obj,function(index,row){
 
-                    $('#pout_labourh option[value='+row.id+']').attr('selected','selected').change();                    
+                    // $('#pout_labourh option[value='+row.id+']').attr('selected','selected').change();       
+                    $("#pout_labourh option[value='"+row.id+"']").attr('selected','selected').change();
+
                 });
             }
         });
 
-  
-
-        // alert(pout_so_id);
-        //for multiple oa
-        // var r=new Array();
-        // if (pout_so_id.toString().indexOf(',')>-1)
-        // { 
-        //     var r=pout_so_id.split(',');
-        // }else{
-        //     r[0]=pout_so_id.toString();
-        // }
-
-
-        // // for multiple labour
-        // var r1=new Array();
-        // if (pout_u_id.toString().indexOf(',')>-1)
-        // { 
-        //     var r1=pout_u_id.split(',');
-        // }else{
-        //     r1[0]=pout_u_id.toString();
-        // }
 
         var  attachment="files/attendance/punchOut/"+pout_img;
         $('#pout_remarkh').val(pout_remark);   
@@ -1312,17 +1198,6 @@
         $('#pout_dateh').val(pout_date); 
         $('#attachment2').attr("href",attachment);
 
-
-        // $.each(r,function(index,value)
-        // {
-        //     $('#pout_soh option[value='+value+']').attr('selected','selected').change();
-        // });
-
-        // $.each(r1,function(index,value)
-        // {
-        //     $('#pout_labourh option[value='+value+']').attr('selected','selected').change();
-        // });
-        
         $('#pouthistryModal').modal('show');
 
     });

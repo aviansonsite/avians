@@ -108,12 +108,12 @@
                                     <span class="d-none d-sm-block">OA Active List</span> 
                                 </a>
                             </li>
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#so_inactive_list" role="tab">
                                     <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
                                     <span class="d-none d-sm-block">OA In-Active List</span> 
                                 </a>
-                            </li>
+                            </li> -->
                             @if($roles==1)
                                 <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle="tab" href="#update_so" role="tab">
@@ -131,7 +131,7 @@
                                             <tr>
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">OA Number</th>
-                                                @if($roles==1)
+                                                @if($roles!=3)
                                                     <th scope="col">Action</th>
                                                 @endif
                                                 <th scope="col" style="width: 100px">Status</th>
@@ -157,7 +157,7 @@
                                             <tr>
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">OA Number</th>
-                                                @if($roles==1)
+                                                @if($roles!=3)
                                                     <th scope="col">Action</th>
                                                 @endif
                                                 <th scope="col" style="width: 100px">Status</th>
@@ -268,39 +268,6 @@
         </div>
     </div>
 </div>    
-<!-- Remove TL Modal -->
-<div id="remove_tl_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirm Remove Technician Leader</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-            {!! Form::open(['class'=>"form-horizontal",'method'=>"post",'url'=>'remove_tl','id'=>'add_dn_form']) !!}
-
-                <div class="modal-body">
-                    <strong>Do you really wants to Remove this OA Technician Leader..? </strong>
-                    <!-- <strong>Do you really want to Reset Password For this Account..? </strong> -->
-
-                    <div class="form-group">
-                        <div class="col-md-4">
-                        <input type="hidden" id="oth_id" name="oth_id" class="form-control"/>
-                        <input type="hidden" id="oth_status" name="oth_status" class="form-control"/>
-                        <input type="hidden" id="oth_so_id" name="oth_so_id" class="form-control"/>
-
-                        
-                        </div>
-                    </div>
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                </div>
-                <div class="modal-footer"> 
-                    <button type="button" class="btn btn-secondary waves-effect btn-sm" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary text-white btn-sm " id="update_tl_rec"><i class="fe fe-check mr-2"></i>Update</button>
-                </div>
-            {!! Form::close() !!}
-        </div>
-    </div>
-</div>
 @include('common.delete_modal')    
 @stop
 @push('datatable_js')
@@ -390,13 +357,9 @@
                             content +="<tr>";
                             content +="<td>"+ ++i  +"</td>";
                             content +="<td>"+row.so_number+"</td>";
-                            if(data.roles == 1){
+                            if(data.roles != 3){
                                 content +="<td>";
-                                content +="<a class='btn btn-outline-secondary btn-sm editU' rel='tooltip' data-bs-placement='top' title='Edit OA' data-id='"+row.id+"' data-so_number='"+row.so_number+"' data-client_name='"+row.client_name+"' data-project_name='"+row.project_name+"' data-address='"+row.address+"' data-cp_name='"+row.cp_name+"' data-cp_ph_no='"+row.cp_ph_no+"' data-lead_technician='"+row.lead_technician+"' data-labour='"+row.labour+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete OA' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>";
-                                
-                                if(row.oth_status == 1){
-                                    content += " <a class='btn btn-outline-secondary btn-sm removeTL'  rel='tooltip' data-bs-placement='top' title='Remove TL' data-oth_so_id='"+row.id+"' data-oth_id='"+row.oth_id+"' data-oth_status='"+row.oth_status+"' data-bs-toggle='modal'><i class='fas fa-ban'></i></a>";
-                                }
+                                content +="<a class='btn btn-outline-secondary btn-sm viewI'data-bs-toggle='tooltip' target='blank' data-bs-placement='top'title='View Payment History' data-id='"+row.id+"' href='../public/view_oa_payment_history/"+row.enc_id+"'><i class='fas fa-eye' style='color: #344bc6;'></i></a>";
                                 content += "</td>";
                             }
                             if(row.oth_status == 1){
@@ -421,13 +384,9 @@
                             content1 +="<td>"+ ++j +"</td>";
                             content1 +="<td>"+row.so_number+"</td>";
                             
-                            if(data.roles == 1){
+                            if(data.roles != 3){
                                 content1 +="<td>";
-                                content1 +="<a class='btn btn-outline-secondary btn-sm editU' rel='tooltip' data-bs-placement='top' title='Edit OA' data-id='"+row.id+"' data-so_number='"+row.so_number+"' data-client_name='"+row.client_name+"' data-project_name='"+row.project_name+"' data-address='"+row.address+"' data-cp_name='"+row.cp_name+"' data-cp_ph_no='"+row.cp_ph_no+"' data-lead_technician='"+row.lead_technician+"' data-labour='"+row.labour+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete OA' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>";
-                                
-                                if(row.oth_status == 1){
-                                    content1 += " <a class='btn btn-outline-secondary btn-sm removeTL'  rel='tooltip' data-bs-placement='top' title='Remove TL' data-oth_so_id='"+row.id+"' data-oth_id='"+row.oth_id+"' data-oth_status='"+row.oth_status+"' data-bs-toggle='modal'><i class='fas fa-ban'></i></a>";
-                                }
+                                content1 +="<a class='btn btn-outline-secondary btn-sm viewI'data-bs-toggle='tooltip' target='blank' data-bs-placement='top'title='View Payment History' data-id='"+row.id+"' href='../public/view_oa_payment_history/"+row.enc_id+"'><i class='fas fa-eye' style='color: #344bc6;'></i></a>";
                                 content1 += "</td>";
                             }
                             if(row.oth_status == 1){

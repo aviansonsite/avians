@@ -99,7 +99,7 @@
                         <div class="text-muted">
                             @foreach($s_obj as $s)
                                 <div>
-                                    <strong>OA Number : </strong>{{$s->so_number}} , <strong>Project Name : </strong>{{$s->project_name}} , <strong>Client Name : </strong>{{$s->client_name}} , <strong>Address : </strong>{{$s->address}}
+                                    <strong>OA Number : </strong>{{$s->so_number}} , <strong>Client Name : </strong>{{$s->client_name}} , <strong>Project Name : </strong>{{$s->project_name}} 
                                 </div>                        
                             @endforeach
                         </div>
@@ -163,7 +163,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#calpayment" role="tab">
                                     <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
-                                    <span class="d-none d-sm-block">Cancelled Payment List</span> 
+                                    <span class="d-none d-sm-block">Disapproved Payment List</span> 
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -183,12 +183,13 @@
                                             <tr>
                                                 <th scope="col">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">Expense Date</th>
+                                                <th scope="col">Action</th>
                                                 <th scope="col" style="width: 100px">Expense Type</th>
                                                 <th scope="col" style="width: 100px">Description</th>
                                                 <th scope="col" style="width: 100px">Acc Remark</th>
                                                 <th scope="col" style="width: 100px">Amount<br>(In Rs.)</th>
                                                 <th scope="col" style="width: 100px">Status</th>
-                                                <th scope="col">Action</th>
+                                                
                                             </tr>
                                         </thead>
                                         <tbody id="exp_pay_records">
@@ -196,10 +197,10 @@
                                         </tbody>
                                         <tfoot id="tucledata">
                                             <tr>
-                                                <th colspan="5" class="text-center"><strong>Total</strong></th>
+                                                <th colspan="6" class="text-center"><strong>Total</strong></th>
                                                 <th id="t_ucleamount"></th>
                                                 <th></th>
-                                                <th></th>
+                                        
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -333,13 +334,13 @@
 
                                         <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
-                                                <input type="file" class="form-control" id="attachment" placeholder="Enter photo File" name="attachment">
-                                                <label for="attachment">Attachment</label>
+                                                <input type="file" class="form-control" id="attachment" placeholder="Enter photo File" name="attachment" onchange="previewFile(this);">
+                                                <label for="attachment">Attachment<sup class="text-danger exp_type_sup">*</sup></label>
                                                 <!-- For Extension an Encoding File  -->
                                                 <textarea class="form-control" style="display: none" id="payment_encodedfile"></textarea> 
                                                 <input type="hidden" name="payment_extension" id="payment_extension">
                                                 <!-- END For Extension an Encoding File  -->
-                                                
+                                                <a id="attachment2"><i class="fa fa-eye"></i> View Previous File</a>
                                                 <a href="" id="attachment1" target="_blank"><i class="fa fa-eye"></i> View Previous File</a>
                                                 <span id="aerror"></span>
                                             </div>
@@ -355,7 +356,7 @@
 
                                         <div class="col-md-6">
                                             <div class="form-floating mb-3">
-                                                <textarea class="form-control" id="exp_desc" placeholder="Enter Expense Description" required name="exp_desc" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100"></textarea>
+                                                <textarea class="form-control" id="exp_desc" placeholder="Enter Expense Description" required name="exp_desc" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="500"></textarea>
                                                 <label for="exp_desc">Expense Description<sup class="text-danger">*</sup></label>
                                                 <span class="text-danger error" id="ederror"></span>
 
@@ -413,7 +414,7 @@
 
 <!-- Image Modal -->
 <div id="imageModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
+    <div class="modal-dialog modal-md">
         <div class="modal-content">
             <form  class="form-horizontal">
                 <div class="modal-header">
@@ -432,6 +433,32 @@
     </div>
 </div>
 
+<!-- Image Modal -->
+<div id="imageModal2" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <form  class="form-horizontal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Travel Expense Attachment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" id="pdf">
+                        <!-- <img id="previewImg" src="" alt="Placeholder"> -->
+                        <iframe src="" id="previewImgpdf" style="width: 500px; height: 500px;"></iframe>
+                    </div>
+                    <div class="row" id="img">
+                        <!-- <img id="previewImg" src="" alt="Placeholder"> -->
+                        <img src="" id="previewImg" style="width: 500px; height: 500px;">
+                    </div>
+                </div>
+                <div class="modal-footer"> 
+                    <button type="button" class="btn btn-secondary waves-effect btn-sm" data-bs-dismiss="modal" id="image_close">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <!-- OA history modal content -->
 <div id="oaHistoryModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -543,7 +570,31 @@
 @endpush
 @push('page_js')
 {!! Html::script('assets/libs/select2/js/select2.min.js') !!}
-
+<script>
+    // view preview file without upload
+    function previewFile(input){
+        var file = $("input[type=file]").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                var src = $('#attachment').val();
+                var ext = src.split('.').pop();
+                $("#pdf,#img").hide();
+                if(ext == "pdf"){
+                    $("#previewImgpdf").attr("src", reader.result);
+                    $("#pdf").show();
+                }else{
+                    $("#previewImg").attr("src", reader.result);
+                    $("#img").show();
+                }
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
 <script>
     
     $(document).ready(function(){
@@ -556,7 +607,48 @@
         $('#labour1,#labours,#oa_hit').select2({ 
             dropdownParent: $('#oaHistoryModal') 
         });
+
+        $('.exp_type_sup').hide();     // for mandatory field
+
+        $("#attachment2").hide();
+        $("#pdf,#img").hide();
         
+    });
+
+    // attachment on change fields
+    $('#attachment').change(function(e)
+    {
+        var src = $('#attachment').val();
+        $("#attachment2").hide();
+        if(src){
+            $("#attachment2").show();     // on change car 
+        }
+       
+    });
+
+    //For preview image show Modal  
+    $(document).on("click", "#attachment2", function ()
+    {   
+        var src = $('#attachment').val();
+        if(src){
+            $("#imageModal2").modal("show");
+        }
+    });
+
+    //expense typet on change fields
+    $('#exp_type').change(function(e)
+    {
+        var exp_type = $(this).val();
+
+        if(exp_type =="Hotel" || exp_type=="Material_Purchase")
+        {
+            $('.exp_type_sup').show();
+        }else{
+            $('.exp_type_sup').hide();
+        }  
+      
+      
+  
     });
 
     // For from date ,to date records
@@ -592,8 +684,8 @@
                     var t_ucleamount=t_cllamount=t_calamount=0; 
                     content ="";        //For Uncleared datatable
                     content1 ="";        //For Cleared datatable
-                    content2 ="";        //For Cancelled datatable
-                    content3 ="";        //For Cancelled datatable
+                    content2 ="";        //For Disapproved datatable
+                    content3 ="";        //For Disapproved datatable
                     var i = 0;       
                     $("#labour").empty();            
                     $("#so").empty();        
@@ -621,27 +713,27 @@
                                 content +="<tr>";
                                 content +="<td>"+ ++i +"</td>";
                                 content +="<td>"+exp_date+"</td>";
-                                if(row.exp_type == "Material_Purchase"){
-                                    content +="<td> Material Purchase </td>";
-                                }else if(row.exp_type == "Labour_Hired"){
-                                    content +="<td> Labour Hired </td>";
-                                }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                    content +="<td>"+row.exp_type+"</td>";
-                                }
-                                
-                                content +="<td>"+row.exp_desc+"</td>";
-                                if(row.acc_remark != null){
-                                    content +="<td>"+row.acc_remark+"</td>";
-                                }else{
-                                    content +="<td class='text-center'> - </td>";
-                                }
-                                content +="<td>"+row.amount+"</td>";
-                                content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                                 content +="<td>";
-                                    if(exp_date == $.datepicker.formatDate('dd-mm-yy', new Date())){
+                                    if(row.diffHours <= 24){
                                         content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-so='"+row.so_id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delI' rel='tooltip' data-bs-placement='top' title='Delete Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
                                     }
                                 content +="</td>";
+                                    if(row.exp_type == "Material_Purchase"){
+                                        content +="<td> Material Purchase </td>";
+                                    }else if(row.exp_type == "Labour_Hired"){
+                                        content +="<td> Labour Hired </td>";
+                                    }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
+                                        content +="<td>"+row.exp_type+"</td>";
+                                    }
+                                
+                                content +="<td>"+row.exp_desc+"</td>";
+                                    if(row.acc_remark != null){
+                                        content +="<td>"+row.acc_remark+"</td>";
+                                    }else{
+                                        content +="<td class='text-center'> - </td>";
+                                    }
+                                content +="<td>"+row.amount+"</td>";
+                                content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                                 content += "</tr>";
                         }      
                         if(row.status == 'Cleared')
@@ -729,7 +821,7 @@
 
 
                         }
-                        if(row.status == 'Cancelled')
+                        if(row.status == 'Disapproved')
                         {
                             //date convert into dd/mm/yyyy
                             function formatDate (input) {
@@ -778,7 +870,7 @@
                     $("#cll_records").html(content1); //For append Cleared datatable html data 
                     $('#clearedDatatable').dataTable();
 
-                    $("#cal_records").html(content2); //For append Cancelled datatable html data
+                    $("#cal_records").html(content2); //For append Disapproved datatable html data
                     $('#cancelDatatable').dataTable();
 
                     $("#apprvd_records").html(content3); //For append html data
@@ -858,7 +950,7 @@
                 var t_ucleamount=t_cllamount=t_calamount=t_apprvdamount=0; 
                 content ="";        //For Uncleared datatable
                 content1 ="";        //For Cleared datatable
-                content2 ="";        //For Cancelled datatable
+                content2 ="";        //For Disapproved datatable
                 content3 ="";        //For Approved datatable
                 var i=j=k=l= 0;   
                 $("#labour").empty();            
@@ -887,31 +979,32 @@
                             content +="<tr>";
                             content +="<td>"+ ++i +"</td>";
                             content +="<td>"+exp_date+"</td>";
-                            if(row.exp_type == "Material_Purchase"){
-                                content +="<td> Material Purchase </td>";
-                            }else if(row.exp_type == "Labour_Hired"){
-                                content +="<td> Labour Hired </td>";
-                            }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                content +="<td>"+row.exp_type+"</td>";
-                            }
-                            content +="<td>"+row.exp_desc+"</td>";
-                            if(row.acc_remark != null){
-                                content +="<td>"+row.acc_remark+"</td>";
-                            }else{
-                                content +="<td class='text-center'> - </td>";
-                            }
-
-                            if(row.attachment != null){
-                                content +="<td>"+row.amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
-                            }else{
-                                content +="<td>"+row.amount+"</td>";
-                            } 
-                            content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                             content +="<td>";
-                                if(exp_date == $.datepicker.formatDate('dd-mm-yy', new Date())){
+                                if(row.diffHours <= 24){    //after 24 hrs button hide
                                     content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-oth_id='"+row.oth_id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delI' rel='tooltip' data-bs-placement='top' title='Delete Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
                                 }
                             content +="</td>";
+                                if(row.exp_type == "Material_Purchase"){
+                                    content +="<td> Material Purchase </td>";
+                                }else if(row.exp_type == "Labour_Hired"){
+                                    content +="<td> Labour Hired </td>";
+                                }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
+                                    content +="<td>"+row.exp_type+"</td>";
+                                }
+                            content +="<td>"+row.exp_desc+"</td>";
+                                if(row.acc_remark != null){
+                                    content +="<td>"+row.acc_remark+"</td>";
+                                }else{
+                                    content +="<td class='text-center'> - </td>";
+                                }
+
+                                if(row.attachment != null){
+                                    content +="<td>"+row.amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                }else{
+                                    content +="<td>"+row.amount+"</td>";
+                                } 
+                            content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                        
                             content += "</tr>";
                     }      
                     if(row.status == 'Cleared')
@@ -1016,7 +1109,7 @@
 
                     }
 
-                    if(row.status == 'Cancelled')
+                    if(row.status == 'Disapproved')
                     {
                         //date convert into dd/mm/yyyy
                         function formatDate (input) {
@@ -1053,9 +1146,9 @@
                             }
                             
                             if(row.attachment != null){
-                                content3 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                content2 +="<td>"+row.amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
                             }else{
-                                content3 +="<td>"+row.aprvd_amount+"</td>";
+                                content2 +="<td>"+row.amount+"</td>";
                             } 
                             
                             content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
@@ -1071,7 +1164,7 @@
                 $("#cll_records").html(content1); //For append Cleared datatable html data 
                 $('#clearedDatatable').dataTable();
 
-                $("#cal_records").html(content2); //For append Cancelled datatable html data
+                $("#cal_records").html(content2); //For append Disapproved datatable html data
                 $('#cancelDatatable').dataTable();
 
                 $("#apprvd_records").html(content3); //For append html data
@@ -1133,8 +1226,15 @@
     //For image show Modal  
     $(document).on("click", ".view_attachment", function ()
     {   
-        $src = $(this).data('attachment');
-        $("#image_div").html('<img src="files/user/expense/'+$src+'" id="imagepreview" style="width: 400px; height: 264px;">');
+        // $src = $(this).data('attachment');
+        var src = $(this).data('attachment');
+        var ext = src.split('.').pop();
+        if(ext == "pdf"){
+            $("#image_div").html('<iframe src="files/user/expense/'+src+'" id="imagepreview" style="width: 500px; height: 500px;"></iframe>');
+        }else{
+            $("#image_div").html('<img src="files/user/expense/'+src+'" id="imagepreview" style="width: 500px; height: 500px;">');
+        }
+         
         // here asign the image to the modal when the user click the enlarge link
         $("#imageModal").modal("show");
     });
@@ -1155,7 +1255,9 @@
         // ("#exp_type option:selected").prop("selected", false);
         // $('#exp_type option:selected').removeAttr('selected','selected').change();
 
+        $("#attachment2").hide();
         $('#attachment1').hide();
+        $("#pdf,#img").hide();
         getLabourExpenses();
 
     });
@@ -1165,6 +1267,8 @@
     {          
         $("#exp_so").empty();
         getLabourExpenses();
+        $("#attachment2").hide();
+        $("#pdf,#img").hide();
     });
 
     //For Edit Operation
@@ -1173,16 +1277,21 @@
         var id = $(this).data('id');
         // $('#exp_type option:selected').remove();
         // $("#exp_type option:selected").removeAttr("selected");
-        
+        $("#pdf,#img").hide();
         if(id !=""){
-            $('#attachment1').show();
+            $("#attachment2").hide();
             var exp_type = $(this).data('exp_type');
             var exp_desc = $(this).data('exp_desc');
             var exp_date = $(this).data('exp_date');
             var amount = $(this).data('amount');
             var attachment = $(this).data('attachment');
             var oth_id= $(this).data('oth_id');
-     
+            if(attachment != null){
+                $('#attachment1').show();
+            }else{
+                $('#attachment1').hide();
+            }
+        //  alert(attachment);
             // ACTIVE PANE AND LINK
             $('.nav-tabs a[href="#update_epayment"]').tab('show');
 
@@ -1217,7 +1326,7 @@
         var exp_date= $('#exp_date').val();
         var attachment= $('#attachment').val();
         var expense_amnt = $('#expense_amnt').val();
-
+        // alert(exp_type);
         n=0;    
         if( $.trim(expense_amnt).length == 0 )
         {
@@ -1264,14 +1373,24 @@
             ++n;
         }
 
-        var ext1 = $('#attachment').val().split('.').pop().toLowerCase();
-        if($.inArray(ext1, ['png','jpg','jpeg']) == -1 && ext1 != '')
-        {
-            $('#aerror').html('Only .jpg, .jpeg, .png allowed').css('color','red');
-            e.preventDefault();
-            return false;
-            ++n;
+        
+        if(exp_type =="Hotel" || exp_type=="Material_Purchase")
+        {   
+            var ext1 = $('#attachment').val().split('.').pop().toLowerCase();
+            
+            if($.inArray(ext1, ['png','jpg','jpeg','pdf','docx']) == -1 )
+            {
+                $('#aerror').html('Only .jpg, .jpeg, .png, .pdf, .docx allowed').css('color','red');
+                event.preventDefault();
+                return false;
+               
+            }else{
+                ++n;
+            }
+           
+
         }
+        
     });
 
         //**************** Expense FILE ENCODER ********************
@@ -1296,8 +1415,16 @@
 
     // For Add Expenses Labour Payment
     $(document).on("click",'#add_expense',function()
-    {           
-        if(n==5)
+    {      
+        var exp_type = $('#exp_type').val();  
+        if(exp_type =="Hotel" || exp_type=="Material_Purchase")
+        {
+            m=6;
+        }else{
+            m=5
+        }  
+
+        if(n==m)
         {        
             var form_data = new FormData();
             form_data.append("exp_edit_id", $("#exp_edit_id").val());
@@ -1380,7 +1507,7 @@
     });
 
 </script>
-<!-- <script>
+<script>
     $(document).ready(function(){
         var $body = $("body");
         $('#labour,#so').select2();
@@ -1778,7 +1905,7 @@
         }
         
     });
-</script> -->
+</script>
 
 
 @endpush

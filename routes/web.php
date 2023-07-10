@@ -53,7 +53,7 @@ Route::group(['middleware' => 'login'], function ()
     Route::get('/user_del', [UserController::class, 'user_delete'])->middleware('check');
     Route::get('/res_pass', [UserController::class, 'resPass']);
 
-    //User Management
+    //OA Management
     Route::get('/so', [SOController::class, 'so_list'])->name('so.page');
     Route::post('/post_oa', [SOController::class, 'postOA']);
     Route::get('/get_so', [SOController::class, 'getSO']);
@@ -61,6 +61,9 @@ Route::group(['middleware' => 'login'], function ()
     Route::get('/delete_so', [SOController::class, 'soDelete']);
     Route::get('/check_tl_status', [SOController::class, 'checkTlStatus']);
     Route::post('/remove_tl', [SOController::class, 'removeTL']);
+
+    //Visit OA Management
+    Route::get('/visit_so', [SOController::class, 'visitSoList'])->name('visit_so.page');
 
     // ****** Start Accountant **********
 
@@ -71,7 +74,7 @@ Route::group(['middleware' => 'login'], function ()
     Route::get('/edit-labour-payment', [LabourPaymentController::class, 'editLabourPayment']);
     Route::get('/delete_labour_payment', [LabourPaymentController::class, 'LabourPaymentDelete']);
 
-    //Accountant Management
+    //attendance regularise 
     Route::get('/technician_attendance', [AttendanceController::class, 'technicianAttendance'])->name('technician_attendance.page');
     Route::get('/tech-att-record', [AttendanceController::class, 'techAttRecord']);
     Route::get('/get-labour', [AttendanceController::class, 'getLabour']);
@@ -83,13 +86,19 @@ Route::group(['middleware' => 'login'], function ()
     Route::get('/get_all_expenses', [LabourPaymentController::class, 'getAllExpense']);
     Route::get('/post_expense', [LabourPaymentController::class, 'postExpense']);
 
+
+    // Accountant Manage Payment
+    Route::get('/SO_payment_history', [SOController::class, 'SOPaymentHistory'])->name('SO_payment_history.page');
+    Route::get('/view_oa_payment_history/{id}', [SOController::class, 'viewOAPaymentHistory']);
+    // Route::get('/get_all_expenses', [LabourPaymentController::class, 'getAllExpense']);
+    // Route::get('/post_expense', [LabourPaymentController::class, 'postExpense']);
+
+
     // ****** End Accountant **********
 
 
 
     // ****** Start Labour **********
-
-    //Labour Dashboard
 
         //Attendance Management
         Route::get('/attendance', [AttendanceController::class, 'attendanceList'])->name('attendance.page');
@@ -118,7 +127,7 @@ Route::group(['middleware' => 'login'], function ()
         Route::get('/post_tlabour_payment', [LabourPaymentController::class, 'postTransferLPayment']);
         Route::get('/delete_tlabour_payment', [LabourPaymentController::class, 'trLabourPaymentDelete']);
 
-        //labour expense
+        //travel expense
         Route::get('/travel_expense', [LabourPaymentController::class, 'travelExpense'])->name('travel_expense.page');
         Route::POST('/post_travel_expense', [LabourPaymentController::class, 'postTravelExpense']);
         Route::get('/get_travel_expenses', [LabourPaymentController::class, 'getTravelExpense']);

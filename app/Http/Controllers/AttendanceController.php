@@ -39,7 +39,7 @@ class AttendanceController extends Controller
         ->leftjoin('users as u','u.id','oth.lead_technician')
         ->leftjoin('sales_orders as so','so.id','oth.so_id')
         ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
-        ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+        ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
         ->orderby('oth.updated_at','DESC')
         ->get();
 
@@ -55,7 +55,7 @@ class AttendanceController extends Controller
         $p_id = PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate,'pin_u_id'=>$a_id])->orderby('updated_at','DESC')->get();
         foreach($p_id as $p){
             $p_id1 = PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate,'a_id'=>$a_id])->orderby('updated_at','DESC')->get();
-            
+            // dd($p_id1);
             $pin_u_ids = [];
             foreach($p_id1 as $p1){
                 array_push($pin_u_ids, $p1->pin_u_id);    //Push user id for attendance
@@ -63,7 +63,7 @@ class AttendanceController extends Controller
             $p->pin_u_ids = implode(',',$pin_u_ids);
         } 
 
-        // dd($p_id);
+        
         // $p_id = $p_id[0];
         foreach($p_obj as $p){
             $startTime=$p->created_at;
@@ -110,6 +110,7 @@ class AttendanceController extends Controller
     	$p_in_date=isset($_POST['p_in_date']) ? $_POST['p_in_date'] : "NA";
         $p_in_latitude=isset($_POST['p_in_latitude']) ? $_POST['p_in_latitude'] : "NA";
     	$p_in_longitude=isset($_POST['p_in_longitude']) ? $_POST['p_in_longitude'] : "NA";
+        dd($p_in_labour);
         $u_id = strval($a_id); 
         array_push($p_in_labour, $u_id);    //Push user id for attendance
         $tech_count = count($p_in_labour);
@@ -503,6 +504,7 @@ class AttendanceController extends Controller
                     $p->s_obj = $s_obj;
 
                 }
+
             }else{
 
                 //punch in records
@@ -568,7 +570,6 @@ class AttendanceController extends Controller
                         $p->tl_name = $tl->name;
                     }
         
-        
                     // $so_id = explode(",",$p->pin_so_id);
         
                     // $s_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0,])->orderby('created_at','DESC')->get();
@@ -618,7 +619,7 @@ class AttendanceController extends Controller
         }
 
         
-        if(!empty($p_obj)){
+        if(count($p_obj)>0){
             return json_encode(array('status' => true ,'data' => $p_obj,'fdate' =>$from_date ,'labours' =>$labours,'message' => 'Data Found'));
         }else{
         return ['status' => false, 'message' => 'No Data Found'];
@@ -682,15 +683,15 @@ class AttendanceController extends Controller
     public function getPoutHLabour(Request $req)
     {
         $pout_date = $req->get('pout_date');
-
+        $pout_oth_id = $req->get('pout_oth_id');
         // $so_id = explode(",",$req->get('pout_so_id'));
         $data=PunchInOutModel::where(['delete'=>0,'pin_date'=>$pout_date])->orderby('updated_at','DESC')->get();
 
 
         $l_obj=DB::table('punch_in_out as pio')
             ->leftjoin('users as u','u.id','pio.pout_u_id')
-            ->select('u.id','pio.pin_date','pio.delete','u.name','u.delete as u_delete','u.is_active')
-            ->where(['pio.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'pio.pout_date'=>$pout_date])
+            ->select('u.id','pio.pout_date','pio.delete','u.name','u.delete as u_delete','u.is_active')
+            ->where(['pio.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'pio.pout_date'=>$pout_date,'pout_oth_id'=>$pout_oth_id])
             ->orderby('u.created_at','DESC')
             ->get();
 
@@ -716,7 +717,7 @@ class AttendanceController extends Controller
         $l_obj=DB::table('punch_in_out as pio')
             ->leftjoin('users as u','u.id','pio.pin_u_id')
             ->select('u.id','pio.pin_date','pio.delete','u.name','u.delete as u_delete','u.is_active')
-            ->where(['pio.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'pio.pin_date'=>$pin_date])
+            ->where(['pio.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'pio.pin_date'=>$pin_date,'pin_oth_id'=>$pin_oth_id])
             ->orderby('u.created_at','DESC')
             ->get();
 

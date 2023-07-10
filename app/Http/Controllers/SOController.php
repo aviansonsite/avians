@@ -9,6 +9,10 @@ use PHPMailer\PHPMailer\Exception;
 use App\Models\UserModel;
 use App\Models\SOModel;
 use App\Models\OATLHistoryModel;
+use App\Models\LabourPaymentModel;
+use App\Models\TransferPaymentModel;
+use App\Models\TechnicianExpenseModel;
+use App\Models\TravelExpenseModel;
 use Session;
 use Hash;
 use DB;
@@ -29,6 +33,7 @@ class SOController extends Controller
     	$edit_id=empty($req->get('edit_id')) ? null : $req->get('edit_id');
         // dd($req);
         $so_number = $req->get('so_number');
+        $oa_type = $req->get('oa_type');
    		$client_name = $req->get('client_name');
    		$project_name = $req->get('project_name');
    		$cp_ph_no = $req->get('cp_ph_no');
@@ -54,6 +59,11 @@ class SOController extends Controller
                 $u_obj->cp_ph_no=$cp_ph_no;
                 $u_obj->labour=$labour;
                 $u_obj->lead_technician=$labour1;
+                if($oa_type == "normal"){
+                    $u_obj->oa_type=1;
+                }else{
+                    $u_obj->oa_type=0;
+                }
                 $u_obj->a_id=$a_id;
                 $res=$u_obj->update();
                 
@@ -102,6 +112,182 @@ class SOController extends Controller
                 }
 
                 if($res){
+                    $tl_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$labour1])->orderby('created_at','DESC')->get();
+
+                    $s_name = [];
+                    foreach($labours as $l){
+                        $s_tl_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$l])->orderby('created_at','DESC')->get();
+                        foreach($s_tl_obj as $p1){
+                            array_push($s_name, $p1->name);    //Push user id for attendance
+                        }
+                    }
+
+                    // $s_obj = SOModel::where(['delete'=>0,])->orderby('updated_at','DESC')->get();
+
+                    $tl_name = $tl_obj[0]->name;
+                    $email = $tl_obj[0]->email;
+                    $image = public_path('files/company/logo.png');
+                    $all_sup_tech=implode(', ',$s_name);
+                    $mail = new PHPMailer(true);
+                    try 
+                    {
+                        //Server Options  
+                        $mail->SMTPOptions = array('ssl' => array('verify_peer' => false,'verify_peer_name' => false,'allow_self_signed' => true)); 
+                        //Server settings                                 
+                        // Enable verbose debug output
+                        $mail->isSMTP();                                      
+                        // Set mailer to use SMTP
+                        $mail->Host = config('constants.MAIL_HOST');  
+                        // Specify main and backup SMTP servers
+                        $mail->SMTPAuth = true;                               
+                        // Enable SMTP authentication
+                        $mail->Username = config('constants.MAIL_USERNAME');                 
+                        // SMTP username
+                        $mail->Password = config('constants.MAIL_PASSWORD');                           
+                        // SMTP password
+                        $mail->SMTPSecure = 'tls';                            
+                        // Enable TLS encryption, `ssl` also accepted
+                        $mail->Port = config('constants.MAIL_PORT');                                    
+                        // TCP port to connect to
+
+                        //Recipients
+                        $mail->setFrom(config('constants.MAIL_FROM'), "".config('constants.AUTHOR_NAME')." Team");
+                        $mail->addAddress($email,$tl_name);     
+                        $mail->addReplyTo(config('constants.MAIL_REPLY'), 'Avians Innovations technology Pvt.Ltd');
+
+                        //Content
+                        $mail->CharSet = "utf-8";       
+                        // set charset to utf8
+                        $mail->isHTML(true); 
+                        $mail->AddEmbeddedImage($image, 'logo_2u');              
+                        // Set email format to HTML
+                        $mail->Subject = config('constants.AUTHOR_NAME')." - OA Details.";
+                        $body="
+                        <div style='background-color:rgb(255,255,255);margin:0;font:12px/16px Arial,sans-serif'>"
+                           ." <table style='width: 640px;color: rgb(51,51,51);margin: 0 auto;border-collapse: collapse;'>"
+                               ." <tbody>"
+                                   ." <tr>"
+                                       ." <td style='padding:0 20px 20px 20px;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif'>"
+                                           ." <table style='width:100%;border-collapse:collapse'>"
+                                               ." <tbody>"
+                                                   ." <tr>"
+                                                       ." <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif'>"
+                                                           ." <table style='width:100%;border-collapse:collapse'>"
+                                                               ." <tbody>"
+                                                                   ." <tr>"
+                                                                       ." <td rowspan='2' style='width:115px;padding:18px 0 0 0;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif'>"
+                                                                           ." <img alt='Money Vision' src='cid:logo_2u' style='border:0;width:115px' class='CToWUd'>" 
+                                                                       ." </td>
+                                                                        <td style='text-align:right;padding:5px 0;border-bottom:1px solid rgb(204,204,204);white-space:nowrap;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif'>"
+                                                                       ." </td>"
+                                                                       ."<td style='text-align:right;padding:5px 0;border-bottom:1px solid rgb(204,204,204);white-space:nowrap;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif'></td></tr><tr><td colspan='3' style='text-align:right;padding:7px 0 5px 0;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif'></td>"
+                                                                   ." </tr>"
+                                                               ." </tbody>"
+                                                           ." </table>"
+                                                       ." </td>"
+                                                   ." </tr>"
+                                                   ." <tr>"
+                                                       ." <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif'>"
+                                                           ." <table style='width:100%;border-collapse:collapse'>"
+                                                               ." <tbody>"
+                                                                   ." <tr>"
+                                                                       ." <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif'> "
+                                                                           ." <h3 style='font-size:15px;color:rgb(204,102,0);margin:15px 0 0 0;font-weight:normal'>"
+                                                                               ." <b> Hello ".$tl_name.", </b>"
+                                                                           ." </h3> "
+                                                                           ." <p style='margin:5px 0 0 0;font:12px/16px Arial,sans-serif'> Greetings from Avians Innovations technology Pvt.Ltd"
+                                                                           ." </p> "
+                                                                       ." </td>"
+                                                                   ." </tr>"
+                                                                   ." <tr>"
+                                                                       ." <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif'>"
+                                                                       ." </td>"
+                                                                   ." </tr>"
+                                                               ." </tbody>"
+                                                           ." </table>"
+                                                       ." </td>"
+                                                   ." </tr>"
+                                                   ." <tr>"
+                                                       ." <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif'>"
+                                                           ." <table style='width:100%;border-collapse:collapse'>"
+                                                            ."</table>"
+                                                       ." </td>"
+                                                   ." </tr>"
+                                                   ." <tr>"
+                                                       ." <td style='vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif'>"
+                                                            ."<table style='width:100%;border-top:3px solid rgb(45,55,65);border-collapse:collapse'>"
+                                                               ." <tbody>"
+                                                                   ." <tr style='background-color:rgb(239,239,239)'>"
+                                                                       ." <td style='font-size:14px;padding:11px 18px 18px 18px;width:50%;vertical-align:top;line-height:16px;font-family:Arial,sans-serif'> "
+                                                                           ." <p style='margin:2px 0 9px 0;font:12px/16px Arial,sans-serif'> "
+                                                                               ." <span style='color:rgb(102,102,102)'>Please go through This information of OA which is assigned for you For tomorrow's tasks.</span>"
+                                                                               ." <br/><br/>"
+                                                                               ." <strong>Login Link:  </strong> <a href='".config('constants.LOGIN_LINK')."'>Click Here.</a>"
+                                                                               ." <br> "
+                                                                               ." <strong>OA Number:  ".$so_number."</strong>"
+                                                                               ." <br>"
+                                                                               ." <strong>Client Name:  ".$client_name."</strong>"
+                                                                               ." <br>"
+                                                                               ." <strong>Project Name:  ".$project_name."</strong>"
+                                                                               ." <br>"
+                                                                               ." <strong>CP Name:  ".$cp_name."</strong>"
+                                                                               ." <br>"
+                                                                               ." <strong>CP Phone Number:  ".$cp_ph_no."</strong>"
+                                                                               ." <br>"
+                                                                               ." <strong>Project Address:  ".$address."</strong>"
+                                                                               ." <br>"
+                                                                               ." <strong>Support Technicians:  ".$all_sup_tech."</strong>"
+                                                                               ." <br/><br/>"
+                                                                               ." <span style='color:rgb(102,102,102)'>If there is anything that feels unclear or needs to change, please share your feedback with Admin.</span>"
+                                                                               ." <br/><br/><br/>"
+                                                                               ." <span style='color:rgb(102,102,102)'>Thanks, </span>"
+                                                                               ." <br>"
+                                                                               ." <span style='color:rgb(102,102,102)'>Avians Innovations technology Pvt.Ltd</span>"
+                                                                               ." <br>"
+                                                                           ." </p>"
+                                                                       ." </td>"
+                                                                   ." </tr>"
+                                                               ." </tbody>"
+                                                           ." </table>"
+                                                       ." </td>"
+                                                   ." </tr>"
+                                                   ." <tr>"
+                                                       ." <td style='padding:0;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif'>"
+                                                           ." <p style='font-size:11px;color:rgb(102,102,102);line-height:16px;margin:0 0 10px 0;font:11px'>This email was sent from a notification-only address that cannot accept incoming email. Please do not reply to this message. "
+                                                           ." </p>"
+                                                           ." <p style='font-size:11px;color:rgb(102,102,102);line-height:16px;margin:0 0 10px 0;font:11px'>"
+                                                               ." <div>"
+                                                                   ." <b>".config('constants.PROJECT_NAME')." Team.</b>"
+                                                                   ." <br/>&nbsp;&nbsp;"
+                                                                   ." <b>"
+                                                                   ." </b>"
+                                                               ." </div>"
+                                                               ." <div style='background-color:#ebeef2;color:black;text-align:center;font-size:12px;height:20px;padding-top: 7px;padding-botton: 7px;'>© ".date('Y')." ".config('constants.AUTHOR_URL')."
+                                                                </div>"
+                                                           ." </p>"
+                                                       ." </td>"
+                                                   ." </tr>"
+                                              ."  </tbody>"
+                                           ." </table>"
+                                       ." </td>"
+                                   ." </tr>"
+                               ." </tbody>"
+                           ." </table>"."
+                        </div>";  
+                        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+                        $mail->MsgHTML($body);
+                        $mail->send();
+
+                        // Session::put('SUCCESS_MESSAGE', "New Password & Login Details Sent On E-mail.");
+                        // return redirect()->route('login.page');
+                    }
+                    catch (Exception $e)
+                    {
+                        return ['status' => false, 'message' => $mail->ErrorInfo];
+                        // Session::put('ERROR_MESSAGE', "E-mail could not be sent.$mail->ErrorInfo");
+                        // return redirect()->route('login.page');
+                    }
+
                     return ['status' => true, 'check_exist_tl'=>count($check_exist_tl),'message' => 'SO Update Successfully'];
                 }else{
                    return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
@@ -123,6 +309,17 @@ class SOController extends Controller
                 $u_obj->cp_ph_no=$cp_ph_no;
                 $u_obj->labour=$labour;
                 $u_obj->lead_technician=$labour1;
+
+                if($oa_type == "normal")
+                {
+                    $u_obj->oa_type=1;          // normal oa
+
+                }else{
+
+                    $u_obj->oa_type=0;          // visit oa
+
+                }
+
                 $u_obj->delete=0;
                 $u_obj->a_id=$a_id;
                 $res=$u_obj->save();
@@ -339,7 +536,7 @@ class SOController extends Controller
         if($roles == 0){
             $data=DB::table('sales_orders as so')
             ->leftjoin('users as u','u.id','so.a_id')
-            ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','u.name','u.delete as u_delete','u.is_active')
+            ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','u.name','u.delete as u_delete','u.is_active')
             ->where(['so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
             ->orderby('so.updated_at','DESC')
             ->get();
@@ -351,13 +548,23 @@ class SOController extends Controller
                     $d->oth_status = $o->status;
                     $d->oth_id = $o->id;
                 }
+
+                // User Data
+                $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->lead_technician])->orderby('created_at','DESC')->get();
+
+                foreach($u_obj as $u){
+                    $d->lead_technician_name = $u->name;
+                }
+
+                $d->enc_id = CommonController::encode_ids($d->id);
             }
             // $oth_obj=OATLHistoryModel::where(['id'=>$so_id])->orderby('created_at','DESC')->get();
 
         }else{
+
             $data=DB::table('sales_orders as so')
             ->leftjoin('users as u','u.id','so.a_id')
-            ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','u.name','u.delete as u_delete','u.is_active')
+            ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','u.name','u.delete as u_delete','u.is_active')
             ->where(['so.a_id'=>$a_id,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
             ->orderby('so.updated_at','DESC')
             ->get();
@@ -369,12 +576,21 @@ class SOController extends Controller
                     $d->oth_status = $o->status;
                     $d->oth_id = $o->id;
                 }
+
+                // User Data
+                $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->lead_technician])->orderby('created_at','DESC')->get();
+
+                foreach($u_obj as $u){
+                    $d->lead_technician_name = $u->name;
+                }
+
+                $d->enc_id = CommonController::encode_ids($d->id);
             }
 
         }
         
         // User Data
-        $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'a_id'=>$a_id])->orderby('created_at','DESC')->get();
+        $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
         if(!empty($data)){
             return json_encode(array('status' => true ,'data' => $data,'u_obj' => $u_obj,'roles' => $roles ,'message' => 'Data Found'));
          }else{
@@ -425,9 +641,12 @@ class SOController extends Controller
     public function soDelete(Request $req)
     {
         $id=$req->get('id');
-        $u_obj=SOModel::find($id);
-        $u_obj->delete=1;
-        $res=$u_obj->update();
+        $s_obj=SOModel::find($id);
+        $s_obj->delete=1;
+        $s_obj->lead_technician=0;
+        $res=$s_obj->update();
+
+        $data=OATLHistoryModel::where(['so_id'=>$id,'status'=>1])->update(['status'=>0]);
 
         if($res){
             return ['status' => true, 'message' => 'SO Deleted Successfully'];
@@ -448,11 +667,27 @@ class SOController extends Controller
         
         $oa_number = "";
         $d_so_id = 0 ;
-        
+        $oa_status ="";
+        // $oa_type =0;
             foreach($data as $d){
-                $s_obj=SOModel::where(['delete'=>0,'id'=>$d->so_id,'a_id'=>$a_id,])->orderby('created_at','DESC')->get();
+                $s_obj=SOModel::where(['delete'=>0,'id'=>$d->so_id])->orderby('created_at','DESC')->get();
                 foreach($s_obj as $s){
                     $oa_number = $s->so_number;
+                    // $oa_type = $d->status;
+                    if($s->oa_type == 1){
+                        if($d->status == 1)
+                        {
+                            $oa_status = "Active OA";
+                        }else{
+                            $oa_status = "In-Active OA";
+                        }
+                    }else{
+                        if($d->status == 1){
+                            $oa_status = "Visit Active OA";
+                        }else{
+                            $oa_status = "Visit In-Active OA";
+                        }
+                    }
                 }
                 $d_so_id = $d->so_id;
             }
@@ -460,13 +695,12 @@ class SOController extends Controller
         // User Data
         $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'a_id'=>$a_id])->where('id', '!=',$u_id)->orderby('created_at','DESC')->get();
         if(!empty($data)){
-            return json_encode(array('status' => true ,'data' => $data,'u_obj' => $u_obj,'count' => $count,'so_id' => $so_id,'d_so_id' => $d_so_id,'roles' => $roles,'oa_number' =>$oa_number ,'message' => 'Data Found'));
+            return json_encode(array('status' => true ,'data' => $data,'u_obj' => $u_obj,'count' => $count,'so_id' => $so_id,'d_so_id' => $d_so_id,'roles' => $roles,'oa_number' =>$oa_number ,'oa_status' =>$oa_status ,'message' => 'Data Found'));
          }else{
             return ['status' => false, 'message' => 'No Data Found'];
          }
 
     }
-
 
     public function removeTL(Request $req)
     {
@@ -482,7 +716,7 @@ class SOController extends Controller
             $oth_obj->status=0;
             $res=$oth_obj->update();
 
-            $s_obj=SOModel::find($oth_id);
+            $s_obj=SOModel::find($oth_so_id);
             $s_obj->lead_technician=0;
             $res=$s_obj->update();
         }
@@ -715,5 +949,189 @@ class SOController extends Controller
             Session::put('ERROR_MESSAGE','Account Does Not Exists..!');
             return redirect()->route('login.page');
         }
+    }
+
+    public function visitSoList()
+    {
+    	$u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+        // dd($u_obj);
+    	// return view('users.users_list',compact('u_obj'));
+    	return view('so.visitSoList',compact('u_obj'));
+
+    }
+
+    public function SOPaymentHistory()
+    {
+        $roles=Session::get('ROLES');
+        $a_id=Session::get('USER_ID');
+
+    	$u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+       
+    	return view('so.SOPaymentHistory',compact('u_obj'));
+
+    }
+
+    public function viewOAPaymentHistory($so_id)
+    {
+        $so_id = CommonController::decode_ids($so_id);
+
+        $data=DB::table('sales_orders as so')
+            ->leftjoin('oa_tl_history as oth','oth.so_id','so.id')
+            ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','oth.id as oth_id','oth.status')
+            ->where(['so.id'=>$so_id,'so.delete'=>0])
+            ->orderby('so.updated_at','DESC')
+            ->get();
+
+        // dd($data);
+
+        $oth_id= array(); //create empty array
+
+        foreach($data as $dl)
+        {   
+            array_push($oth_id,$dl->oth_id);        // push lead technician in all technicians
+        }
+        // Avians account Payment
+        $accountant_payment = LabourPaymentModel::where(['delete'=>0])->whereIn('oth_id',$oth_id)->sum('payment_amnt');
+        // fot - from other technician
+        $fot = TransferPaymentModel::where(['delete'=>0])->whereIn('recvr_oth_id',$oth_id)->sum('amount');
+        $total_wallet = $accountant_payment + $fot;
+      
+        //Technician Expense
+        $technician_expenses = TechnicianExpenseModel::where(['delete'=>0])->whereIn('oth_id',$oth_id)->whereIn('oth_id',$oth_id)->sum('amount');
+
+        //Travel Expense
+        $travel_expense = TravelExpenseModel::where(['delete'=>0])->whereIn('oth_id',$oth_id)->sum('travel_amount');
+
+        $total_tech_expense = $technician_expenses + $travel_expense;
+
+        //transfer to other technician
+        $ttot = TransferPaymentModel::where(['delete'=>0])->whereIn('oth_id',$oth_id)->sum('amount');
+        // dd($ttot);
+        $total_expense = $technician_expenses + $travel_expense + $ttot;
+
+        //Cleared Payment
+        $aprvd_technician_expenses = TechnicianExpenseModel::where(['delete'=>0,'status'=>'Approved'])->whereIn('oth_id',$oth_id)->sum('aprvd_amount');
+    
+        //Cleared Payment
+        $apprvd_travel_expense = TravelExpenseModel::where(['delete'=>0,'status'=>'Approved'])->whereIn('oth_id',$oth_id)->sum('aprvd_amount');
+           
+        $cleared_pay = $aprvd_technician_expenses +  $apprvd_travel_expense;
+
+        //uncleared Payment
+        $uncleared_pay = TechnicianExpenseModel::where(['delete'=>0])->whereIn('oth_id',$oth_id)->where('status', '!=','Approved')->sum('amount');
+
+        $balance = $total_wallet - $total_expense;
+
+        $s_obj=SOModel::where(['delete'=>0,'id'=>$so_id])->orderby('created_at','DESC')->get();
+        // dd($s_obj);
+        //from avians account payment
+        $avians_payment=DB::table('sales_orders as so')
+            ->leftjoin('oa_tl_history as oth','oth.so_id','so.id')
+            ->leftjoin('labour_payments as lp','lp.oth_id','oth.id')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','oth.id as oth_id','oth.status','lp.p_desc','lp.payment_date','lp.payment_amnt','u.name','u.delete as u_delete',)
+            ->where(['so.delete'=>0,'u.delete'=>0])
+            ->whereIn('oth_id',$oth_id)
+            ->orderby('so.updated_at','DESC')
+            ->get();
+            // dd($avians_payment);
+        // // transfer other technician
+        // $transfer_payment=DB::table('sales_orders as so')
+        //     ->leftjoin('oa_tl_history as oth','oth.so_id','so.id')
+        //     ->leftjoin('transfer_payments as tp','tp.oth_id','oth.id')
+        //     ->leftjoin('users as u','u.id','tp.u_id')
+        //     ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','oth.id as oth_id','oth.status','tp.p_desc','tp.p_date','tp.amount','u.name','u.delete as u_delete',)
+        //     ->where(['so.id'=>$so_id,'so.delete'=>0,'oth.status'=>1,'u.delete'=>0,'tp.delete'=>0])
+        //     ->orderby('so.updated_at','DESC')
+        //     ->get();    
+
+        // dd($avians_payment);
+        $general_expense=DB::table('technician_expenses as te')
+            ->leftjoin('users as u','u.id','te.a_id')
+            ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','te.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+            ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'so.id'=>$so_id])
+            ->orderby('te.created_at','DESC')
+            ->get();
+
+            foreach($general_expense as $ge){
+                $u_obj=UserModel::where(['delete'=>0,'id'=>$ge->u_a_id])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $ge->project_admin = $u->name;
+                }
+            }
+            
+        $travel_expense=DB::table('travel_expenses as te')
+            ->leftjoin('users as u','u.id','te.a_id')
+            ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id as u_a_id','u.emp_number','te.id','te.oth_id','te.ad_id','te.sa_id','te.mode_travel','te.from_location','te.to_location','te.total_km','te.travel_date','te.travel_desc','te.ad_remark','te.sa_remark','te.attachment','te.no_of_person','te.travel_amount','te.aprvd_amount','te.status','te.a_id','te.delete','te.created_at','te.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.a_id as so_aid')
+            ->where(['te.delete'=>0,'u.delete'=>0,'so.id'=>$so_id])
+            // ->where('te.created_at', '>=', $date)
+            ->orderby('te.created_at','DESC')
+            ->get();
+
+            foreach($travel_expense as $tr)
+            {
+                $u_obj=UserModel::where(['delete'=>0,'id'=>$tr->u_a_id])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $tr->project_admin = $u->name;
+                }
+            }
+        
+
+        $transfer_payment=DB::table('transfer_payments as tp')
+            ->leftjoin('oa_tl_history as oth','oth.id','tp.oth_id')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id as u_a_id','u.emp_number','tp.id','tp.oth_id','tp.u_id','tp.recvr_oth_id','tp.p_date','tp.p_desc','tp.amount','tp.a_id','tp.delete','tp.created_at','tp.updated_at','so.id as so_id','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.a_id as so_aid')
+            ->where(['tp.delete'=>0,'u.delete'=>0,'so.id'=>$so_id])
+            ->orderby('tp.created_at','DESC')
+            ->get();
+
+            foreach($transfer_payment as $tp)
+            {
+                $s_obj1=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id as u_a_id','u.emp_number','oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.updated_at','so.delete','so.labour','so.so_number')
+                ->where(['oth.id'=>$tp->recvr_oth_id,'so.delete'=>0])
+                ->orderby('so.updated_at','DESC')
+                ->get();
+
+                foreach($s_obj1 as $s){
+                    $tp->recvr_so_number = $s->so_number;
+                    $tp->recvr_labour_name = $s->labour_name;
+                }
+            }
+        
+        $receiver_payment=DB::table('transfer_payments as tp')
+            ->leftjoin('oa_tl_history as oth','oth.id','tp.recvr_oth_id')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id as u_a_id','u.emp_number','tp.id','tp.oth_id','tp.u_id','tp.recvr_oth_id','tp.p_date','tp.p_desc','tp.amount','tp.a_id','tp.delete','tp.created_at','tp.updated_at','so.id as so_id','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.a_id as so_aid')
+            ->where(['tp.delete'=>0,'u.delete'=>0,'so.id'=>$so_id])
+            ->orderby('tp.created_at','DESC')
+            ->get();
+
+            foreach($receiver_payment as $tp)
+            {
+                $s_obj1=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id as u_a_id','u.emp_number','oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.updated_at','so.delete','so.labour','so.so_number')
+                ->where(['oth.id'=>$tp->oth_id,'so.delete'=>0])
+                ->orderby('so.updated_at','DESC')
+                ->get();
+
+                foreach($s_obj1 as $s){
+                    $tp->sender_so_number = $s->so_number;
+                    $tp->sender_labour_name = $s->labour_name;
+                }
+            }    
+        // dd($receiver_payment);
+    	return view('so.viewSOPaymentHistory',compact('s_obj','data','accountant_payment','total_wallet','technician_expenses','fot','ttot','total_expense','cleared_pay','uncleared_pay','balance','total_tech_expense','avians_payment','general_expense','travel_expense','transfer_payment','receiver_payment'));
+
     }
 }

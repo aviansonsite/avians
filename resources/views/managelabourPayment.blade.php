@@ -101,41 +101,41 @@
                         <div id="alerts">
                         </div>
                         {!! Form::open(['class'=>"form-horizontal",'id'=>"tech_pay_search_form"]) !!}
-                        <div class="row">
-                            <?php $tdate=date("Y-m-d"); ?>
-                            <div class="col-md-3 col-sm-12 col-lg-3">
-                                <div class="form-floating mb-3">
-                                    <input type="date" max="{{$tdate}}" class="form-control" id="from_date"  name="from_date" required placeholder="dd-mm-yyyy" value="{{$tdate}}">
-                                    <label for="from_date">From Date <sup class="text-danger">*</sup></label>
-                                    <small><span class="text-danger" id="fderror" style="font-size: 11px !important;"></span></small>
-                                </div>
-                            </div>
-    
-                            <div class="col-md-3 col-sm-12 col-lg-3">
-                                <div class="form-floating mb-3">
-                                    <input type="date" max="{{$tdate}}" class="form-control" id="to_date"  name="to_date" required placeholder="dd-mm-yyyy" 
-                                    value="{{$tdate}}">
-                                    <label for="to_date">To Date <sup class="text-danger">*</sup></label>
-                                    <small><span class="text-danger" id="tderror" style="font-size: 11px !important;"></span></small>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-12 col-lg-3">
-                                <div class="form-group mb-3">
-                                    <label for="labours" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician <sup class="text-danger">*</sup></label>
-                                    <select class="form-control select2" id="labours" required name="labours">
-                                        <option value="" disabled selected>Select</option>
-                                        @foreach($u_obj as $u)
-                                            <option value="{{$u->id}}">{{$u->name}}</option>
-                                        @endforeach
-                                    </select>
-                                    <small><span class="text-danger" id="slerror" style="font-size: 11px !important;"></span></small>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-12 col-lg-3">
-                                <button type="button" class="btn btn-primary btn-sm waves-effect waves-light w-sm" id="exp_req_ftd_records">Search</button>
-                            </div>
-                        </div>
-                        {!! Form::close() !!} 
+                                <div class="row">
+                                    <?php $tdate=date("Y-m-d"); ?>
+                                    <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="form-floating mb-3">
+                                            <input type="date" max="{{$tdate}}" class="form-control" id="from_date"  name="from_date" required placeholder="dd-mm-yyyy" value="{{$tdate}}">
+                                            <label for="from_date">From Date <sup class="text-danger">*</sup></label>
+                                            <small><span class="text-danger" id="fderror" style="font-size: 11px !important;"></span></small>
+                                        </div>
+                                    </div>
+            
+                                    <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="form-floating mb-3">
+                                            <input type="date" max="{{$tdate}}" class="form-control" id="to_date"  name="to_date" required placeholder="dd-mm-yyyy" 
+                                            value="{{$tdate}}">
+                                            <label for="to_date">To Date <sup class="text-danger">*</sup></label>
+                                            <small><span class="text-danger" id="tderror" style="font-size: 11px !important;"></span></small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="form-group mb-3">
+                                            <label for="labours" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician <sup class="text-danger">*</sup></label>
+                                            <select class="form-control select2" id="labours" required name="labours">
+                                                <option value="" disabled selected>Select</option>
+                                                @foreach($u_obj as $u)
+                                                    <option value="{{$u->id}}">{{$u->name}}</option>
+                                                @endforeach
+                                            </select>
+                                            <small><span class="text-danger" id="slerror" style="font-size: 11px !important;"></span></small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-12 col-lg-3">
+                                            <button type="button" class="btn btn-primary btn-sm waves-effect waves-light w-sm" id="exp_req_ftd_records">Search</button>
+                                        </div>
+                                    </div>
+                                {!! Form::close() !!} 
                       
                         <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
                             <li class="nav-item">
@@ -171,9 +171,6 @@
                                             <tr>
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">Expense Date</th>
-                                                @if($roles == 1)
-                                                    <th scope="col">Action</th>
-                                                @endif
                                                 <th scope="col" style="width: 100px">Technician Name</th>
                                                 <th scope="col" style="width: 100px">OA Number</th>
                                                 <th scope="col" style="width: 100px">Client Name</th>
@@ -184,7 +181,9 @@
                                                 <th scope="col" style="width: 100px">Admin Remark</th>
                                                 <th scope="col" style="width: 100px">Status</th>
                                                 <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
-                                               
+                                                @if($roles == 1)
+                                                    <th scope="col">Action</th>
+                                                @endif
                                             </tr>
                                         </thead>
                                         <tbody id="exp_pay_records">
@@ -192,12 +191,11 @@
                                         </tbody>
                                         <tfoot id="tucledata">
                                             <tr>
-                                                @if($roles == 1)
-                                                    <th colspan="12" class="text-center"><strong>Total</strong></th>
-                                                @else
-                                                    <th colspan="11" class="text-center"><strong>Total</strong></th>
-                                                @endif
+                                                <th colspan="11" class="text-center"><strong>Total</strong></th>
                                                 <th id="t_ucleamount"></th>
+                                                @if($roles == 1)
+                                                    <th></th>
+                                                @endif
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -211,9 +209,6 @@
                                             <tr>
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">Expense Date</th>
-                                                @if($roles == 0)
-                                                    <th scope="col">Action</th>
-                                                @endif
                                                 <th scope="col" style="width: 100px">Technician Name</th>
                                                 <th scope="col" style="width: 100px">OA Number</th>
                                                 <th scope="col" style="width: 100px">Client Name</th>
@@ -225,7 +220,9 @@
                                                 <th scope="col" style="width: 100px">Status</th>
                                                 <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
 
-                                                
+                                                @if($roles == 0)
+                                                    <th scope="col">Action</th>
+                                                @endif
                                             </tr>
                                         </thead>
                                         <tbody id="cll_records">
@@ -233,12 +230,11 @@
                                         </tbody>
                                         <tfoot id="tclldata">
                                             <tr>
+                                                <th colspan="11" class="text-center"><strong>Total</strong></th>
+                                                <th id="t_cllamount"></th>
                                                 @if($roles == 0)
-                                                    <th colspan="12" class="text-center"><strong>Total</strong></th>
-                                                @else
-                                                    <th colspan="11" class="text-center"><strong>Total</strong></th>
-                                                @endif      
-                                                    <th id="t_cllamount"></th>                                       
+                                                    <th></th>
+                                                @endif
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -285,9 +281,6 @@
                                             <tr>
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">Expense Date</th>
-                                                @if($roles == 0)
-                                                    <th scope="col">Action</th>
-                                                @endif
                                                 <th scope="col" style="width: 100px">Technician Name</th>
                                                 <th scope="col" style="width: 100px">OA Number</th>
                                                 <th scope="col" style="width: 100px">Client Name</th>
@@ -298,7 +291,9 @@
                                                 <th scope="col" style="width: 100px">Admin Remark</th>
                                                 <th scope="col" style="width: 100px">Status</th>
                                                 <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
-                                               
+                                                @if($roles == 0)
+                                                    <th scope="col">Action</th>
+                                                @endif
                                             </tr>
                                         </thead>
                                         <tbody id="cal_records">
@@ -306,14 +301,11 @@
                                         </tbody>
                                         <tfoot id="tcaldata">
                                             <tr>
-                                                @if($roles == 0)
-                                                    <th colspan="12" class="text-center"><strong>Total</strong></th>
-                                                @else
-                                                    <th colspan="11" class="text-center"><strong>Total</strong></th>
-                                                @endif
-                                                
+                                                <th colspan="11" class="text-center"><strong>Total</strong></th>
                                                 <th id="t_calamount"></th>
-                                                
+                                                @if($roles == 0)
+                                                    <th></th>
+                                                @endif
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -328,8 +320,8 @@
     </div>
 </div>
 
-<!-- sample modal content -->
-<div id="editPaymentModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+ <!-- sample modal content -->
+ <div id="editPaymentModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -590,9 +582,6 @@
                                 content +="<tr>";
                                 content +="<td>"+ ++i +"</td>";
                                 content +="<td>"+exp_date+"</td>";
-                                if(data.role == 1){
-                                    content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
-                                }
                                 content +="<td>"+row.labour_name+"</td>";
                                 content +="<td>"+row.so_number+"</td>";
                                 content +="<td>"+row.client_name+"</td>";
@@ -614,7 +603,9 @@
                                 
                                 content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                                 content +="<td>"+row.amount+"</td>";
-                                
+                                if(data.role == 1){
+                                    content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                }
                                 content += "</tr>";
 
                         }   
@@ -641,9 +632,6 @@
                                 content1 +="<tr>";
                                 content1 +="<td>"+ ++j +"</td>";
                                 content1 +="<td>"+exp_date+"</td>";
-                                if(data.role == 0){
-                                    content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
-                                }
                                 content1 +="<td>"+row.labour_name+"</td>";
                                 content1 +="<td>"+row.so_number+"</td>";
                                 content1 +="<td>"+row.client_name+"</td>";
@@ -664,7 +652,9 @@
                                 }
                                 content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                                 content1 +="<td>"+row.aprvd_amount+"</td>";
-                                
+                                if(data.role == 0){
+                                    content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                }
                                 content1 += "</tr>";
                         }
 
@@ -739,9 +729,6 @@
                                 content2 +="<tr>";
                                 content2 +="<td>"+ ++k +"</td>";
                                 content2 +="<td>"+exp_date+"</td>";
-                                if(data.role == 0){
-                                    content2 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
-                                }
                                 content2 +="<td>"+row.labour_name+"</td>";
                                 content2 +="<td>"+row.so_number+"</td>";
                                 content2 +="<td>"+row.client_name+"</td>";
@@ -763,7 +750,9 @@
                                 }
                                 content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                                 content2 +="<td>"+row.amount+"</td>";
-                               
+                                if(data.role == 0){
+                                    content2 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                }
                                 content2 += "</tr>";
 
                         }
@@ -866,9 +855,6 @@
                                 content +="<tr>";
                                 content +="<td>"+ ++i +"</td>";
                                 content +="<td>"+exp_date+"</td>";
-                                if(data.role == 1){
-                                    content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
-                                }
                                 content +="<td>"+row.labour_name+"</td>";
                                 content +="<td>"+row.so_number+"</td>";
                                 content +="<td>"+row.client_name+"</td>";
@@ -890,7 +876,9 @@
                                 
                                 content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                                 content +="<td>"+row.amount+"</td>";
-                                
+                                if(data.role == 1){
+                                    content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                }
                                 content += "</tr>";
 
                         }   
@@ -917,9 +905,6 @@
                                 content1 +="<tr>";
                                 content1 +="<td>"+ ++j +"</td>";
                                 content1 +="<td>"+exp_date+"</td>";
-                                if(data.role == 0){
-                                    content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
-                                }
                                 content1 +="<td>"+row.labour_name+"</td>";
                                 content1 +="<td>"+row.so_number+"</td>";
                                 content1 +="<td>"+row.client_name+"</td>";
@@ -940,7 +925,9 @@
                                 }
                                 content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                                 content1 +="<td>"+row.aprvd_amount+"</td>";
-                                
+                                if(data.role == 0){
+                                    content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                }
                                 content1 += "</tr>";
                         }
 
@@ -1015,9 +1002,6 @@
                                 content2 +="<tr>";
                                 content2 +="<td>"+ ++k +"</td>";
                                 content2 +="<td>"+exp_date+"</td>";
-                                if(data.role == 0){
-                                    content2 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
-                                }
                                 content2 +="<td>"+row.labour_name+"</td>";
                                 content2 +="<td>"+row.so_number+"</td>";
                                 content2 +="<td>"+row.client_name+"</td>";
@@ -1039,7 +1023,9 @@
                                 }
                                 content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                                 content2 +="<td>"+row.amount+"</td>";
-                                
+                                if(data.role == 0){
+                                    content2 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                }
                                 content2 += "</tr>";
 
                         }

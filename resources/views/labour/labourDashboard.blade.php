@@ -96,7 +96,7 @@
                 <div class="text-muted">
                     @foreach($s_obj as $s)
                         <div>
-                            <strong>OA Number : </strong>{{$s->so_number}} , <strong>Project Name : </strong>{{$s->project_name}} , <strong>Client Name : </strong>{{$s->client_name}} , <strong>Address : </strong>{{$s->address}}
+                            <strong>OA Number : </strong>{{$s->so_number}} , <strong>Client Name : </strong>{{$s->client_name}} , <strong>Project Name : </strong>{{$s->project_name}}
                         </div>                        
                     @endforeach
                 </div>
@@ -163,12 +163,12 @@
                             <div class="flex-grow-1">
                                 <p class="text-muted fw-medium text-center">Total Approved Amount</p>
                                 <h4 class="mb-2 text-center">{{$cleared_pay}}</h4>
-                                <div class="row ">
+                                <!-- <div class="row ">
                                     <div class="col-md-12">
                                         <h6 class="mb-0 text-center waves-effect style1" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="Uncleared Expense">{{$uncleared_pay}}</h6>
-                                        <!-- <p class="text-muted fw-medium text-center"> Uncleared </p> -->
+                                        <p class="text-muted fw-medium text-center"> Uncleared </p>
                                     </div> 
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -251,7 +251,7 @@
                                         <tr>
                                             <th scope="col" style="width: 20px;">#</th>
                                             <th scope="col" style="width: 100px">Date</th>
-                                            <th scope="col" style="width: 100px">SO Number</th>
+                                            <th scope="col" style="width: 100px">OA Number</th>
                                             <th scope="col" style="white-space: normal;">Description</th>
                                             <th scope="col">Amount<br>(In Rs.)</th>
                                         </tr>
@@ -469,7 +469,7 @@
     
     $(document).ready(function(){
         var $body = $("body");
-        $('#exp_type,#exp_so').select2();
+        $('#exp_type,#exp_so,#p_in_soh').select2();
         $("#taccdata").hide();
         $("#tothdata").hide();
 
@@ -592,10 +592,16 @@
                         content +="<td>"+payment_date+"</td>";
                         content +="<td>";
                         $.each(row.s_obj,function(index,row){
-                            content +=row.so_number+",";
+                            content +=row.so_number;
                         });
                         content +="</td>";
-                        content +="<td>"+row.p_desc+"</td>";
+
+                        if(row.p_desc != null){
+                            content +="<td>"+row.p_desc+"</td>";
+                        }else{
+                            content +="<td class='text-center'> - </td>";
+                        }
+
                         content +="<td>"+row.payment_amnt+"</td>";
                         content += "</tr>";
                 });
@@ -749,7 +755,11 @@
                         content +="<td>"+ ++i +"</td>";
                         content +="<td>"+p_date+"</td>";
                         content +="<td>"+row.name+"</td>";
-                        content +="<td>"+row.p_desc+"</td>";
+                        if(row.p_desc != null){
+                            content +="<td>"+row.p_desc+"</td>";
+                        }else{
+                            content +="<td class='text-center'> - </td>";
+                        }
                         content +="<td>"+row.amount+"</td>";
                         content += "</tr>";
                 });

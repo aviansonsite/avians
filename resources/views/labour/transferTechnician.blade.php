@@ -99,14 +99,14 @@
                         <div class="text-muted">
                             @foreach($s_obj as $s)
                                 <div>
-                                    <strong>OA Number : </strong>{{$s->so_number}} , <strong>Project Name : </strong>{{$s->project_name}} , <strong>Client Name : </strong>{{$s->client_name}} , <strong>Address : </strong>{{$s->address}}
+                                    <strong>OA Number : </strong>{{$s->so_number}} , <strong>Client Name : </strong>{{$s->client_name}} , <strong>Project Name : </strong>{{$s->project_name}} 
                                 </div>                        
                             @endforeach
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="d-sm-flex flex-wrap">     
-                           <h4 class="card-title mb-4">Transfer to Other Technician</h4>
+                           <h4 class="card-title mb-4">Transfer to Other Technician &nbsp;<small class="text-danger note">(Note - Payment will Transfer to only Active TL.)</small></h4>
                            <div class="ms-auto">
                            
                             </div>
@@ -163,6 +163,7 @@
                                             <tr>
                                                 <th scope="col">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">Payment Date</th>
+                                                <th scope="col" style="width: 100px">OA Number</th>
                                                 <th scope="col" style="width: 100px">Technician Name</th>
                                                 <th scope="col" style="width: 100px">Description</th>
                                                 <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
@@ -174,7 +175,7 @@
                                         </tbody>
                                         <tfoot id="ttrandata">
                                             <tr>
-                                                <th colspan="4" class="text-center"><strong>Total</strong></th>
+                                                <th colspan="5" class="text-center"><strong>Total</strong></th>
                                                 <th id="t_tranamount"></th>
                                                 <th></th>
                                             </tr>
@@ -196,9 +197,9 @@
                                                 <span class="text-danger error" id="soerror"></span>
                                             </div>
                                         </div>
-                                        <div class="col-md-2 col-sm-12 col-lg-2">
+                                        <div class="col-md-3 col-sm-12 col-lg-3">
                                             <div class="form-group mb-3">
-                                                <label for="labour" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician <sup class="text-danger">*</sup></label>
+                                                <label for="labour" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician - (OA Number)<sup class="text-danger">*</sup></label>
                                                 <select class="form-control select2" id="labour" required name="labour">
                                                     
                                                 </select>
@@ -215,6 +216,15 @@
                                                 <span class="text-danger error" id="pdaerror"></span>
                                             </div>
                                         </div>
+                                        
+                                        <div class="col-md-5 col-sm-12 col-lg-5">
+                                            <div class="form-floating mb-3">
+                                                <textarea class="form-control" id="pay_desc" placeholder="Enter Payment Description" required name="pay_desc" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="500"></textarea>
+                                                <label for="pay_desc">Payment Description<sup class="text-danger">*</sup></label>
+                                                <span class="text-danger error" id="pderror"></span>
+
+                                            </div>
+                                        </div>
                                         <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" id="payment_amnt" placeholder="Payment Amount" name="payment_amnt" maxlength="10" required>
@@ -222,15 +232,6 @@
                                                 <span class="text-danger error" id="paerror"></span>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 col-sm-12 col-lg-4">
-                                            <div class="form-floating mb-3">
-                                                <textarea class="form-control" id="pay_desc" placeholder="Enter Payment Description" required name="pay_desc" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);" maxlength="100"></textarea>
-                                                <label for="pay_desc">Payment Description<sup class="text-danger">*</sup></label>
-                                                <span class="text-danger error" id="pderror"></span>
-
-                                            </div>
-                                        </div>
-                                        
                                         <div class="d-sm-flex flex-wrap">
                                             <div class="ms-auto">
                                                 <button type="button" class="btn btn-primary btn-sm waves-effect waves-light" id="add_labour_payment">Submit</button>
@@ -793,6 +794,7 @@
         var $body = $("body");
         $('#labour,#so').select2();
         $("#ttrandata").hide();
+        $(".note").hide();
         $('#labour1,#labours,#oa_hit').select2({ 
             dropdownParent: $('#oaHistoryModal') 
         });
@@ -960,6 +962,7 @@
                         content +="<tr>";
                         content +="<td>"+ ++i +"</td>";
                         content +="<td>"+payment_date+"</td>";
+                        content +="<td>"+row.so_number+"</td>";
                         content +="<td>"+row.labour_name+"</td>";
                         content +="<td>"+row.p_desc+"</td>";
                         content +="<td>"+row.amount+"</td>";
@@ -987,43 +990,11 @@
                     //For Add Material Modal
                     // $('#edit_labour').append("<option value='"+row.id+"'>"+row.name+"</option>");
                     if(row.lead_technician != data.a_id){
-                        $('#labour').append("<option value='"+row.lead_technician+"'>"+row.name+"</option>");
+                        $('#labour').append("<option value='"+row.lead_technician+"' data-oth_id='"+row.oth_id+"'>"+row.name+" -  ("+row.so_number+")</option>");
 
                     }
                 });
 
-                //For so
-                // $('#edit_so').append("<option value='' class='text-muted' selected disabled>"+'ALL'+"</option>");
-                $.each(data.s_obj,function(index,row){
-                    //For Add Material Modal
-                    // $('#edit_so').append("<option value='"+row.id+"'>"+row.so_number+"</option>");
-                    $('#so').append("<option value='"+row.oth_id+"'>"+row.so_number+"</option>");
-
-                    $('#client_name').val(row.client_name); 
-                    $('#project_name').val(row.project_name); 
-                    $('#address').val(row.address); 
-                    $('#cp_name').val(row.cp_name); 
-                    $('#cp_ph_no').val(row.cp_ph_no);
-
-
-                    var r=new Array();
-                    if (row.labour.toString().indexOf(',')>-1)
-                    { 
-                        var r=row.labour.split(',');
-                    }
-                    else
-                    {
-                        r[0]=row.labour.toString();
-                    }
-
-                    $.each(r,function(index,value)
-                    {
-                        $("#labour1 option[value='"+value+"']").attr('selected','selected').change();
-                    });
-
-                    $("#labours option[value='"+row.lead_technician+"']").attr('selected','selected').change(); 
-
-                });
 
 
                 $.each(data.s_obj,function(index,row){
@@ -1067,6 +1038,7 @@
         $('#edit_id').val('');
         $("#labour").empty();            
         $("#so").empty();
+        $(".note").show();
         getLabourPaymnet();
 
     });
@@ -1076,6 +1048,7 @@
     {
         $("#labour").empty();            
         $("#so").empty();
+        $(".note").hide();
         getLabourPaymnet();
     });
 
@@ -1187,6 +1160,7 @@
         {        
             var edit_id= $('#edit_id').val();
             var labour = $('#labour').val();
+            var oth_id = $('#labour').find('option:selected').data('oth_id'); 
             var so= $('#so').val();
             var pay_desc = $('#pay_desc').val();
             var payment_date= $('#payment_date').val();
@@ -1198,7 +1172,7 @@
                 },
                 url:"{{url('post_tlabour_payment')}}",
                 type :'get',
-                data : {so:so,pay_desc:pay_desc,payment_date:payment_date,payment_amnt:payment_amnt,labour:labour,edit_id:edit_id},
+                data : {so:so,pay_desc:pay_desc,payment_date:payment_date,payment_amnt:payment_amnt,labour:labour,edit_id:edit_id,oth_id:oth_id},
                 async: false,
                 cache: true,
                 dataType: 'json',

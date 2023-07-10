@@ -37,6 +37,12 @@ $count=count($role);
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="{{route('visit_so.page')}}" class="waves-effect nav-link">
+                                    <i class="bx bx-file"></i>
+                                    <span key="t-dashboards">Visit OA</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{route('manage_labour_payment.page')}}" class="waves-effect nav-link">
                                     <i class="bx bx-file"></i>
                                     <span key="t-dashboards">Manage Expense Requests</span>
@@ -94,6 +100,14 @@ $count=count($role);
                                 <a href="{{route('travel_expense.page')}}" class="waves-effect nav-link">
                                     <i class="bx bx-file"></i>
                                     <span key="t-dashboards">Travel Expense</span>
+                                </a>
+                            </li>
+                        @endif
+                        @if($roles!=3)
+                            <li class="nav-item">
+                                <a href="{{route('SO_payment_history.page')}}" class="waves-effect nav-link">
+                                    <i class="bx bx-file"></i>
+                                    <span key="t-dashboards">OA Payment History</span>
                                 </a>
                             </li>
                         @endif

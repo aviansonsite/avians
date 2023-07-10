@@ -109,6 +109,7 @@ $roles=Session::get('ROLES');
                                 <!-- <button type="button" class="btn btn-primary btn-sm waves-effect waves-light w-sm " data-bs-toggle="modal" data-bs-target="#addUserModal" style="margin-left: 10px;">
                                 <i class="mdi mdi-plus font-size-11"></i> Add User
                                 </button> -->
+                                <input type="hidden" name="admin_roles" id="admin_roles" value="{{Session::get('ROLES')}}">
                             </div>
                         </div>
                     
@@ -159,24 +160,27 @@ $roles=Session::get('ROLES');
                                             <tr>
                                                 <th scope="col">#</th>
                                                 @if($roles == 0)
-                                                    <th scope="col" style="white-space: normal;">User Id</th>
+                                                    <th scope="col">User Id</th>
                                                 @else
-                                                    <th scope="col" style="white-space: normal;">Technician Id</th>
+                                                    <th scope="col">Technician Id</th>
                                                 @endif
-                                                <th scope="col">Active</th>
+                                                <th scope="col" style="width: 20px;">Active</th>
                                                 <th scope="col">Action</th>
                                                 <th scope="col" style="white-space: normal;">Full Name</th>
+                                                @if($roles != 0)
+                                                    <th scope="col" style="white-space: normal;">Active OA</th>
+                                                @endif
                                                 <th scope="col">Email</th>
                                                 <th scope="col">Mobile</th>
                                                 
                                             </tr>
                                         </thead>
                                         <tbody id="user_records">
-                                            <?php $i=0; $roless=Session::get('ROLES'); ?>
+                                            <?php $j=$i=$k=0; $roless=Session::get('ROLES'); ?>
                                             @foreach($u_obj as $u)
                                                 @if($roless==0 && $u->role!=3)
                                                     <tr>
-                                                        <td>{{++$i}}</td>
+                                                        <td>{{++$j}}</td>
                                                         <td>{{$u->emp_number}}</td>
                                                         <td>
                                                             <div class="form-check form-switch mb-3" dir="ltr">
@@ -236,6 +240,7 @@ $roles=Session::get('ROLES');
                                                                 )
                                                             </small></h5>
                                                         </td>
+                                                        
                                                         <td>{{$u->email}}</td>
                                                         <td>{{$u->mobile}}</td>
                                                         
@@ -243,7 +248,7 @@ $roles=Session::get('ROLES');
                                                 @endif
                                                 @if($roless==1 && $u->role==3)
                                                     <tr>
-                                                        <td>{{++$i}}</td>
+                                                        <td>{{++$k}}</td>
                                                         <td>{{$u->emp_number}}</td>
                                                         <td>
                                                             <div class="form-check form-switch mb-3" dir="ltr">
@@ -303,7 +308,15 @@ $roles=Session::get('ROLES');
                                                                 )
                                                             </small></h5>
                                                         </td>
-                                                        <td>{{$u->email}}</td>
+                                                        <td>
+                                                            @foreach($u->so_number as $s)
+                                                            (
+                                                                {{$s}}    
+                                                            )
+                                                            @endforeach
+                                                        </td>
+                                                        <td>{{$u->email}} 
+                                                        </td>
                                                         <td>{{$u->mobile}}</td>
                                                     </tr>
                                                 @endif
@@ -316,6 +329,7 @@ $roles=Session::get('ROLES');
                                 {!! Form::open(['class'=>"form-horizontal user_form",'enctype'=>'multipart/form-data','files' => 'true' ,'method'=>"post",'url'=>'post_user','id'=>'postUserForm']) !!}
                                 <div class="row">
                                     <input type="hidden" name="user_id" id="user_id">
+                                    <input type="hidden" name="roles" id="roles" value="{{Session::get('ROLES')}}">
                                     <div class="col-md-3">
                                         <div class="form-floating mb-3">
                                             <input type="text" class="form-control" id="user_name" placeholder="Enter Name" required name="name" onkeyup="var start = this.selectionStart;var end = this.selectionEnd;this.value = this.value.toUpperCase();this.setSelectionRange(start, end);">
@@ -326,7 +340,7 @@ $roles=Session::get('ROLES');
 
                                     <div class="col-md-3">
                                         <div class="form-floating mb-3">
-                                            <input type="text" class="form-control" id="mobile" placeholder="Enter Mobile" required name="mobile" pattern="[789]\d{9}" maxlength="10">
+                                            <input type="text" class="form-control" id="mobile" placeholder="Enter Mobile" required name="mobile" pattern="[6789]\d{9}" maxlength="10">
                                             <label for="mobile">Mobile<sup class="text-danger">*</sup></label>
                                             <span class="text-danger error" id="merror"></span>
                                         </div>
@@ -348,9 +362,10 @@ $roles=Session::get('ROLES');
                                             
                                                 @if($roles==0)
                                                     <option value="" selected disabled>Select</option>
+                                                    <option value="0">Super Admin</option>
                                                     <option value="1">Admin</option>
                                                     <option value="2">Accountant</option>
-                                                    <!-- <option value="3">Labour</option> -->
+                                                    
                                                 @endif
 
                                                 @if($roles==1)
@@ -365,7 +380,7 @@ $roles=Session::get('ROLES');
                                     <div class="col-md-3">
                                         <div class="form-floating mb-3">
                                             <input type="file" class="form-control" id="photo_file" placeholder="photo File" name="photo_file">
-                                            <label for="photo_file">User Photo<sup class="text-danger">*</sup></label>
+                                            <label for="photo_file">User Photo<sup class="text-danger admin_role">*</sup></label>
                                             <a href="" id="photo_file1" target="_blank"><i class="fa fa-eye"></i> View Previous File</a>
                                             <span class="text-danger error" id="uperror"></span>
                                         </div>
@@ -390,7 +405,7 @@ $roles=Session::get('ROLES');
                                     <div class="col-md-3">
                                         <div class="form-floating mb-3">
                                             <input type="text" class="form-control" id="aadhar_number" placeholder="Enter AADHAR Number" name="aadhar_number" maxlength="12">
-                                            <label for="aadhar_number">AADHAR Number<sup class="text-danger">*</sup></label>
+                                            <label for="aadhar_number">AADHAR Number<sup class="text-danger admin_role">*</sup></label>
                                             <span class="text-danger error" id="aerror"></span>
                                         </div>
                                     </div>
@@ -425,6 +440,7 @@ $roles=Session::get('ROLES');
                                                 <th scope="col">Active</th>
                                                 <th scope="col" style="white-space: normal;">Full Name</th>
                                                 <th scope="col">Project Admin</th>
+                                                <th scope="col" style="white-space: normal;">Active OA</th>
                                                 <th scope="col">Email</th>
                                                 <th scope="col">Mobile</th>
                                                 
@@ -483,6 +499,13 @@ $roles=Session::get('ROLES');
                                                             </small></h5>
                                                         </td>
                                                         <td>{{$u->project_admin}}</td>
+                                                        <td>
+                                                            @foreach($u->so_number as $s)
+                                                            (
+                                                                {{$s}}    
+                                                            )
+                                                            @endforeach
+                                                        </td>
                                                         <td>{{$u->email}}</td>
                                                         <td>{{$u->mobile}}</td>
                                                         
@@ -516,9 +539,17 @@ $roles=Session::get('ROLES');
        <script>
            $(document).ready(function(){
                 $('#datatable,#tech_datatable').dataTable();
-                // $('#showbtn').hide();
+                // $('#admin_role').hide();
                 // $('#subform').attr('disabled','disabled');
                 $('#role').select2();
+
+                //for role wise compulsary fields
+                var admin_roles = $('#admin_roles').val();
+                if(admin_roles == 0){
+                    $('.admin_role').hide();
+                }else{
+                    $('.admin_role').show();
+                }   
                 
            });
        </script>
@@ -528,14 +559,6 @@ $roles=Session::get('ROLES');
 <script>
     $('#postUserForm').submit(function(e){
         
-        var ext1 = $('#photo_file').val().split('.').pop().toLowerCase();
-        if($.inArray(ext1, ['png','jpg','jpeg']) == -1 && ext1 != '')
-        {
-            $('#pferror').html('Only .jpg, .jpeg, .png allowed').css('color','red');
-            e.preventDefault();
-             return false;
-        }
-
         var ext2 = $('#pan_file').val().split('.').pop().toLowerCase();
         if($.inArray(ext2, ['png','jpg','jpeg','pdf']) == -1 && ext2 != '')
         {
@@ -564,6 +587,7 @@ $("#postUserForm").submit(function(event)
     var mobile= $('#mobile').val();
     var role= $('#role').val();
     var aadhar_number = $('#aadhar_number').val();
+    var roles = $('#roles').val();
 
     n=0;    
     if( $.trim(user_name).length == 0 )
@@ -593,14 +617,28 @@ $("#postUserForm").submit(function(event)
         ++n;
     }
 
-    if( $.trim(aadhar_number).length != 12 )
-    {
-        $('#aerror').text('Please Enter Valid Aadhar No.');
-        event.preventDefault();
-    }else{
-        $('#aerror').text('');
-        ++n;
+    if(roles != 0){
+        if( $.trim(aadhar_number).length != 12 )
+        {
+            $('#aerror').text('Please Enter Valid Aadhar No.');
+            event.preventDefault();
+        }else{
+            $('#aerror').text('');
+            ++n;
+        }
+
+        var ext1 = $('#photo_file').val().split('.').pop().toLowerCase();
+
+        if($.inArray(ext1, ['png','jpg','jpeg']) == -1)
+        {
+            $('#uperror').html('Only .jpg, .jpeg, .png allowed').css('color','red');
+            event.preventDefault();
+            return false;
+        }
+
+        
     }
+    
 
 });
 
@@ -661,9 +699,9 @@ $('.nav-tabs a[href="#profile1"]').click(function(){
 
 $(document).on("click",'.editU',function()
 {
-    $('#pan_file1').show();
-    $('#aadhar_file1').show();
-    $('#photo_file1').show();
+    $('#pan_file1').hide();
+    $('#aadhar_file1').hide();
+    $('#photo_file1').hide();
     var id = $(this).data('id');
     var name = $(this).data('name');
     var mobile_no = $(this).data('mobile');
@@ -674,7 +712,20 @@ $(document).on("click",'.editU',function()
     var pan_file = $(this).data('pan_file');
     var aadhar_file = $(this).data('aadhar_file');
     var photo_file = $(this).data('photo_file');
-    // alert(pan_file);
+    if(pan_file !=""){
+        
+        $('#pan_file1').show();
+    }
+    if(aadhar_file !=""){
+        $('#aadhar_file1').show();
+    }
+    if(photo_file !=""){
+        $('#photo_file1').show();
+    }
+    
+    
+
+    // alert(photo_file);
     var  pan_file="files/user/"+pan_file;
     var  aadhar_file="files/user/"+aadhar_file;
     var  photo_file="files/user/"+photo_file;
@@ -684,7 +735,8 @@ $(document).on("click",'.editU',function()
     $('#email').val(email);
     $('#pan_number').val(pan_number);
     $('#aadhar_number').val(aadhar_number);
-    $("#role").find("option[value="+role+"]").prop("selected", "selected");
+    // $("#role").find("option[value="+role+"]").prop("selected", "selected");
+    $("#role").val(role).trigger("change");
     $('#pan_file1').attr("href",pan_file);
     $('#aadhar_file1').attr("href",aadhar_file);
     $('#photo_file1').attr("href",photo_file);
