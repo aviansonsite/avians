@@ -967,7 +967,7 @@ class SOController extends Controller
 
     	$u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
        
-    	return view('so.SOPaymentHistory',compact('u_obj'));
+    	return view('so.soPaymentHistory',compact('u_obj'));
 
     }
 
