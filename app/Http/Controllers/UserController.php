@@ -48,22 +48,25 @@ class UserController extends Controller
 			}
 			
 		}else{
-			$u_obj=UserModel::where(['delete'=>0])->where('role','!=','0')->where('id','!=',$a_id)->orderby('created_at','DESC')->get();
-			foreach($u_obj as $u){
 
-				//get labour/sub technician so number
-				$s_obj=SOModel::where('labour', 'LIKE', '%'.$u->id.'%')->where('lead_technician','!=',0)->where(['delete'=>0])->orderby('created_at','DESC')->get();
+			$u_obj=UserModel::where(['delete'=>0])->where('role','!=','0')->where('id','!=',$a_id)->orderby('created_at','asc')->take(5)->get();
+			foreach($u_obj as $u){
 				$so_number = [];
-				foreach($s_obj as $s){
-					array_push($so_number, $s->so_number);  
-				}
+				//get labour/sub technician so number
+				$s_obj=SOModel::where('lead_technician','!=',0)->where(['delete'=>0,'labour'=>$u->id])->orderby('created_at','DESC')->get();
+				
+				array_push($so_number, $s_obj); 
+				// foreach($s_obj as $s){
+				// 	array_push($so_number, $s->so_number);  
+				// }
 
 				//get lead technician so number
-				$s_obj1=SOModel::where('lead_technician', 'LIKE', '%'.$u->id.'%')->where(['delete'=>0])->orderby('created_at','DESC')->get();
-				
-				foreach($s_obj1 as $s1){
-					array_push($so_number, $s1->so_number);  
-				}
+				$s_obj1=SOModel::where(['delete'=>0,'lead_technician'=>$u->id])->orderby('created_at','DESC')->get();
+				array_push($so_number, $s_obj1);
+
+				// foreach($s_obj1 as $s1){
+					  
+				// }
 
 				$u->so_number = $so_number;
 			}
