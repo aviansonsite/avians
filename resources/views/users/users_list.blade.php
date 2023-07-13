@@ -311,7 +311,7 @@ $roles=Session::get('ROLES');
                                                         <td>
                                                             @foreach($u->so_number as $so)
                                                                 @foreach($so as $s)
-                                                                    ({{$s->so_number}} -  {{$s->client_name}})
+                                                                    ({{$s->so_number}} -  {{$s->client_name}}) <br>
                                                                 @endforeach 
                                                             @endforeach
                                                         </td>
