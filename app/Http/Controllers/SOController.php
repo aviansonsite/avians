@@ -44,6 +44,13 @@ class SOController extends Controller
         $labour=implode(',',$labours);
     	$a_id=Session::get('USER_ID');
 
+        $check = SOModel::where(['so_number'=>$so_number,'delete'=>0])->get();
+        if(count($check)>0)
+        {
+            return ['status' => false, 'message' => "These $so_number is Already Exists..."]; 
+
+        }
+
     	$u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$labour1])->orderby('created_at','DESC')->get();
 
         if($edit_id!=null)
