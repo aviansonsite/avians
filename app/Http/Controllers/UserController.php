@@ -49,7 +49,7 @@ class UserController extends Controller
 			
 		}else{
 
-			$u_obj=UserModel::where(['delete'=>0])->where('role','!=','0')->where('id','!=',$a_id)->orderby('created_at','asc')->take(5)->get();
+			$u_obj=UserModel::where(['delete'=>0])->where('role','!=','0')->where('id','!=',$a_id)->orderby('created_at','asc')->get();
 			foreach($u_obj as $u){
 				$so_number = [];
 				//get labour/sub technician so number
