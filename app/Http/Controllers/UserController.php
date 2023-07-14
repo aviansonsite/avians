@@ -169,8 +169,8 @@ class UserController extends Controller
 			if($check1==false)
 			{
 
-				if($check==false)
-				{
+				// if($check==false)
+				// {
 
 					$a_id=Session::get('USER_ID');
 					$permitted='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -255,9 +255,9 @@ class UserController extends Controller
 						Session::put('ERROR_MESSAGE',"User Not Created...!");
 					}
 
-				}else{
-					Session::put('ERROR_MESSAGE',"User With This Number Already Exist...!");
-				}
+				// }else{
+				// 	Session::put('ERROR_MESSAGE',"User With This Number Already Exist...!");
+				// }
 
 			}else{
 				Session::put('ERROR_MESSAGE',"User With This AADHAR Number Already Exist...!");
