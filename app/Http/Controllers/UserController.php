@@ -97,10 +97,10 @@ class UserController extends Controller
 		if($user_id!=null)
     	{
 
-			if($check1==false)
-			{
-				if($check==false)
-				{
+			// if($check1==false )
+			// {
+				// if($check==false)
+				// {
 					$a_id=Session::get('USER_ID');
 					$permitted='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 					$pass=substr(str_shuffle($permitted),0,6);
@@ -154,13 +154,13 @@ class UserController extends Controller
 					}else{
 						Session::put('ERROR_MESSAGE',"User Not Updated...!");
 					}
-				}else{
-					Session::put('ERROR_MESSAGE',"User With This Number Already Exist...!");
-				}
+				// }else{
+				// 	Session::put('ERROR_MESSAGE',"User With This Number Already Exist...!");
+				// }
 
-			}else{
-				Session::put('ERROR_MESSAGE',"User With This AADHAR Number Already Exist...!");
-			}
+			// }else{
+			// 	Session::put('ERROR_MESSAGE',"User With This AADHAR Number Already Exist...!");
+			// }
 
 			
 
