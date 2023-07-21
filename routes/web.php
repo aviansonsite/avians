@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SOController;
 use App\Http\Controllers\LabourPaymentController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\ReportController;
 
 
 
@@ -65,6 +66,9 @@ Route::group(['middleware' => 'login'], function ()
     //Visit OA Management
     Route::get('/visit_so', [SOController::class, 'visitSoList'])->name('visit_so.page');
 
+    //Expense
+    Route::get('/site_exp_report', [ReportController::class, 'siteExpReport'])->name('site_exp_report.page');
+    Route::get('/get-exp-record', [ReportController::class, 'getExpRecord']);
     // ****** Start Accountant **********
 
     //Accountant Management
@@ -135,7 +139,7 @@ Route::group(['middleware' => 'login'], function ()
         Route::get('/update_travel_expense', [LabourPaymentController::class, 'updateTravelExpenses']);
 
         
-    
+        
     // ****** End Labour **********
 
 });    

@@ -93,7 +93,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Attendance Report</h5>
-                        {!! Form::open(['class'=>"form-horizontal",'id'=>"inv_report_form"]) !!}
+                        {!! Form::open(['class'=>"form-horizontal",'id'=>"att_report_form"]) !!}
                         <div class="row">
                             <?php $tdate=date("Y-m-d"); ?>
                             <div class="col-md-2 col-sm-12 col-lg-2">

@@ -23,7 +23,7 @@ class LabourPaymentController extends Controller
     {
     	$u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
     	$s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
-
+        
     	return view('labour.labourPaymentList',compact('u_obj','s_obj'));
 
     }
@@ -574,7 +574,7 @@ class LabourPaymentController extends Controller
             //SO data
             $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
 
-            if(count($data)>0){
+            if(!empty($data)){
                 return json_encode(array('status' => true ,'data' => $data,'u_obj' => $u_obj,'s_obj' => $s_obj ,'role'=>$role ,'message' => 'Data Found'));
             }else{
                 return ['status' => false, 'message' => 'No Data Found'];

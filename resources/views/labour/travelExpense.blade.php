@@ -2275,7 +2275,7 @@
             }
             
 
-            $('#ad_remark').val(ad_remark);
+            $('#acc_remark').val(ad_remark);
 
             $('#attachment2').attr("href",attachment);
             $('#t_name').html(t_name);   

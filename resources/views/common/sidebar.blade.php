@@ -110,6 +110,17 @@ $count=count($role);
                                     <span key="t-dashboards">OA Payment History</span>
                                 </a>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-user" role="button"
+                                >
+                                    <i class="bx bx-user me-2"></i><span key="t-specification">Reports</span> <div class="arrow-down"></div>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="topnav-settings">
+                                    <a href="{{route('site_exp_report.page')}}" class="dropdown-item">
+                                    <span key="t-customers">Site Expenses</span>
+                                    </a>
+                                </div>
+                            </li>
                         @endif
                         <!-- labour -->
                         @if($roles==1)
