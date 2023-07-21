@@ -300,12 +300,12 @@ class SOController extends Controller
 
         }else{    
 
-            $check = SOModel::where(['so_number'=>$so_number,'delete'=>0])->get();
-            if(count($check)>0)
-            {
-                return ['status' => false, 'message' => "These $so_number is Already Exists..."]; 
+            // $check = SOModel::where(['so_number'=>$so_number,'delete'=>0])->get();
+            // if(count($check)>0)
+            // {
+            //     return ['status' => false, 'message' => "These $so_number is Already Exists..."]; 
 
-            }
+            // }
             // return ['status' => true, 'message' => "$so_number,$client_name,$project_name,$address,$cp_name,$cp_ph_no,$labour"];
             if ($so_number !='' && $client_name !='' && $project_name !='' && $address !='' && $cp_name !='' && $cp_ph_no !='') 
             {
