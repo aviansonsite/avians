@@ -1,6 +1,6 @@
 @extends('common.master')
 <?php $title=config('constants.PROJECT_NAME'); ?>
-@section('title',"Attendance Report | $title")
+@section('title',"Expense Report | $title")
 @push('page_css')
 {!! Html::style('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') !!}
 {!! Html::style('assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css') !!}
@@ -161,14 +161,14 @@
                                 <thead>
                                     <tr>
                                         <th scope="col" style="width: 20px;">Sr.No</th>
-                                        <th scope="col" style="width: 100px">Date <br>(DD/MM/YY)</th>
+                                        <th scope="col" style="width: 100px">Date</th>
                                         <th scope="col" style="width: 100px">Amount</th>
                                         <th scope="col" style="width: 100px">OA Number</th>
                                         <th scope="col" style="width: 100px">Expense Description</th>
                                         <th scope="col" style="width: 100px">Expense Type</th>
                                         <th scope="col" style="width: 100px">Admin Name</th>
                                         <th scope="col" style="width: 100px">Super Admin</th>
-                                        <th scope="col" style="width: 100px">SA Remark</th>
+                                    
                                     </tr>
                                 </thead>
                                 <tbody id="att_table">
@@ -216,14 +216,14 @@
             buttons: [
                 {extend: 'copy', className: 'btn-sm'},
                 {extend: 'csv', 
-                    title: 'Attendance Records', 
+                    title: 'Expense Records', 
                     className: 'btn-sm',
-                    exportOptions: {columns: [0,1,2,3,4,5,6,7]}
+                    exportOptions: {columns: [0,1,2,3,4,5,6]}
                 },
                 {   header: true,
                     footer:true,
                     extend: 'excel',
-                    title: 'Attendance Records', 
+                    title: 'Expense Records', 
                     messageTop: function () {
                             var thead_name=$('#edr_title').text();
                             return thead_name;
@@ -231,13 +231,13 @@
                     },
                     messageBottom:'The information in this table is copyright to Avians',
                     className: 'btn-sm',
-                    exportOptions: {columns: [0,1,2,3,4,5,6,7]}
+                    exportOptions: {columns: [0,1,2,3,4,5,6]}
                     
                 },
                 {header: true,
                     footer:true,
                     extend: 'pdf', 
-                    title: 'Attendance Records', 
+                    title: 'Expense Records', 
                     className: 'btn-sm',
                     messageTop: function () {
                             var thead_name=$('#edr_title').text();
@@ -245,7 +245,7 @@
                     
                     },
                     messageBottom:'The information in this table is copyright to Avians',
-                    exportOptions: {columns: [0,1,2,3,4,5,6,7]}
+                    exportOptions: {columns: [0,1,2,3,4,5,6]}
                 },
                 {extend: 'print', className: 'btn-sm'}
             ]
@@ -299,7 +299,7 @@
         }
     });
 
-    //For technician attendance Records
+    //For technician Expense Records
     $(document).on("click", "#exp_records", function ()
     {   
         if (n==3) {
@@ -319,8 +319,8 @@
             var from_date1 = formatDate (from_date); // "18/01/10"
             var to_date1 = formatDate (to_date); // "18/01/10"
 
-            // $("#f_date").html(from_date1);
-            // $("#t_date").html(to_date1);
+            $("#f_date").html(from_date1);
+            $("#t_date").html(to_date1);
 
             $.ajax({
                 headers:{
@@ -350,100 +350,27 @@
                                 month = datePart[1], day = datePart[2];
                                 return day+'-'+month+'-'+year;
                             }
-                        
-                           
-
-                            var d = new Date();
-
-                            var current_date = d.getDate();
-
-                            if(row.pin_date != null){
-                                var pin_date = formatDate (row.pin_date); // "18/01/10"
-                                content +="<tr>";
-                                content +="<td>"+ ++i +"</td>";
-                                content +="<td>"+pin_date+"</td>";
-                                content +="<td>";
-                                $.each(row.s_obj,function(index,row)
-                                {   
-                                    content += row.so_number+"<br> <span class='badge badge-soft-primary oa_hist'data-id='"+row.id+"' data-so_number='"+row.so_number+"' data-client_name='"+row.client_name+"' data-project_name='"+row.project_name+"' data-address='"+row.address+"' data-cp_name='"+row.cp_name+"' data-cp_ph_no='"+row.cp_ph_no+"' data-lead_technician='"+row.lead_technician+"' data-labour='"+row.labour+"' data-bs-toggle='modal'>OA History</span>";
-                                });
-                                content +="</td>";
-                                content +="<td>"+row.technician_name+"</td>";
-                                content +="<td class='pinhistry' data-pin_oth_id='"+row.pin_oth_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>"+row.pin_time+"</td>";
-
-                                if(row.created_at == row.updated_at){ 
-                                    content +="<td><span class='badge badge-soft-danger regularise_modal' data-id='"+row.id+"' data-tl_id='"+row.a_id+"' data-ptype='pout_record'>Regularise</span></td>";
-
-                                }else{
-                                    content +="<td class='pouthistry' data-pout_oth_id='"+row.pout_oth_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>"+row.pout_time+"</td>";
-                                }
-                                        
-                                content +="<td>"+row.totalDuration+"</td>";
-                                content +="<td>"+row.tl_name+"</td>";
-                                content += "</tr>";
-
+                     
+                            var exp_date = formatDate (row.exp_date); // "18/01/10"
+                       
+                            content +="<tr>";
+                            content +="<td>"+ ++i +"</td>";
+                            content +="<td>"+exp_date+"</td>";
+                            content +="<td>"+row.aprvd_amount+"</td>";
+                            content +="<td>"+row.so_number+"</td>";
+                            if(row.exp_desc == null){
+                                content +="<td><strong>SA Remark - </strong>"+row.sa_remark+"</td>";
                             }else{
-
-                                if(row.pin_date != null){
-                                    var pin_date = formatDate (row.pin_date); // "18/01/10"
-                                }else{
-                                    var pout_date = formatDate (row.pout_date); // "18/01/10"
-                                }
-                                content +="<tr>";
-                                content +="<td>"+ ++i +"</td>";
-                                content +="<td>"+pout_date+"</td>";
-                                content +="<td>";
-                                $.each(row.s_obj,function(index,row)
-                                {   
-                                    content += row.so_number+"<br> <span class='badge badge-soft-primary oa_hist'data-id='"+row.id+"' data-so_number='"+row.so_number+"' data-client_name='"+row.client_name+"' data-project_name='"+row.project_name+"' data-address='"+row.address+"' data-cp_name='"+row.cp_name+"' data-cp_ph_no='"+row.cp_ph_no+"' data-lead_technician='"+row.lead_technician+"' data-labour='"+row.labour+"' data-bs-toggle='modal'>OA History</span>";
-                                });
-                                content +="</td>";
-                                content +="<td>"+row.technician_name+"</td>";
-
-                                if(row.created_at == row.updated_at){ 
-                                    content +="<td><span class='badge badge-soft-danger regularise_modal' data-id='"+row.id+"' data-tl_id='"+row.a_id+"' data-ptype='pin_record'>Regularise</span></td>";
-
-                                }else{
-
-                                    content +="<td class='pinhistry' data-pin_oth_id='"+row.pin_oth_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>"+row.pin_time+"</td>";
-
-                                }
-
-                                content +="<td class='pouthistry' data-pout_oth_id='"+row.pout_oth_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>"+row.pout_time
-                                        
-                                content +="<td>"+row.totalDuration+"</td>";
-                                content +="<td>"+row.tl_name+"</td>";
-                                content += "</tr>";
+                                content +="<td>"+row.exp_desc+"<br> <strong>SA Remark - </strong>"+row.sa_remark+"</td>";
                             }
+                            content +="<td>"+row.exp_type+"</td>";
+                            content +="<td>"+row.project_admin+"</td>";
+                            content +="<td>"+row.super_admin+"</td>";
+                            content += "</tr>";
+
+                           
                                 
-                        });
-
-                        $.each(data.s_obj,function(index,row){
-
-                            $('#client_name').val(row.client_name); 
-                            $('#project_name').val(row.project_name); 
-                            $('#address').val(row.address); 
-                            $('#cp_name').val(row.cp_name); 
-                            $('#cp_ph_no').val(row.cp_ph_no);
-
-
-                            var r=new Array();
-                            if (row.labour.toString().indexOf(',')>-1)
-                            { 
-                                var r=row.labour.split(',');
-                            }
-                            else
-                            {
-                                r[0]=row.labour.toString();
-                            }
-
-                            $.each(r,function(index,value)
-                            {
-                                $("#hist_labour option[value='"+value+"']").attr('selected','selected').change();
-                            });
-
-                            $("#hist_labours option[value='"+row.lead_technician+"']").attr('selected','selected').change(); 
-                        });     
+                        });   
 
                         $("#att_table").html(content); //For append html data
 
@@ -453,14 +380,14 @@
                             buttons: [
                                 {extend: 'copy', className: 'btn-sm'},
                                 {extend: 'csv', 
-                                    title: 'Attendance Records', 
+                                    title: 'Expense Records', 
                                     className: 'btn-sm',
-                                    exportOptions: {columns: [0,1,2,3,4,5,6,7]}
+                                    exportOptions: {columns: [0,1,2,3,4,5,6]}
                                 },
                                 {   header: true,
                                     footer:true,
                                     extend: 'excel',
-                                    title: 'Attendance Records', 
+                                    title: 'Expense Records', 
                                     messageTop: function () {
                                             var thead_name=$('#edr_title').text();
                                             return thead_name;
@@ -468,13 +395,13 @@
                                     },
                                     messageBottom:'The information in this table is copyright to Avians',
                                     className: 'btn-sm',
-                                    exportOptions: {columns: [0,1,2,3,4,5,6,7]}
+                                    exportOptions: {columns: [0,1,2,3,4,5,6]}
                                     
                                 },
                                 {header: true,
                                     footer:true,
                                     extend: 'pdf', 
-                                    title: 'Attendance Records', 
+                                    title: 'Expense Records', 
                                     className: 'btn-sm',
                                     messageTop: function () {
                                             var thead_name=$('#edr_title').text();
@@ -482,7 +409,7 @@
                                     
                                     },
                                     messageBottom:'The information in this table is copyright to Avians',
-                                    exportOptions: {columns: [0,1,2,3,4,5,6,7]}
+                                    exportOptions: {columns: [0,1,2,3,4,5,6]}
                                 },
                                 {extend: 'print', className: 'btn-sm'}
                             ]
