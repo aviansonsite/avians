@@ -42,6 +42,7 @@ class ReportController extends Controller
         //Technician Expense
         $exp_date = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$labours]) ->whereDate('exp_date', '>=' ,$from_date)
         ->whereDate('exp_date', '<=' ,$to_date)->groupBy('exp_date')->get('exp_date');
+
         $tech_exp= array(); //create empty array
         foreach($exp_date as $ed){
 
@@ -74,7 +75,7 @@ class ReportController extends Controller
             $approval_admin = "";
             $approval_super_admin = "";
             $oa_number = "";
-            $exp_date = $ed->exp_date;
+            $exp_date1 = $ed->exp_date;
             foreach($data as $d){
                 
                 $approval_admin = $d->project_admin;
@@ -95,7 +96,7 @@ class ReportController extends Controller
                 }
 
             }
-            $date = date('d-m-Y', strtotime($ed->exp_date));
+            $date = date('d-m-Y', strtotime($ed->exp_date1));
             $exp_objj["hotel"] = $hotel;
             $exp_objj["daily_allowance"] = $daily_allowance;
             $exp_objj["material_purchase"] = $material_purchase;
