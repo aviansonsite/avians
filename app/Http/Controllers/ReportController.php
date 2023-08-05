@@ -104,7 +104,7 @@ class ReportController extends Controller
 
         }
 
-        if(count($data)>0){
+        if(count($technicianss)>0){
             return json_encode(array('status' => true ,'data' => $technicianss,'exp_date' => $exp_date,'message' => 'Data Found'));
         }else{
             return ['status' => false, 'message' => 'No Data Found'];
