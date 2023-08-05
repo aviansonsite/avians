@@ -32,10 +32,17 @@ class ReportController extends Controller
         $to_date = $req->get('to_date');
         $labours = $req->get('labours');
                                                                                                                                          
+        $u_obj1=UserModel::where(['delete'=>0,'id'=>$labours])->where('role','!=','0')->orderby('created_at','DESC')->get();
+        foreach($u_obj1 as $u){
+            $u->from_date = date('d-m-Y', strtotime($from_date));
+            $u->to_date = date('d-m-Y', strtotime($to_date));
+
+        }
+
         //Technician Expense
         $exp_date = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$labours]) ->whereDate('exp_date', '>=' ,$from_date)
         ->whereDate('exp_date', '<=' ,$to_date)->groupBy('exp_date')->get('exp_date');
-        $technicianss= array(); //create empty array
+        $tech_exp= array(); //create empty array
         foreach($exp_date as $ed){
 
             $data=DB::table('technician_expenses as te')
@@ -88,6 +95,7 @@ class ReportController extends Controller
                 }
 
             }
+            $date = date('d-m-Y', strtotime($ed->exp_date));
             $exp_objj["hotel"] = $hotel;
             $exp_objj["daily_allowance"] = $daily_allowance;
             $exp_objj["material_purchase"] = $material_purchase;
@@ -96,16 +104,16 @@ class ReportController extends Controller
             $exp_objj["approval_admin"] = $approval_admin;
             $exp_objj["approval_super_admin"] = $approval_super_admin;
             $exp_objj["oa_number"] = $oa_number;
-            $exp_objj["exp_date"]= $ed->exp_date;
+            $exp_objj["exp_date"]= $date;
             $travel_expense = TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours,'travel_date'=>$ed->exp_date])->sum('aprvd_amount');
             $exp_objj["travel_expense"]= $travel_expense;
-          
-            array_push($technicianss,$exp_objj);
+            $exp_objj["exp_total_amount"] = $total_amount + $travel_expense;
+            array_push($tech_exp,$exp_objj);
 
         }
 
-        if(count($technicianss)>0){
-            return json_encode(array('status' => true ,'data' => $technicianss,'exp_date' => $exp_date,'message' => 'Data Found'));
+        if(count($tech_exp)>0){
+            return json_encode(array('status' => true ,'data' => $tech_exp,'exp_date' => $exp_date,'message' => 'Data Found'));
         }else{
             return ['status' => false, 'message' => 'No Data Found'];
         }
