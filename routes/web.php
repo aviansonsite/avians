@@ -137,9 +137,9 @@ Route::group(['middleware' => 'login'], function ()
         Route::get('/get_travel_expenses', [LabourPaymentController::class, 'getTravelExpense']);
         Route::get('/delete_travel_expense', [LabourPaymentController::class, 'deleteTravelExpense']);
         Route::get('/update_travel_expense', [LabourPaymentController::class, 'updateTravelExpenses']);
-
-        
         
     // ****** End Labour **********
+
+        Route::post('/generate-pdf', [ReportController::class, 'generatePdf']);
 
 });    
