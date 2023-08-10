@@ -47,69 +47,73 @@
         <tr>       
             <td style="width:80px;"> Technician Name.: <br/> <b> {{$u_obj1[0]->name}} </b></td>
             <td style="width:30px;"> Mobile No.: <br/> <b> {{$u_obj1[0]->mobile}} </b></td>
-            <td style="width:30px;"> Adv Total Amount.: <br/> <b> Pending </b></td>
-            <td style="width:30px;"> Period.: <br/> <b> Pending </b></td>
+            <td style="width:30px;"> Adv Total Amount.: <br/> <b> {{$u_obj1[0]->adv_amnt}} </b></td>
             <td style="width:30px;"> From Date.: <br/> <b> {{$u_obj1[0]->from_date}} </b></td>
             <td style="width:30px;"> To Date.: <br/> <b> {{$u_obj1[0]->to_date}} </b></td>
+            <td style="width:30px;">  <br/> <b>  </b></td>
         </tr>
         <tr>       
-            <td colspan="6"> Adv VH No.: <br/> <b> Pending </b></td>
+            <td colspan="6"> Adv VH No.: <br/><br/><br/> <b>  </b></td>
         </tr>
     </table>
 
     <table style='margin-top: 0px;'>
         <tr>
-            <th class="srno" style="width: 10px;">Sr.No</th>
+            
             <th  style="width:50px;">Date</th>
-            <th >Description</th>
-            <th  style="width:90px;"> OA NO.</th>
             <th  style="width:60px;white-space:wrap;">Approval Admin</th>
             <th  style="width:60px;white-space:wrap;">Approval Super Admin</th>
+            <th >Description</th>
+            <th  style="width:90px;"> OA NO.</th>
             <th  style="width:50px;"> Bills (Y / N)</th>
             <th  style="width:50px;white-space:wrap;">Travel Expense</th>
             <th  style="width:40px;">Hotel</th>
             <th  style="width:50px;white-space:wrap;">Daily Allowance</th>
-            <th  style="width:60px;white-space:wrap;">Matereal Purchase</th>
+            <th  style="width:60px;white-space:wrap;">Material Purchase</th>
             <th  style="width:;white-space:wrap;">Other Expenses (Crane,scaffolding, labor hired)</th>
-            <th  style="width:;white-space:wrap;">Super Admin Remarks</th>
             <th >Amount (in Rs.)</th>
         </tr>
       <?php  $n=7?>
-      <?php $j = 0; ?>
+      <?php $j = 0; $total_tech_exp_amount=0; $exp_total_amount=0;?>
     @foreach($tech_exp as $tech_exp)
-      
+        <?php   $total_tech_exp_amount += $tech_exp['total_tech_exp_amount'];
+                $exp_total_amount += $tech_exp['exp_total_amount'];
+        ?>
         <tr style="border-bottom: none; border-top: none;">
-            <td style="width: 10px;">{{++$j}}</td>
+           
             <td style="width: ;">{{$tech_exp['exp_date']}}</td>
-            <td  style=""> <strong> Pending </strong> <br> </td>
-            <td style="width:;">{{$tech_exp['oa_number']}}</td>
             <td style="width: ;">{{$tech_exp['approval_admin']}}</td>
             <td style="width: ;">{{$tech_exp['approval_super_admin']}}</td>
+            <td  style="">
+                @foreach($tech_exp['travel_desc'] as $td) 
+                     <strong>{{$td->travel_desc}}</strong> <br> 
+                @endforeach
+            </td>
+            <td style="width:;">{{$tech_exp['oa_number']}}</td>
             <td style="width: ;"> Yes </td>
             <td style="width: ;">{{$tech_exp['travel_expense']}}</td>
             <td style="width: ;">{{$tech_exp['hotel']}}</td>
             <td style="width: ;">{{$tech_exp['daily_allowance']}}</td>
             <td style="width: ;">{{$tech_exp['material_purchase']}}</td>
             <td style="width: ;">{{$tech_exp['other']}}</td>
-            <td style="width: ;"></td>
             <td style="width: ;">{{$tech_exp['exp_total_amount']}}</td>
 
         </tr>
     @endforeach
     <tr style="border-bottom: none; border-top: none;">
-        <td colspan="13" style="text-align: right; font-style: normal;"><strong>Sum Amount claimed by technician</strong></td>
-        <td style="width: 100px;">  Pending </td>
+        <td colspan="11" style="text-align: right; font-style: normal;"><strong>Sum Amount claimed by technician</strong></td>
+        <td style="width: 100px;">{{$total_tech_exp_amount}}</td>
     </tr>
     <tr style="border-bottom: none; border-top: none;">
-        <td colspan="13" style="text-align: right; font-style: normal;"><strong>Approved Amount by super admin</strong></td>
-        <td style="width: 100px;">  Pending </td>
+        <td colspan="11" style="text-align: right; font-style: normal;"><strong>Approved Amount by super admin</strong></td>
+        <td style="width: 100px;">{{$exp_total_amount}}</td>
     </tr>
     <tr style="border-bottom: none; border-top: none;">
-        <td colspan="13" style="text-align: right; font-style: normal;"><strong>Balance /refundable Amount,if any</strong></td>
-        <td style="width: 100px;">  Pending </td>
+        <td colspan="11" style="text-align: right; font-style: normal;"><strong>Balance /refundable Amount,if any</strong></td>
+        <td style="width: 100px;">{{$total_tech_exp_amount - $exp_total_amount}}</td>
     </tr>   
     <tr style="border-bottom: none; border-top: none;">
-        <td colspan="11" style="text-align: right; font-style: normal;"></td>
+        <td colspan="9" style="text-align: right; font-style: normal;"></td>
         <td  colspan="3"style="text-align:right;">
                   <b style="vertical-align: text-top;">For  Avians Innovation Technology Pvt. Ltd </b>
                   <br/><br/><br/><br/><br/> 

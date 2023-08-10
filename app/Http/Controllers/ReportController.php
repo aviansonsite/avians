@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\UserModel;
 use App\Models\TechnicianExpenseModel;
 use App\Models\TravelExpenseModel;
-
+use App\Models\LabourPaymentModel;
 use Session;
 use Hash;
 use DB;
@@ -33,27 +33,56 @@ class ReportController extends Controller
         $labours = $req->get('labours');
                                                                                                                                          
         $u_obj1=UserModel::where(['delete'=>0,'id'=>$labours])->where('role','!=','0')->orderby('created_at','DESC')->get();
-        foreach($u_obj1 as $u){
+
+        foreach($u_obj1 as $u)
+        {
             $u->from_date = date('d-m-Y', strtotime($from_date));
             $u->to_date = date('d-m-Y', strtotime($to_date));
-
+            $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u->id])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->sum('payment_amnt');
+            $u->adv_amnt = $accountant_payment;
+            
         }
 
+        $total_date =  array();
         //Technician Expense
-        $exp_date = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$labours]) ->whereDate('exp_date', '>=' ,$from_date)
-        ->whereDate('exp_date', '<=' ,$to_date)->groupBy('exp_date')->get('exp_date');
+        $exp_date = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$labours])->whereDate('exp_date', '>=' ,$from_date)->whereDate('exp_date', '<=' ,$to_date)->groupBy('exp_date')->get('exp_date');
+
+        $trav_date = TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours])->whereDate('travel_date', '>=' ,$from_date)->whereDate('travel_date', '<=' ,$to_date)->groupBy('travel_date')->get('travel_date');
+
+        // push unique date in one object
+        foreach($trav_date as $t)
+        {
+            array_push($total_date,$t);
+        }
+
+        foreach($exp_date as $ed)
+        {
+            array_push($total_date,$ed);
+        }
+
+        // $unique = array_unique($total_date);
+        // $unique = array_unique($unique);
+        foreach ($total_date as $td) {
+            if (isset($td->travel_date)) {
+                $td->exp_date = $td->travel_date;
+                unset($td->travel_date);
+            }
+        }
+        $unique = array_values(array_unique($total_date));
 
         $tech_exp= array(); //create empty array
-        foreach($exp_date as $ed){
+        $i=0;
+        foreach($unique as $ed)
+        {
 
             $data=DB::table('technician_expenses as te')
-            ->leftjoin('users as u','u.id','te.a_id')
-            ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
-            ->leftjoin('sales_orders as so','so.id','oth.so_id')
-            ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
-            ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.status'=>"Approved",'te.exp_date'=>$ed->exp_date])
-            ->orderby('u.created_at','DESC')
-            ->get();
+                ->leftjoin('users as u','u.id','te.a_id')
+                ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+                ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.status'=>"Approved",'te.exp_date'=>$ed->exp_date])
+                ->orderby('u.created_at','DESC')
+                ->get();
 
             foreach($data as $d){
                 $u_obj=UserModel::where(['delete'=>0,'id'=>$d->so_aid])->where('role','!=','0')->orderby('created_at','DESC')->get();
@@ -71,50 +100,87 @@ class ReportController extends Controller
             // $technicians= array(); //create empty array
             $exp_obj=UserModel::select('id','name','emp_number','mobile')->where(['delete'=>0,'id'=>$labours])->orderby('created_at','DESC')->get();
             
-            $hotel=$daily_allowance=$material_purchase=$other=$total_amount= 0;
+            $hotel=$daily_allowance=$material_purchase=$other=$total_amount=$tech_exp_amount= 0;
             $approval_admin = "";
             $approval_super_admin = "";
             $oa_number = "";
-            $exp_date1 = $ed->exp_date;
+            $exp_date1 = $ed[$i];
             foreach($data as $d){
                 
                 $approval_admin = $d->project_admin;
+                
                 $approval_super_admin = $d->super_admin;
                 $oa_number = $d->so_number;
                 if($d->exp_type == "Hotel"){
                     $hotel += $d->aprvd_amount;
-                    $total_amount += $d->aprvd_amount;
+                    $tech_exp_amount += $d->amount;             //tech expences amount
+                    $total_amount += $d->aprvd_amount;          //sa aproval amount
                 }else if($d->exp_type == "Daily Allowance"){
                     $daily_allowance += $d->aprvd_amount;
                     $total_amount += $d->aprvd_amount;
+                    $tech_exp_amount += $d->amount;             //tech expences amount
+
                 }else if($d->exp_type == "Material_Purchase"){
                     $material_purchase += $d->aprvd_amount;
                     $total_amount += $d->aprvd_amount;
+                    $tech_exp_amount += $d->amount;             //tech expences amount
+
                 }else{
                     $other += $d->aprvd_amount;
                     $total_amount += $d->aprvd_amount;
+                    $tech_exp_amount += $d->amount;             //tech expences amount
+
                 }
 
             }
-            $date = date('d-m-Y', strtotime($ed->exp_date1));
+            $date = date('d-m-Y', strtotime($ed->exp_date));
             $exp_objj["hotel"] = $hotel;
             $exp_objj["daily_allowance"] = $daily_allowance;
             $exp_objj["material_purchase"] = $material_purchase;
             $exp_objj["other"] = $other;
-            $exp_objj["total_amount"] = $total_amount;
+            $exp_objj["tech_exp_amount"] = $tech_exp_amount;                 //tech expences amount
+            $exp_objj["total_amount"] = $total_amount;                      //sa aproval amount
             $exp_objj["approval_admin"] = $approval_admin;
             $exp_objj["approval_super_admin"] = $approval_super_admin;
-            $exp_objj["oa_number"] = $oa_number;
+
+            if($oa_number != ""){
+                $exp_objj["oa_number"] = $oa_number;
+            }else{
+                $t_data=DB::table('travel_expenses as te')
+                    ->leftjoin('users as u','u.id','te.a_id')
+                    ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+                    ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                    ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.oth_id','te.travel_date','te.travel_desc','te.mode_travel','te.a_id','te.delete','te.attachment','te.ad_id','te.ad_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+                    ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.status'=>"Approved",'te.travel_date'=>$ed->exp_date])
+                    ->orderby('u.created_at','DESC')
+                    ->get();
+                    $oa_number = "";
+                    foreach($t_data as $td){
+                        $oa_number = $td->so_number;
+                    }
+                    $exp_objj["oa_number"] = $oa_number;
+               
+            }   
+            
             $exp_objj["exp_date"]= $date;
-            $travel_expense = TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours,'travel_date'=>$ed->exp_date])->sum('aprvd_amount');
-            $exp_objj["travel_expense"]= $travel_expense;
+
+            $travel_expense = TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours,'status'=>"Approved",'travel_date'=>$ed->exp_date])->sum('aprvd_amount');
+            $travel_exp_amount = TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours,'status'=>"Approved",'travel_date'=>$ed->exp_date])->sum('travel_amount');
+            $travel_desc= TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours,'status'=>"Approved",'travel_date'=>$ed->exp_date])->get();
+            $exp_objj["travel_desc"]= $travel_desc;
+            $exp_objj["tech_tr_exp_amount"]= $travel_exp_amount;      // techniciation travel expense 
+            $exp_objj["travel_expense"]= $travel_expense;             // sa approval amount
             $exp_objj["exp_total_amount"] = $total_amount + $travel_expense;
+
+            $exp_objj["total_tech_exp_amount"]= $travel_exp_amount + $tech_exp_amount;      // techniciation total expense 
             array_push($tech_exp,$exp_objj);
 
+            $i++;
         }
 
+    
         if(count($tech_exp)>0){
-            return json_encode(array('status' => true ,'data' => $tech_exp,'exp_date' => $exp_date,'message' => 'Data Found'));
+            return json_encode(array('status' => true ,'data' => $tech_exp,'u_obj1'=>$u_obj1,'message' => 'Data Found'));
         }else{
             return ['status' => false, 'message' => 'No Data Found'];
         }
@@ -126,28 +192,58 @@ class ReportController extends Controller
         $from_date = $req->get('pdf_from_date');
         $to_date = $req->get('pdf_to_date');
         $labours = $req->get('pdf_labours');
-        // dd($from_date);
+
         $u_obj1=UserModel::where(['delete'=>0,'id'=>$labours])->where('role','!=','0')->orderby('created_at','DESC')->get();
-        foreach($u_obj1 as $u){
+
+        foreach($u_obj1 as $u)
+        {
             $u->from_date = date('d-m-Y', strtotime($from_date));
             $u->to_date = date('d-m-Y', strtotime($to_date));
-
+            $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u->id])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->sum('payment_amnt');
+            $u->adv_amnt = $accountant_payment;
+            
         }
 
+        $total_date =  array();
         //Technician Expense
-        $exp_date = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$labours]) ->whereDate('exp_date', '>=' ,$from_date)
-        ->whereDate('exp_date', '<=' ,$to_date)->groupBy('exp_date')->get('exp_date');
+        $exp_date = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$labours])->whereDate('exp_date', '>=' ,$from_date)->whereDate('exp_date', '<=' ,$to_date)->groupBy('exp_date')->get('exp_date');
+
+        $trav_date = TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours])->whereDate('travel_date', '>=' ,$from_date)->whereDate('travel_date', '<=' ,$to_date)->groupBy('travel_date')->get('travel_date');
+
+        // push unique date in one object
+        foreach($trav_date as $t)
+        {
+            array_push($total_date,$t);
+        }
+
+        foreach($exp_date as $ed)
+        {
+            array_push($total_date,$ed);
+        }
+
+        // $unique = array_unique($total_date);
+        // $unique = array_unique($unique);
+        foreach ($total_date as $td) {
+            if (isset($td->travel_date)) {
+                $td->exp_date = $td->travel_date;
+                unset($td->travel_date);
+            }
+        }
+        $unique = array_values(array_unique($total_date));
+
         $tech_exp= array(); //create empty array
-        foreach($exp_date as $ed){
+        $i=0;
+        foreach($unique as $ed)
+        {
 
             $data=DB::table('technician_expenses as te')
-            ->leftjoin('users as u','u.id','te.a_id')
-            ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
-            ->leftjoin('sales_orders as so','so.id','oth.so_id')
-            ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
-            ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.status'=>"Approved",'te.exp_date'=>$ed->exp_date])
-            ->orderby('u.created_at','DESC')
-            ->get();
+                ->leftjoin('users as u','u.id','te.a_id')
+                ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+                ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.status'=>"Approved",'te.exp_date'=>$ed->exp_date])
+                ->orderby('u.created_at','DESC')
+                ->get();
 
             foreach($data as $d){
                 $u_obj=UserModel::where(['delete'=>0,'id'=>$d->so_aid])->where('role','!=','0')->orderby('created_at','DESC')->get();
@@ -165,28 +261,36 @@ class ReportController extends Controller
             // $technicians= array(); //create empty array
             $exp_obj=UserModel::select('id','name','emp_number','mobile')->where(['delete'=>0,'id'=>$labours])->orderby('created_at','DESC')->get();
             
-            $hotel=$daily_allowance=$material_purchase=$other=$total_amount= 0;
+            $hotel=$daily_allowance=$material_purchase=$other=$total_amount=$tech_exp_amount= 0;
             $approval_admin = "";
             $approval_super_admin = "";
             $oa_number = "";
-            $exp_date = $ed->exp_date;
+            $exp_date1 = $ed[$i];
             foreach($data as $d){
                 
                 $approval_admin = $d->project_admin;
+                
                 $approval_super_admin = $d->super_admin;
                 $oa_number = $d->so_number;
                 if($d->exp_type == "Hotel"){
                     $hotel += $d->aprvd_amount;
-                    $total_amount += $d->aprvd_amount;
+                    $tech_exp_amount += $d->amount;             //tech expences amount
+                    $total_amount += $d->aprvd_amount;          //sa aproval amount
                 }else if($d->exp_type == "Daily Allowance"){
                     $daily_allowance += $d->aprvd_amount;
                     $total_amount += $d->aprvd_amount;
+                    $tech_exp_amount += $d->amount;             //tech expences amount
+
                 }else if($d->exp_type == "Material_Purchase"){
                     $material_purchase += $d->aprvd_amount;
                     $total_amount += $d->aprvd_amount;
+                    $tech_exp_amount += $d->amount;             //tech expences amount
+
                 }else{
                     $other += $d->aprvd_amount;
                     $total_amount += $d->aprvd_amount;
+                    $tech_exp_amount += $d->amount;             //tech expences amount
+
                 }
 
             }
@@ -195,16 +299,44 @@ class ReportController extends Controller
             $exp_objj["daily_allowance"] = $daily_allowance;
             $exp_objj["material_purchase"] = $material_purchase;
             $exp_objj["other"] = $other;
-            $exp_objj["total_amount"] = $total_amount;
+            $exp_objj["tech_exp_amount"] = $tech_exp_amount;                 //tech expences amount
+            $exp_objj["total_amount"] = $total_amount;                      //sa aproval amount
             $exp_objj["approval_admin"] = $approval_admin;
             $exp_objj["approval_super_admin"] = $approval_super_admin;
-            $exp_objj["oa_number"] = $oa_number;
+
+            if($oa_number != ""){
+                $exp_objj["oa_number"] = $oa_number;
+            }else{
+                $t_data=DB::table('travel_expenses as te')
+                    ->leftjoin('users as u','u.id','te.a_id')
+                    ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+                    ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                    ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.oth_id','te.travel_date','te.travel_desc','te.mode_travel','te.a_id','te.delete','te.attachment','te.ad_id','te.ad_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+                    ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.status'=>"Approved",'te.travel_date'=>$ed->exp_date])
+                    ->orderby('u.created_at','DESC')
+                    ->get();
+                    $oa_number = "";
+                    foreach($t_data as $td){
+                        $oa_number = $td->so_number;
+                    }
+                    $exp_objj["oa_number"] = $oa_number;
+               
+            }   
+            
             $exp_objj["exp_date"]= $date;
-            $travel_expense = TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours,'travel_date'=>$ed->exp_date])->sum('aprvd_amount');
-            $exp_objj["travel_expense"]= $travel_expense;
+
+            $travel_expense = TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours,'status'=>"Approved",'travel_date'=>$ed->exp_date])->sum('aprvd_amount');
+            $travel_exp_amount = TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours,'status'=>"Approved",'travel_date'=>$ed->exp_date])->sum('travel_amount');
+            $travel_desc= TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours,'status'=>"Approved",'travel_date'=>$ed->exp_date])->get();
+            $exp_objj["travel_desc"]= $travel_desc;
+            $exp_objj["tech_tr_exp_amount"]= $travel_exp_amount;      // techniciation travel expense 
+            $exp_objj["travel_expense"]= $travel_expense;             // sa approval amount
             $exp_objj["exp_total_amount"] = $total_amount + $travel_expense;
+
+            $exp_objj["total_tech_exp_amount"]= $travel_exp_amount + $tech_exp_amount;      // techniciation total expense 
             array_push($tech_exp,$exp_objj);
 
+            $i++;
         }
 
 

@@ -166,17 +166,15 @@
                                     <tr>
                                         <th scope="col" style="width: 20px;">Sr.No</th>
                                         <th scope="col" style="width: 100px">Date</th>
-                                        <th scope="col" style="width: 100px">Amount</th>
+                                        <!-- <th scope="col" style="width: 100px">Amount</th> -->
                                         <th scope="col" style="width: 100px">OA Number</th>
-                                        <!-- <th scope="col" style="width: 100px">Expense Description</th> -->
+                                        <th scope="col" style="width: 100px">Travel Description</th>
                                         <th scope="col" style="width: 100px">travel_expense</th>
                                         <th scope="col" style="width: 100px">hotel</th>
                                         <th scope="col" style="width: 100px">daily_allowance</th>
                                         <th scope="col" style="width: 100px">material_purchase</th>
                                         <th scope="col" style="width: 100px">other</th>
                                         <th scope="col" style="width: 100px">total_amount</th>
-
-                           
                                         <th scope="col" style="width: 100px">Admin Name</th>
                                         <th scope="col" style="width: 100px">Super Admin</th>
                                     </tr>
@@ -371,23 +369,28 @@
                             content +="<tr>";
                             content +="<td>"+ ++i +"</td>";
                             content +="<td>"+row.exp_date+"</td>";
-                            content +="<td>"+row.total_amount+"</td>";
+                            // content +="<td>"+row.total_amount+"</td>";
                             content +="<td>"+row.oa_number+"</td>";
-                            // if(row.exp_desc == null){
-                            //     content +="<td><strong>SA Remark - </strong>"+row.sa_remark+"</td>";
-                            // }else{
-                            //     content +="<td>"+row.exp_desc+"<br> <strong>SA Remark - </strong>"+row.sa_remark+"</td>";
-                            // }
+                            content +="<td>";
+                            $.each(row.travel_desc,function(index,row)
+                            {
+                                if(row.travel_desc == null){
+                                  
+                                }else{
+                                    content +="<strong>"+row.travel_desc+"<br></strong>";
+                                }
+                            });
+                            content +="</td>";
                             content +="<td>"+row.travel_expense+"</td>";
                             content +="<td>"+row.hotel+"</td>";
                             content +="<td>"+row.daily_allowance+"</td>";
                             content +="<td>"+row.material_purchase+"</td>";
                             content +="<td>"+row.other+"</td>";
-                            content +="<td>"+row.total_amount+"</td>";
+                            content +="<td>"+row.exp_total_amount+"</td>";
                            
                             content +="<td>"+row.approval_admin+"</td>";
                             content +="<td>"+row.approval_super_admin+"</td>";
-                            content += "</tr>";
+                            content +="</tr>";
 
                            
                                 
