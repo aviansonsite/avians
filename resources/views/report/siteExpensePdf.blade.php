@@ -59,66 +59,99 @@
 
     <table style='margin-top: 0px;'>
         <tr>
-            
-            <th  style="width:50px;">Date</th>
-            <th  style="width:60px;white-space:wrap;">Approval Admin</th>
-            <th  style="width:60px;white-space:wrap;">Approval Super Admin</th>
-            <th >Description</th>
-            <th  style="width:90px;"> OA NO.</th>
-            <th  style="width:50px;"> Bills (Y / N)</th>
-            <th  style="width:50px;white-space:wrap;">Travel Expense</th>
-            <th  style="width:40px;">Hotel</th>
-            <th  style="width:50px;white-space:wrap;">Daily Allowance</th>
-            <th  style="width:60px;white-space:wrap;">Material Purchase</th>
-            <th  style="width:;white-space:wrap;">Other Expenses (Crane,scaffolding, labor hired)</th>
-            <th >Amount (in Rs.)</th>
+            <th  style="width:60px;text-align:center;">Date</th>
+            <th  style="white-space:wrap;text-align:center;"> Expense Description</th>
+            <th  style="width:60px;white-space:wrap;text-align:center;">Approver Admin</th>
+            <th  style="width:60px;white-space:wrap;text-align:center;">Approver SuperAdmin</th>
+            <th  style="width:60px;text-align:center;"> OA NO.</th>
+            <th  style="width:30px;text-align:center;"> Bills</th>
+            <th  style="width:50px;white-space:wrap;text-align:center;">Travel Exp</th>
+            <th  style="width:40px;text-align:center;">Hotel</th>
+            <th  style="width:40px;white-space:wrap;text-align:center;">DA</th>
+            <th  style="width:40px;white-space:wrap;text-align:center;">Mat Purchase</th>
+            <th  style="width:40px;white-space:wrap;text-align:center;">Other Exp</th>
+            <th style="width:30px;white-space:wrap;text-align:center;">Amount (in Rs.)</th>
         </tr>
       <?php  $n=7?>
-      <?php $j = 0; $total_tech_exp_amount=0; $exp_total_amount=0;?>
-    @foreach($tech_exp as $tech_exp)
-        <?php   $total_tech_exp_amount += $tech_exp['total_tech_exp_amount'];
-                $exp_total_amount += $tech_exp['exp_total_amount'];
-        ?>
-        <tr style="border-bottom: none; border-top: none;">
-           
-            <td style="width: ;">{{$tech_exp['exp_date']}}</td>
-            <td style="width: ;">{{$tech_exp['approval_admin']}}</td>
-            <td style="width: ;">{{$tech_exp['approval_super_admin']}}</td>
-            <td  style="">
-                @foreach($tech_exp['travel_desc'] as $td) 
-                     <strong>{{$td->travel_desc}}</strong> <br> 
-                @endforeach
-            </td>
-            <td style="width:;">{{$tech_exp['oa_number']}}</td>
-            <td style="width: ;"> Yes </td>
-            <td style="width: ;">{{$tech_exp['travel_expense']}}</td>
-            <td style="width: ;">{{$tech_exp['hotel']}}</td>
-            <td style="width: ;">{{$tech_exp['daily_allowance']}}</td>
-            <td style="width: ;">{{$tech_exp['material_purchase']}}</td>
-            <td style="width: ;">{{$tech_exp['other']}}</td>
-            <td style="width: ;">{{$tech_exp['exp_total_amount']}}</td>
+      <?php $j = 0; $total_tech_exp_amount=0; $sa_aprvd_amount=0;?>
+        @foreach($tech_exp as $te)
+            <?php   
+                    $total_tech_exp_amount += $te->amount;
+                    $sa_aprvd_amount += $te->aprvd_amount;
+                    $exp_date = date('d-m-Y', strtotime($te->exp_date));
+            ?>
+            <tr style="border-bottom: none; border-top: none;">
+            
+                <td style="width: ;text-align:center;">{{$exp_date}}</td>
+                @if($te->exp_desc == null)
+                    <td  style="text-align:center;"> - </td>
+                @else
+                    <td  style=""><strong>{{$te->exp_desc}}</strong></td>
+                @endif
+                
+                <td style="width: ;text-align:center;">{{$te->project_admin}}</td>
+                <td style="width: ;text-align:center;">{{$te->super_admin}}</td>
+                <td style="width: ;text-align:center;">{{$te->so_number}}</td>
 
+                @if($te->attachment == null)
+                <td  style="text-align:center;"><strong> N </strong></td>
+                @else
+                    <td  style="text-align:center;"><strong> Y </strong></td>
+                @endif 
+
+                @if(($te->exp_type == 'Bus') || ($te->exp_type == 'Train') || ($te->exp_type == 'Bike') || ($te->exp_type == 'Shared_Auto') || ($te->exp_type == 'Private_Auto') || ($te->exp_type == 'Own Car') )
+                    <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
+                @else
+                    <td style="width: ;text-align:center;"> </td>
+                @endif 
+
+                @if($te->exp_type == 'Hotel')
+                    <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
+                @else
+                    <td style="width: ;text-align:center;"> </td>
+                @endif 
+
+                @if($te->exp_type == 'Daily Allowance')
+                    <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
+                @else
+                    <td style="width: ;text-align:center;"> </td>
+                @endif
+
+                @if($te->exp_type == 'Material_Purchase')
+                    <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
+                @else
+                    <td style="width: ;text-align:center;"> </td>
+                @endif
+
+                @if(($te->exp_type == 'Crane/Hydra') || ($te->exp_type == 'Labour_Hired') || ($te->exp_type == 'Scaffolding') || ($te->exp_type == 'Other'))
+                    <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
+                @else
+                    <td style="width: ;text-align:center;"> </td>
+                @endif
+
+                <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
+
+            </tr>
+        @endforeach
+        <tr style="border-bottom: none; border-top: none;">
+            <td colspan="11" style="text-align: right; font-style: normal;"><strong>Total claimed Amount (Technician)</strong></td>
+            <td style="width: 100px;text-align:center;">{{$total_tech_exp_amount}}</td>
         </tr>
-    @endforeach
-    <tr style="border-bottom: none; border-top: none;">
-        <td colspan="11" style="text-align: right; font-style: normal;"><strong>Sum Amount claimed by technician</strong></td>
-        <td style="width: 100px;">{{$total_tech_exp_amount}}</td>
-    </tr>
-    <tr style="border-bottom: none; border-top: none;">
-        <td colspan="11" style="text-align: right; font-style: normal;"><strong>Approved Amount by super admin</strong></td>
-        <td style="width: 100px;">{{$exp_total_amount}}</td>
-    </tr>
-    <tr style="border-bottom: none; border-top: none;">
-        <td colspan="11" style="text-align: right; font-style: normal;"><strong>Balance /refundable Amount,if any</strong></td>
-        <td style="width: 100px;">{{$total_tech_exp_amount - $exp_total_amount}}</td>
-    </tr>   
-    <tr style="border-bottom: none; border-top: none;">
-        <td colspan="9" style="text-align: right; font-style: normal;"></td>
-        <td  colspan="3"style="text-align:right;">
-                  <b style="vertical-align: text-top;">For  Avians Innovation Technology Pvt. Ltd </b>
-                  <br/><br/><br/><br/><br/> 
-                  <small>( Authorised Signatory )</small>
-    </tr>
+        <tr style="border-bottom: none; border-top: none;">
+            <td colspan="11" style="text-align: right; font-style: normal;"><strong>Total Approved Amount (super admin)</strong></td>
+            <td style="width: 100px;text-align:center;">{{$sa_aprvd_amount}}</td>
+        </tr>
+        <tr style="border-bottom: none; border-top: none;">
+            <td colspan="11" style="text-align: right; font-style: normal;"><strong>Balance /refundable Amount to Company,if any</strong></td>
+            <td style="width: 100px;text-align:center;">{{$u_obj1[0]->adv_amnt - $sa_aprvd_amount}}</td>
+        </tr>   
+        <tr style="border-bottom: none; border-top: none;">
+            <td colspan="9" style="text-align: right; font-style: normal;"></td>
+            <td  colspan="3"style="text-align:right;">
+                    <b style="vertical-align: text-top;">For  Avians Innovation Technology Pvt. Ltd </b>
+                    <br/><br/><br/><br/><br/> 
+                    <small>( Authorised Signatory )</small>
+        </tr>
 
     </table>
     <p style="text-align:center;font-size: 9px;">( This is computer generated Site Expenses Statement. )</p>

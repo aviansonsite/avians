@@ -166,17 +166,18 @@
                                     <tr>
                                         <th scope="col" style="width: 20px;">Sr.No</th>
                                         <th scope="col" style="width: 100px">Date</th>
-                                        <!-- <th scope="col" style="width: 100px">Amount</th> -->
-                                        <th scope="col" style="width: 100px">OA Number</th>
-                                        <th scope="col" style="width: 100px">Travel Description</th>
-                                        <th scope="col" style="width: 100px">travel_expense</th>
-                                        <th scope="col" style="width: 100px">hotel</th>
-                                        <th scope="col" style="width: 100px">daily_allowance</th>
-                                        <th scope="col" style="width: 100px">material_purchase</th>
-                                        <th scope="col" style="width: 100px">other</th>
-                                        <th scope="col" style="width: 100px">total_amount</th>
-                                        <th scope="col" style="width: 100px">Admin Name</th>
-                                        <th scope="col" style="width: 100px">Super Admin</th>
+                                        <th scope="col" style="width: 100px">Expense Description</th>
+                                        <th scope="col" style="width: 100px">Approver Admin</th>
+                                        <th scope="col" style="width: 100px">Approver SuperAdmin</th>
+                                        <th scope="col" style="width: 100px">OA No</th>
+                                        <th scope="col" style="width: 100px">Bills</th>
+                                        <th scope="col" style="width: 100px">Travel Exp</th>
+                                        <th scope="col" style="width: 100px">Hotel</th>
+                                        <th scope="col" style="width: 100px">DA</th>
+                                        <th scope="col" style="width: 100px">Mat Purchase</th>
+                                        <th scope="col" style="width: 100px">other Exp</th>
+                                        <th scope="col" style="width: 100px">Total Amt</th>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody id="att_table">
@@ -352,48 +353,75 @@
                         $("#f_rec").DataTable().destroy();  //For using 
                         
                         content ="";
-                        var i = 0;
+                        var i=total_exp_amt= 0;
 
                         $.each(data.data,function(index,row)
                         {
-                            //date convert into dd/mm/yyyy
-                            // function formatDate (input) {
-                            //     var datePart = input.match(/\d+/g),
-                            //     year = datePart[0].substring(0), // get only two digits
-                            //     month = datePart[1], day = datePart[2];
-                            //     return day+'-'+month+'-'+year;
-                            // }
+                            // date convert into dd/mm/yyyy
+                            function formatDate (input) {
+                                var datePart = input.match(/\d+/g),
+                                year = datePart[0].substring(0), // get only two digits
+                                month = datePart[1], day = datePart[2];
+                                return day+'-'+month+'-'+year;
+                            }
                      
-                            // var exp_date = formatDate (row.exp_date); // "18/01/10"
+                            var exp_date = formatDate (row.exp_date); // "18/01/10"
                        
                             content +="<tr>";
                             content +="<td>"+ ++i +"</td>";
-                            content +="<td>"+row.exp_date+"</td>";
-                            // content +="<td>"+row.total_amount+"</td>";
-                            content +="<td>"+row.oa_number+"</td>";
-                            content +="<td>";
-                            $.each(row.travel_desc,function(index,row)
-                            {
-                                if(row.travel_desc == null){
-                                  
-                                }else{
-                                    content +="<strong>"+row.travel_desc+"<br></strong>";
-                                }
-                            });
-                            content +="</td>";
-                            content +="<td>"+row.travel_expense+"</td>";
-                            content +="<td>"+row.hotel+"</td>";
-                            content +="<td>"+row.daily_allowance+"</td>";
-                            content +="<td>"+row.material_purchase+"</td>";
-                            content +="<td>"+row.other+"</td>";
-                            content +="<td>"+row.exp_total_amount+"</td>";
-                           
-                            content +="<td>"+row.approval_admin+"</td>";
-                            content +="<td>"+row.approval_super_admin+"</td>";
-                            content +="</tr>";
+                            content +="<td>"+exp_date+"</td>";                     
+                            if(row.exp_desc == null){
+                                content +="<td> - </td>";
+                            }else{
+                                content +="<td><strong>"+row.exp_desc+"</strong></td>";
+                            }
+                            content +="<td>"+row.project_admin+"</td>";
+                            content +="<td>"+row.super_admin+"</td>";
+                            content +="<td>"+row.so_number+"</td>";
+                            
+                            if(row.attachment == null){
+                                content +="<td> N </td>";
+                            }else{
+                                content +="<td> Y </td>";
+                            }
 
-                           
-                                
+                            if((row.exp_type == 'Bus') || (row.exp_type == 'Train') || (row.exp_type == 'Bike') || (row.exp_type == 'Shared_Auto')|| (row.exp_type == 'Private_Auto') || (row.exp_type == 'Own Car'))
+                            {
+                                content +="<td>"+row.aprvd_amount+"</td>";
+                            }else{
+                                content +="<td> </td>";
+                            }
+
+                            if((row.exp_type == 'Hotel'))
+                            {
+                                content +="<td>"+row.aprvd_amount+"</td>";
+                            }else{
+                                content +="<td> </td>";
+                            }
+
+                            if((row.exp_type == 'Daily Allowance'))
+                            {
+                                content +="<td>"+row.aprvd_amount+"</td>";
+                            }else{
+                                content +="<td> </td>";
+                            }
+
+                            if((row.exp_type == 'Material_Purchase'))
+                            {
+                                content +="<td>"+row.aprvd_amount+"</td>";
+                            }else{
+                                content +="<td> </td>";
+                            }
+
+                            if((row.exp_type == 'Crane/Hydra') || (row.exp_type == 'Labour_Hired') || (row.exp_type == 'Scaffolding') || (row.exp_type == 'Other') )
+                            {
+                                content +="<td>"+row.aprvd_amount+"</td>";
+                            }else{
+                                content +="<td> </td>";
+                            }
+
+                            content +="<td>"+row.aprvd_amount+"</td>";                        
+                            content +="</tr>";
                         });   
 
                         $("#att_table").html(content); //For append html data
