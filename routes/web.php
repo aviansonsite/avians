@@ -69,6 +69,7 @@ Route::group(['middleware' => 'login'], function ()
     //Expense
     Route::get('/site_exp_report', [ReportController::class, 'siteExpReport'])->name('site_exp_report.page');
     Route::get('/get-exp-record', [ReportController::class, 'getExpRecord']);
+    Route::post('/generate-pdf', [ReportController::class, 'generatePdf']);
     // ****** Start Accountant **********
 
     //Accountant Management
@@ -140,6 +141,6 @@ Route::group(['middleware' => 'login'], function ()
         
     // ****** End Labour **********
 
-        Route::post('/generate-pdf', [ReportController::class, 'generatePdf']);
+       
 
 });    
