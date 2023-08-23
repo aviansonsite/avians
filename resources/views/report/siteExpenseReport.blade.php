@@ -92,7 +92,7 @@
             <div class="col-sm-12 col-md-12 col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Site Expense Reportssss</h5>
+                        <h5 class="card-title">Site Expense Report</h5>
                         {!! Form::open(['class'=>"form-horizontal",'id'=>"site_exp_report_form"]) !!}
                         <div class="row">
                             <?php $tdate=date("Y-m-d"); ?>
