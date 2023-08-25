@@ -27,7 +27,7 @@ class LabourAPIController extends Controller
         $a_id = $req->get('u_id');
         $from_date = $req->get('from_date');
         $to_date = $req->get('to_date');
-
+        
         if ($from_date == null && $to_date == null) 
         {
             $a_idd [] =Session::get('USER_ID');
