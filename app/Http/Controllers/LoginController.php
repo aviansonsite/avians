@@ -216,7 +216,12 @@ class LoginController extends Controller
 							return $response=array(
 								"status" => 1,
 								"message" =>"Login Successfull.",
-								"data"=>$u_obj
+								"data"=>array(
+									 "id"=>$u_obj[0]->id,
+									 "name"=>$u_obj[0]->name,
+									 "mobile"=>$u_obj[0]->mobile,
+									 "role"=>$u_obj[0]->role
+							   ) 
 						   );  
 
 							// return json_encode(array('status' => true, 'message' => 'Login Successfull...!', 'data' => $u_obj));
