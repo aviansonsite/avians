@@ -214,7 +214,7 @@ class LoginController extends Controller
 							$u_obj=UserModel::where('emp_number', 'LIKE', '%'.$emp_number.'%')->select('id','emp_number','name','mobile','password','delete','is_active','role')->get();
 
 							return $response=array(
-								"status" => 1,
+								"status" => true,
 								"message" =>"Login Successfull.",
 								"data"=>array(
 									 "id"=>$u_obj[0]->id,
