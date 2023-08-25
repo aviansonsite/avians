@@ -180,7 +180,7 @@ class LoginController extends Controller
 	// ****** API Functions  ********* API ********* API *****   API *********
 
 
-    public function check_login_api(Request $req)
+    public function checkLoginAPI(Request $req)
 	{
 		// dd('Hello');
 		$emp_number=$_POST['emp_number'];
@@ -211,8 +211,9 @@ class LoginController extends Controller
 							// return redirect()->route('dashboard'); 
 
 							$user_id = CommonController::encode_ids($u_obj[0]->id);
+							$u_obj=UserModel::where('emp_number', 'LIKE', '%'.$emp_number.'%')->select('id','emp_number','name','mobile','password','delete','is_active','role')->get();
 
-							return json_encode(array('status' => true ,'user_id' => $user_id));
+							return json_encode(array('status' => true, 'message' => 'Login Successfull...!', 'data' => $u_obj));
 						}else{
 							return ['status' => false, 'message' => 'Wrong Password.Please Try Again...!'];
 
@@ -243,7 +244,7 @@ class LoginController extends Controller
 		}
 	}
 
-	public function profile_edit_api(Request $req)
+	public function profileEditAPI(Request $req)
 	{
 		// dd('hello');
 		$edit_id=$req->get('edit_id');
@@ -284,7 +285,7 @@ class LoginController extends Controller
             $response = curl_exec($ch);
             curl_close($ch);
 
-			return ['status' => true, 'message' => "User Profile Update..!"];
+			return ['status' => true, 'message' => "User Profile Updated Successfully!"];
 		}
 	  	else
 	  	{
@@ -294,7 +295,7 @@ class LoginController extends Controller
 
 	}
 
-	public function check_pass_api(Request $req)
+	public function checkPassAPI(Request $req)
 	{
 		$edit_id=$req->get('edit_id');
 		$current_password=isset($_POST['current_password']) ? $_POST['current_password'] : "NA";

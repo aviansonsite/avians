@@ -21,9 +21,9 @@ use App\Http\Controllers\LabourAPIController;
 //     return $request->user();
 // });
 
-Route::post('/checkLoginAPI', [LoginController::class, 'check_login_api']);
-Route::post('/profile_edtAPI', [LoginController::class, 'profile_edit_api']);
-Route::post('/check_passAPI', [LoginController::class, 'check_pass_api']);
+Route::post('/check_login_api', [LoginController::class, 'checkLoginAPI']);
+Route::post('/profile_edit_api', [LoginController::class, 'profileEditAPI']);
+Route::post('/check_pass_api', [LoginController::class, 'checkPassAPI']);
 
 //Attendance Management
 Route::post('/punch_in_api', [LabourAPIController::class, 'punchInAPI']);
