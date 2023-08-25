@@ -213,6 +213,12 @@ class LoginController extends Controller
 							$user_id = CommonController::encode_ids($u_obj[0]->id);
 							$u_obj=UserModel::where('emp_number', 'LIKE', '%'.$emp_number.'%')->select('id','emp_number','name','mobile','password','delete','is_active','role')->get();
 
+							return $response=array(
+								"status" => 1,
+								"message" =>"Login Successfull.",
+								"data"=>$u_obj
+						   );  
+
 							return json_encode(array('status' => true, 'message' => 'Login Successfull...!', 'data' => $u_obj));
 							// return ['status' => true, 'message' => 'Login Successfull...!', 'data' => $u_obj];
 						}else{
