@@ -21,6 +21,116 @@ use DB;
 
 class LabourAPIController extends Controller
 {
+    public function getPIORecords(Request $req)
+    {
+        // $a_id=Session::get('USER_ID');
+        $a_id = $req->get('u_id');
+        $from_date = $req->get('from_date');
+        $to_date = $req->get('to_date');
+
+        if ($from_date == null && $to_date == null) 
+        {
+            $a_idd [] =Session::get('USER_ID');
+ 
+            // $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->where('id', '!=', $a_id)->orderby('created_at','DESC')->get();
+            // $s_obj=SOModel::whereIn('labour',$a_idd)->where(['delete'=>0])->orderby('created_at','DESC')->get();
+
+            $s_obj=DB::table('oa_tl_history as oth')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
+            ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            ->orderby('oth.updated_at','DESC')
+            ->get();
+
+            $labour = explode(",",$s_obj[0]->labour);
+            $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->whereIn('id',$labour)->orderby('created_at','DESC')->get();
+            $tdate=date("Y-m-d");
+
+            $t_count=PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate])->orderby('updated_at','DESC')->count();
+            $p_obj=PunchInOutModel::where(['delete'=>0,'pin_u_id'=>$a_id])->orderby('updated_at','DESC')->get();
+
+            $createdAt = PunchInOutModel::whereNotNull('created_at')->get();
+            $updatedAt = PunchInOutModel::whereNotNull('updated_at')->get();
+
+            $p_id = PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate,'a_id'=>$a_id])->orderby('updated_at','DESC')->get();
+            // dd($p_obj);
+            // $p_id = $p_id[0];
+            foreach($p_obj as $p){
+                $startTime=$p->created_at;
+                $finishTime=$p->updated_at;
+                // $totalDuration = $finishTime->diffInMinutes($startTime);
+                $totalDuration = $startTime->diff($finishTime)->format('%H:%I:%S');
+                $p->totalDuration=$totalDuration;
+                $p->pin_time=$p->created_at->format('H:i:s');          
+                $p->pout_time=$p->updated_at->format('H:i:s');  
+                $p->pin_time=$p->created_at->format('H:i:s');          
+            }
+
+            if(!empty($p_obj)){
+                return json_encode(array('status' => true ,'data' => $p_obj,'u_obj' => $u_obj,'s_obj' => $s_obj ,'message' => 'Data Found'));
+            }else{
+            return ['status' => false, 'message' => 'No Data Found'];
+            }
+
+        }else{
+
+            
+            $a_idd [] =Session::get('USER_ID');
+            $a_id =Session::get('USER_ID');
+            $id =Session::get('USER_ID');
+            // $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->where('id', '!=', $a_id)->orderby('created_at','DESC')->get();
+            // // $s_obj=SOModel::whereIn('labour',$a_idd)->where(['delete'=>0])->orderby('created_at','DESC')->get();
+
+            // $s_obj=DB::table('oa_tl_history as oth')
+            // ->leftjoin('users as u','u.id','oth.lead_technician')
+            // ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            // ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+            // ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            // ->orderby('oth.updated_at','DESC')
+            // ->get();
+
+            $s_obj=DB::table('oa_tl_history as oth')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
+            ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            ->orderby('oth.updated_at','DESC')
+            ->get();
+
+            $labour = explode(",",$s_obj[0]->labour);
+            $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->whereIn('id',$labour)->orderby('created_at','DESC')->get();
+            $tdate=date("Y-m-d");
+
+            $t_count=PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate])->orderby('updated_at','DESC')->count();
+            $p_obj=PunchInOutModel::where(['delete'=>0,'pin_u_id'=>$a_id])->whereDate('pin_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+
+            $createdAt = PunchInOutModel::whereNotNull('created_at')->get();
+            $updatedAt = PunchInOutModel::whereNotNull('updated_at')->get();
+
+            $p_id = PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate,'a_id'=>$a_id])->orderby('updated_at','DESC')->get();
+            // dd($p_obj);
+            // $p_id = $p_id[0];
+            foreach($p_obj as $p){
+                $startTime=$p->created_at;
+                $finishTime=$p->updated_at;
+                // $totalDuration = $finishTime->diffInMinutes($startTime);
+                $totalDuration = $startTime->diff($finishTime)->format('%H:%I:%S');
+                $p->totalDuration=$totalDuration;
+                $p->pin_time=$p->created_at->format('H:i:s');          
+                $p->pout_time=$p->updated_at->format('H:i:s');  
+            }
+
+            if(!empty($p_obj)){
+                return json_encode(array('status' => true ,'data' => $p_obj,'u_obj' => $u_obj,'s_obj' => $s_obj,'fdate' =>$from_date ,'message' => 'Data Found'));
+            }else{
+            return ['status' => false, 'message' => 'No Data Found'];
+            }
+        }       
+
+    }
+
+
     public function postExpenseLPaymentAPI(Request $req)
     {
         $edit_id=$req->get('exp_edit_id');
