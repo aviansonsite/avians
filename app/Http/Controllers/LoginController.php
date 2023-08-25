@@ -220,6 +220,7 @@ class LoginController extends Controller
 									 "id"=>$u_obj[0]->id,
 									 "name"=>$u_obj[0]->name,
 									 "mobile"=>$u_obj[0]->mobile,
+									 "email"=>$u_obj[0]->email,
 									 "role"=>$u_obj[0]->role
 							   ) 
 						   );  
