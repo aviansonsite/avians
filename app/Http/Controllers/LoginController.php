@@ -219,7 +219,7 @@ class LoginController extends Controller
 								"data"=>$u_obj
 						   );  
 
-							return json_encode(array('status' => true, 'message' => 'Login Successfull...!', 'data' => $u_obj));
+							// return json_encode(array('status' => true, 'message' => 'Login Successfull...!', 'data' => $u_obj));
 							// return ['status' => true, 'message' => 'Login Successfull...!', 'data' => $u_obj];
 						}else{
 							return ['status' => false, 'message' => 'Wrong Password.Please Try Again...!'];
