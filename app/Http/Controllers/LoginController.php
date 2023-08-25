@@ -211,7 +211,7 @@ class LoginController extends Controller
 							// return redirect()->route('dashboard'); 
 
 							$user_id = CommonController::encode_ids($u_obj[0]->id);
-							$u_obj=UserModel::where('emp_number', 'LIKE', '%'.$emp_number.'%')->select('id','emp_number','name','mobile','password','delete','is_active','role')->get();
+							$u_obj=UserModel::where('emp_number', 'LIKE', '%'.$emp_number.'%')->select('id','emp_number','name','mobile','password','delete','is_active','role','email')->get();
 
 							return $response=array(
 								"status" => true,
