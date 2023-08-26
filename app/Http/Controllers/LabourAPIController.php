@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use PHPMailer\PHPMailer\PHPMailer;  
 use PHPMailer\PHPMailer\Exception;
@@ -130,6 +130,264 @@ class LabourAPIController extends Controller
 
     }
 
+    public function punchInAPI(Request $req)
+    {
+    	// $a_id=Session::get('USER_ID');
+        $a_id = $req->get('u_id');
+        $p_in_so=isset($_POST['p_in_so']) ? $_POST['p_in_so'] : "NA";
+    	$p_in_labour=isset($_POST['p_in_labour']) ? $_POST['p_in_labour'] : "NA";
+    	$p_in_remark=isset($_POST['p_in_remark']) ? $_POST['p_in_remark'] : "NA";
+    	$p_in_date=isset($_POST['p_in_date']) ? $_POST['p_in_date'] : "NA";
+        $p_in_latitude=isset($_POST['p_in_latitude']) ? $_POST['p_in_latitude'] : "NA";
+    	$p_in_longitude=isset($_POST['p_in_longitude']) ? $_POST['p_in_longitude'] : "NA";
+        $photo_path_ext=isset($_POST['profile_photo_ext']) ? $_POST['profile_photo_ext'] : null;
+        $photo_path = $req->hasfile('attachment');
+        
+        $u_id = strval($a_id); 
+        array_push($p_in_labour, $u_id);    //Push user id for attendance
+        $tech_count = count($p_in_labour);
+        // return ['status' => true,'p_in_so' => $p_in_so,'p_in_labour' => $p_in_labour,'p_in_remark' => $p_in_remark,'p_in_date' => $p_in_date,'p_in_latitude' => $p_in_latitude,'p_in_longitude' => $p_in_longitude,'a_id'=>$a_id,'photo_path_ext'=>$photo_path_ext,'photo_path'=>$photo_path]; 
+        // $p_in_so=implode(',',$p_in_so);
+        // $p_in_labour=implode(',',$p_in_labour);
+        
+        if ($p_in_latitude !='' &&  $p_in_longitude !='' && $p_in_date !='' ) 
+        {
+            $j=0;
+            for ($i=1; $i <= count($p_in_labour); $i++)
+            { 
+                $u_obj=new PunchInOutModel();
+                $u_obj->pin_u_id=$p_in_labour[$j];
+                $u_obj->pin_oth_id=$p_in_so;
+                $u_obj->pin_remark=$p_in_remark;
+                $u_obj->pin_date=$p_in_date;
+                $u_obj->pin_latitude=$p_in_latitude;
+                $u_obj->pin_longitude=$p_in_longitude;
+                $u_obj->delete=0;
+                $u_obj->a_id=$a_id;
+
+
+                $destinationPath = 'files/attendance/punchIn/';
+                    if($photo_path!="" && str_contains($photo_path, '+'))
+                    {              
+                        
+                        $img = str_replace('data:image/jpg;base64,', '', $photo_path);
+                        $img = str_replace(' ', '+', $img);
+                        $data = base64_decode($img);
+                        // $image_id= uniqid();
+                        $filename= $photo_path_ext."_".md5($photo_path. microtime()).'.'.$photo_path_ext;
+
+                        file_put_contents($destinationPath.$filename, $data);
+                        $u_obj->pin_img=$filename;
+                        
+                    }
+
+
+                $res=$u_obj->save();
+                $j++;
+
+                // if($req->hasfile('attachment'))  
+                // {  
+                   
+                //     try {
+                //         // Your file upload and move code here
+                //         $file=$req->file('attachment');  
+                //         $extension=$file->getClientOriginalExtension();  
+                //         $filename= $extension."_".md5($file. microtime()).'.'.$extension;
+                //         // $fileName= '.png'."_".md5($file. microtime()).'.png';
+                //         $file->move(public_path('files/attendance/punchIn/'), $filename);
+
+                //     } catch (\Symfony\Component\HttpFoundation\File\Exception\FileException $e) {
+                //         // Log or display the exception message for further debugging
+                //         // echo "File upload error: " . $e->getMessage();
+                //         // return ['status' => false, 'message' =>  $e->getMessage()]; 
+                //         $u_obj->pin_img=$filename;
+                       
+                //     }
+                //     // $image->image=$filename;  
+                    
+                // }  
+
+                    // $img = $req->pin_img;                        //get image
+                    // $folderPath = public_path('files/attendance/punchIn/');     // folder path
+                    
+                    // $image_parts = explode(";base64,", $img);
+                    // $image_type_aux = explode("image/", $image_parts[0]);
+                    // $image_type = $image_type_aux[1];
+                    
+                    // $image_base64 = base64_decode($image_parts[1]);
+
+                    // $fileName= '.png'."_".md5($img. microtime()).'.png';
+                    // $fileName = uniqid() . '.png';
+                    // $file = $folderPath . $fileName;
+                    // file_put_contents($file, $image_base64);        //move to specific folder
+
+             
+            }
+            if($res){
+                // Session::put('SUCCESS_MESSAGE', 'Punch In Successfully...!');
+                return ['status' => true, 'message' => 'Punch In Successfully...!']; 
+
+            }else{
+                // Session::put('ERROR_MESSAGE', 'Something went wrong. Please try again.');
+                return ['status' => false, 'message' => 'Something went wrong. Please try again.']; 
+            }
+           
+        }else{
+            // Session::put('SUCCESS_MESSAGE', 'Please Try Again..');
+            return ['status' => false, 'message' => 'Please Try Again..']; 
+        } 
+        // return redirect()->back();
+
+    }
+
+    public function punchOut(Request $req)
+    {
+        // $a_id=Session::get('USER_ID');
+        $a_id = $req->get('u_id');
+        $pin_id=!empty($_POST['pin_id']) ? $_POST['pin_id'] : "" ;                   //punch in today id
+        $pout_so=isset($_POST['pout_so']) ? $_POST['pout_so'] : "NA";
+    	$pout_labour=isset($_POST['pout_labour']) ? $_POST['pout_labour'] : "NA";
+    	$pout_remark=isset($_POST['pout_remark']) ? $_POST['pout_remark'] : "NA";
+    	$pout_work_desc=isset($_POST['pout_work_desc']) ? $_POST['pout_work_desc'] : "NA";
+    	$pout_date=isset($_POST['pout_date']) ? $_POST['pout_date'] : "NA";
+        $pout_latitude=isset($_POST['pout_latitude']) ? $_POST['pout_latitude'] : "NA";
+    	$pout_longitude=isset($_POST['pout_longitude']) ? $_POST['pout_longitude'] : "NA";
+        $photo_path_ext=isset($_POST['profile_photo_ext']) ? $_POST['profile_photo_ext'] : null;
+        $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
+
+        $u_id = strval($a_id); 
+        array_push($pout_labour, $u_id);    //Push user id for attendance
+        $tech_count = count($pout_labour);
+        // dd($tech_count);
+        // $pout_so=implode(',',$pout_so);
+        // $pout_labour=implode(',',$pout_labour);
+
+        
+        if ($pout_latitude !='' && $pout_longitude !='') 
+        {
+            $j=0;
+            for ($i=1; $i <= count($pout_labour); $i++)
+            {  
+                $check=PunchInOutModel::where(['pin_u_id'=>$pout_labour[$j],'pin_date'=>$pout_date])->get();
+
+                if(count($check) > 0){
+                    $u_obj=PunchInOutModel::where(['pin_u_id'=>$pout_labour[$j],'pin_date'=>$pout_date]);
+                    // $img = $req->pout_img;                        //get image
+                    if($photo_path!="" && str_contains($photo_path, '+'))
+                    {
+
+                        // $folderPath = public_path('files/attendance/punchOut/');     // folder path
+                    
+                        // $image_parts = explode(";base64,", $img);
+                        // $image_type_aux = explode("image/", $image_parts[0]);
+                        // $image_type = $image_type_aux[1];
+                        
+                        // $image_base64 = base64_decode($image_parts[1]);
+                        // $fileName= '.png'."_".md5($img. microtime()).'.png';
+                        // // $fileName = uniqid() . '.png';
+                        // $file = $folderPath . $fileName;
+                        // file_put_contents($file, $image_base64);        //move to specific folder
+
+                        $destinationPath = 'files/attendance/punchOut/';
+                            
+                            $img = str_replace('data:image/jpg;base64,', '', $photo_path);
+                            $img = str_replace(' ', '+', $img);
+                            $data = base64_decode($img);
+                            // $image_id= uniqid();
+                            $filename= $photo_path_ext."_".md5($photo_path. microtime()).'.'.$photo_path_ext;
+
+                            file_put_contents($destinationPath.$filename, $data);
+            
+                        $u_obj->update([
+                            'pout_u_id' => $pout_labour[$j],
+                            'pout_oth_id' => $pout_so, 
+                            'pout_remark' => $pout_remark,
+                            'pout_work_desc' => $pout_work_desc,
+                            'pout_date' => $pout_date, 
+                            'pout_latitude' => $pout_latitude,
+                            'pout_longitude' => $pout_longitude,
+                            'delete' => 0, 
+                            'a_id' => $a_id,
+                            'pout_img' => $fileName,
+                        ]);
+
+                    }else{
+                        // Session::put('ERROR_MESSAGE', 'Something went wrong. Please try again.');
+                        return ['status' => false, 'message' => 'Something went wrong. Please try again.']; 
+                    }
+                    
+                }else{
+
+                    // $img = $req->pout_img;                        //get image
+                    if($photo_path!=""){
+                        $u_obj=new PunchInOutModel();
+                        $u_obj->pout_u_id=$pout_labour[$j];
+                        $u_obj->pout_oth_id=$pout_so;
+                        $u_obj->pout_remark=$pout_remark;
+                        $u_obj->pout_work_desc=$pout_work_desc;
+                        $u_obj->pout_date=$pout_date;
+                        $u_obj->pout_latitude=$pout_latitude;
+                        $u_obj->pout_longitude=$pout_longitude;
+                        $u_obj->delete=0;
+                        $u_obj->a_id=$a_id;
+
+                            // $folderPath = public_path('files/attendance/punchOut/');     // folder path
+                            
+                            // $image_parts = explode(";base64,", $img);
+                            // $image_type_aux = explode("image/", $image_parts[0]);
+                            // $image_type = $image_type_aux[1];
+                            
+                            // $image_base64 = base64_decode($image_parts[1]);
+
+                            // $fileName= '.png'."_".md5($img. microtime()).'.png';
+
+                            // // $fileName = uniqid() . '.png';
+                            // $file = $folderPath . $fileName;
+                            // file_put_contents($file, $image_base64);        //move to specific folder
+
+                            $destinationPath = 'files/attendance/punchIn/';
+                            if($photo_path!="" && str_contains($photo_path, '+'))
+                            {              
+                                
+                                $img = str_replace('data:image/jpg;base64,', '', $photo_path);
+                                $img = str_replace(' ', '+', $img);
+                                $data = base64_decode($img);
+                                // $image_id= uniqid();
+                                $filename= $photo_path_ext."_".md5($photo_path. microtime()).'.'.$photo_path_ext;
+
+                                file_put_contents($destinationPath.$filename, $data);                                
+                            }
+
+
+                        $u_obj->pout_img=$fileName;
+                        $res=$u_obj->save();
+                    }else{
+                        // Session::put('ERROR_MESSAGE', 'Something went wrong. Please try again.');
+                        return ['status' => false, 'message' => 'Something went wrong. Please try again.']; 
+                    }
+                }
+                $j++;
+            }    
+            
+            if($u_obj){
+                // Session::put('SUCCESS_MESSAGE', 'Punch Out Successfully...!');
+                return ['status' => true, 'message' => 'Punch Out Successfully...!']; 
+
+            }else{
+                // Session::put('ERROR_MESSAGE', 'Something went wrong. Please try again.');
+                return ['status' => false, 'message' => 'Something went wrong. Please try again.']; 
+            }
+           
+        }else{
+            // Session::put('SUCCESS_MESSAGE', 'Please Try Again..');
+            return ['status' => false, 'message' => 'Please Try Again..']; 
+
+        } 
+
+        return ['status' => false, 'message' => 'Please Try Again..']; 
+        // return redirect()->back();
+
+    }
 
     public function postExpenseLPaymentAPI(Request $req)
     {
@@ -499,198 +757,8 @@ class LabourAPIController extends Controller
         }
     }
 
-    public function punchInAPI(Request $req)
-    {
-    	// $a_id=Session::get('USER_ID');
-        $user_id = $req->get('user_id');
-        $p_in_so=isset($_POST['p_in_so']) ? $_POST['p_in_so'] : "NA";
-    	$p_in_labour=isset($_POST['p_in_labour']) ? $_POST['p_in_labour'] : "NA";
-    	$p_in_remark=isset($_POST['p_in_remark']) ? $_POST['p_in_remark'] : "NA";
-    	$p_in_date=isset($_POST['p_in_date']) ? $_POST['p_in_date'] : "NA";
-        $p_in_latitude=isset($_POST['p_in_latitude']) ? $_POST['p_in_latitude'] : "NA";
-    	$p_in_longitude=isset($_POST['p_in_longitude']) ? $_POST['p_in_longitude'] : "NA";
-        $user_id = CommonController::decode_ids($user_id);
-        // $u_id = strval($user_id); 
-        // array_push($p_in_labour, $user_id);    //Push user id for attendance
-        // $tech_count = count($p_in_labour);
-        return ['status' => true,'p_in_so' => $p_in_so,'p_in_labour' => $p_in_labour,'p_in_remark' => $p_in_remark,'p_in_date' => $p_in_date,'p_in_latitude' => $p_in_latitude,'p_in_longitude' => $p_in_longitude]; 
-        // $p_in_so=implode(',',$p_in_so);
-        // $p_in_labour=implode(',',$p_in_labour);
-        
-        if ($p_in_latitude !='' &&  $p_in_longitude !='' && $p_in_date !='' ) 
-        {
-            $j=0;
-            for ($i=1; $i <= count($p_in_labour); $i++)
-            { 
-                $u_obj=new PunchInOutModel();
-                $u_obj->pin_u_id=$p_in_labour[$j];
-                $u_obj->pin_oth_id=$p_in_so;
-                $u_obj->pin_remark=$p_in_remark;
-                $u_obj->pin_date=$p_in_date;
-                $u_obj->pin_latitude=$p_in_latitude;
-                $u_obj->pin_longitude=$p_in_longitude;
-                $u_obj->delete=0;
-                $u_obj->a_id=$user_id;
-
-                if($req->hasfile('attachment'))  
-                {  
-                    $file=$req->file('attachment');  
-                    $extension=$file->getClientOriginalExtension();  
-                    $filename= $extension."_".md5($file. microtime()).'.'.$extension;
-                    // $fileName= '.png'."_".md5($file. microtime()).'.png';
-                    $file->move(public_path('files/attendance/punchIn/'), $filename);
-                
-                    // $image->image=$filename;  
-                    $u_obj->pin_img=$filename;
-                }  
-
-                    // $img = $req->pin_img;                        //get image
-                    // $folderPath = public_path('files/attendance/punchIn/');     // folder path
-                    
-                    // $image_parts = explode(";base64,", $img);
-                    // $image_type_aux = explode("image/", $image_parts[0]);
-                    // $image_type = $image_type_aux[1];
-                    
-                    // $image_base64 = base64_decode($image_parts[1]);
-
-                    // $fileName= '.png'."_".md5($img. microtime()).'.png';
-                    // $fileName = uniqid() . '.png';
-                    // $file = $folderPath . $fileName;
-                    // file_put_contents($file, $image_base64);        //move to specific folder
-
-                $res=$u_obj->save();
-                $j++;
-            }
-            if($res){
-                // Session::put('SUCCESS_MESSAGE', 'Punch In Successfully...!');
-                return ['status' => true, 'message' => 'Punch In Successfully...!']; 
-
-            }else{
-                // Session::put('ERROR_MESSAGE', 'Something went wrong. Please try again.');
-                return ['status' => false, 'message' => 'Something went wrong. Please try again.']; 
-            }
-           
-        }else{
-            // Session::put('SUCCESS_MESSAGE', 'Please Try Again..');
-            return ['status' => false, 'message' => 'Please Try Again..']; 
-        } 
-        // return redirect()->back();
-
-    }
 
 
-    public function punchOut(Request $req)
-    {
 
-        $a_id=Session::get('USER_ID');
-        $pin_id=!empty($_POST['pin_id']) ? $_POST['pin_id'] : "" ;                   //punch in today id
-        $pout_so=isset($_POST['pout_so']) ? $_POST['pout_so'] : "NA";
-    	$pout_labour=isset($_POST['pout_labour']) ? $_POST['pout_labour'] : "NA";
-    	$pout_remark=isset($_POST['pout_remark']) ? $_POST['pout_remark'] : "NA";
-    	$pout_work_desc=isset($_POST['pout_work_desc']) ? $_POST['pout_work_desc'] : "NA";
-    	$pout_date=isset($_POST['pout_date']) ? $_POST['pout_date'] : "NA";
-        $pout_latitude=isset($_POST['pout_latitude']) ? $_POST['pout_latitude'] : "NA";
-    	$pout_longitude=isset($_POST['pout_longitude']) ? $_POST['pout_longitude'] : "NA";
-
-        $u_id = strval($a_id); 
-        array_push($pout_labour, $u_id);    //Push user id for attendance
-        $tech_count = count($pout_labour);
-        // dd($tech_count);
-
-        // $pout_so=implode(',',$pout_so);
-        // $pout_labour=implode(',',$pout_labour);
-
-        
-        if ($pout_latitude !='' && $pout_longitude !='') 
-        {
-            $j=0;
-            for ($i=1; $i <= count($pout_labour); $i++)
-            {  
-                $check=PunchInOutModel::where(['pin_u_id'=>$pout_labour[$j],'pin_date'=>$pout_date])->get();
-
-                if(count($check) > 0){
-                    $u_obj=PunchInOutModel::where(['pin_u_id'=>$pout_labour[$j],'pin_date'=>$pout_date]);
-                    $img = $req->pout_img;                        //get image
-                    if($img != ""){
-
-                        $folderPath = public_path('files/attendance/punchOut/');     // folder path
-                    
-                        $image_parts = explode(";base64,", $img);
-                        $image_type_aux = explode("image/", $image_parts[0]);
-                        $image_type = $image_type_aux[1];
-                        
-                        $image_base64 = base64_decode($image_parts[1]);
-                        $fileName= '.png'."_".md5($img. microtime()).'.png';
-                        // $fileName = uniqid() . '.png';
-                        $file = $folderPath . $fileName;
-                        file_put_contents($file, $image_base64);        //move to specific folder
-
-                        $u_obj->update([
-                            'pout_u_id' => $pout_labour[$j],
-                            'pout_oth_id' => $pout_so, 
-                            'pout_remark' => $pout_remark,
-                            'pout_work_desc' => $pout_work_desc,
-                            'pout_date' => $pout_date, 
-                            'pout_latitude' => $pout_latitude,
-                            'pout_longitude' => $pout_longitude,
-                            'delete' => 0, 
-                            'a_id' => $a_id,
-                            'pout_img' => $fileName,
-                        ]);
-
-                    }else{
-                        Session::put('ERROR_MESSAGE', 'Something went wrong. Please try again.');
-                    }
-                    
-                }else{
-
-                    $img = $req->pout_img;                        //get image
-                    if($img != ""){
-                        $u_obj=new PunchInOutModel();
-                        $u_obj->pout_u_id=$pout_labour[$j];
-                        $u_obj->pout_oth_id=$pout_so;
-                        $u_obj->pout_remark=$pout_remark;
-                        $u_obj->pout_work_desc=$pout_work_desc;
-                        $u_obj->pout_date=$pout_date;
-                        $u_obj->pout_latitude=$pout_latitude;
-                        $u_obj->pout_longitude=$pout_longitude;
-                        $u_obj->delete=0;
-                        $u_obj->a_id=$a_id;
-
-                            $folderPath = public_path('files/attendance/punchOut/');     // folder path
-                            
-                            $image_parts = explode(";base64,", $img);
-                            $image_type_aux = explode("image/", $image_parts[0]);
-                            $image_type = $image_type_aux[1];
-                            
-                            $image_base64 = base64_decode($image_parts[1]);
-
-                            $fileName= '.png'."_".md5($img. microtime()).'.png';
-
-                            // $fileName = uniqid() . '.png';
-                            $file = $folderPath . $fileName;
-                            file_put_contents($file, $image_base64);        //move to specific folder
-
-                        $u_obj->pout_img=$fileName;
-                        $res=$u_obj->save();
-                    }else{
-                        Session::put('ERROR_MESSAGE', 'Something went wrong. Please try again.');
-                    }
-                }
-                $j++;
-            }    
-            
-            if($u_obj){
-                Session::put('SUCCESS_MESSAGE', 'Punch Out Successfully...!');
-            }else{
-                Session::put('ERROR_MESSAGE', 'Something went wrong. Please try again.');
-            }
-           
-        }else{
-            Session::put('SUCCESS_MESSAGE', 'Please Try Again..');
-        } 
-
-        return redirect()->back();
-
-    }
+   
 }
