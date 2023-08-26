@@ -240,7 +240,7 @@ class LabourAPIController extends Controller
 
     }
 
-    public function punchOut(Request $req)
+    public function punchOutAPI(Request $req)
     {
         // $a_id=Session::get('USER_ID');
         $a_id = $req->get('u_id');
