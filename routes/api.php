@@ -29,12 +29,13 @@ Route::post('/check_pass_api', [LoginController::class, 'checkPassAPI']);
 Route::post('/get_pio_records', [LabourAPIController::class, 'getPIORecords']);
 
 Route::post('/punch_in_api', [LabourAPIController::class, 'punchInAPI']);
-// Route::post('/punch_out_api', [LabourAPIController::class, 'punchOutAPI']);
-
+Route::post('/punch_out_api', [LabourAPIController::class, 'punchOutAPI']);
+Route::post('/get_pinh_labour', [LabourAPIController::class, 'getPinHLabourAPI']);
+Route::post('/get_pouth_labour', [LabourAPIController::class, 'getPoutHLabourAPI']);
 
 // Route::post('webcam', [AttendanceController::class, 'store'])->name('webcam.capture');
-// Route::get('/get-pouth-labour', [AttendanceController::class, 'getPoutHLabour']);
-// Route::get('/get-pinh-labour', [AttendanceController::class, 'getPinHLabour']);
+
+
 
 
 //Technician Expenses

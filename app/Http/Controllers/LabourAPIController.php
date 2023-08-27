@@ -244,7 +244,7 @@ class LabourAPIController extends Controller
     {
         // $a_id=Session::get('USER_ID');
         $a_id = $req->get('u_id');
-        $pin_id=!empty($_POST['pin_id']) ? $_POST['pin_id'] : "" ;                   //punch in today id
+        // $pin_id=!empty($_POST['pin_id']) ? $_POST['pin_id'] : "" ;                   //punch in today id
         $pout_so=isset($_POST['pout_so']) ? $_POST['pout_so'] : "NA";
     	$pout_labour=isset($_POST['pout_labour']) ? $_POST['pout_labour'] : "NA";
     	$pout_remark=isset($_POST['pout_remark']) ? $_POST['pout_remark'] : "NA";
@@ -253,7 +253,8 @@ class LabourAPIController extends Controller
         $pout_latitude=isset($_POST['pout_latitude']) ? $_POST['pout_latitude'] : "NA";
     	$pout_longitude=isset($_POST['pout_longitude']) ? $_POST['pout_longitude'] : "NA";
         $photo_path_ext=isset($_POST['profile_photo_ext']) ? $_POST['profile_photo_ext'] : null;
-        $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
+        // $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
+        $photo_path = $req->hasfile('attachment');
 
         $u_id = strval($a_id); 
         array_push($pout_labour, $u_id);    //Push user id for attendance
@@ -262,7 +263,8 @@ class LabourAPIController extends Controller
         // $pout_so=implode(',',$pout_so);
         // $pout_labour=implode(',',$pout_labour);
 
-        
+        // return ['status' => true,'pout_so' => $pout_so,'pout_labour' => $pout_labour,'pout_remark' => $pout_remark,'pout_work_desc' => $pout_work_desc,'pout_date'=>$pout_date,'pout_latitude' => $pout_latitude,'pout_longitude' => $pout_longitude,'a_id'=>$a_id,'photo_path_ext'=>$photo_path_ext,'photo_path'=>$photo_path]; 
+
         if ($pout_latitude !='' && $pout_longitude !='') 
         {
             $j=0;
@@ -388,6 +390,74 @@ class LabourAPIController extends Controller
         // return redirect()->back();
 
     }
+
+    public function getPinHLabourAPI(Request $req)
+    {
+        // $pin_date = $req->get('pin_date');
+        $pin_oth_id = $req->get('pin_oth_id');
+        $pin_date=isset($_POST['pin_date']) ? $_POST['pin_date'] : "NA";
+
+        // $a_id =Session::get('USER_ID');
+        // $so_id = explode(",",$req->get('pin_so_id'));
+        
+        $data=PunchInOutModel::where(['delete'=>0,'pin_date'=>$pin_date])->orderby('updated_at','DESC')->get();
+
+
+        $l_obj=DB::table('punch_in_out as pio')
+            ->leftjoin('users as u','u.id','pio.pin_u_id')
+            ->select('u.id','pio.pin_date','pio.delete','u.name','u.delete as u_delete','u.is_active')
+            ->where(['pio.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'pio.pin_date'=>$pin_date,'pin_oth_id'=>$pin_oth_id])
+            ->orderby('u.created_at','DESC')
+            ->get();
+
+        $s_obj=DB::table('oa_tl_history as oth')
+        ->leftjoin('users as u','u.id','oth.lead_technician')
+        ->leftjoin('sales_orders as so','so.id','oth.so_id')
+        ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+        ->where(['oth.id'=>$pin_oth_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+        ->orderby('oth.updated_at','DESC')
+        ->get();
+
+        // $s_obj=SOModel::where(['delete'=>0,'id'=>$so_id])->orderby('created_at','DESC')->get();
+        // $s_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->orderby('created_at','DESC')->get();
+        if(!empty($data)){
+           return json_encode(array('status' => true ,'data' => $data,'l_obj'=>$l_obj,'s_obj'=>$s_obj));
+        }else{
+           return ['status' => false, 'message' => 'No Data Found'];
+        }
+    }
+
+    public function getPoutHLabourAPI(Request $req)
+    {
+        $pout_date = $req->get('pout_date');
+        $pout_oth_id = $req->get('pout_oth_id');
+        // $so_id = explode(",",$req->get('pout_so_id'));
+        $data=PunchInOutModel::where(['delete'=>0,'pin_date'=>$pout_date])->orderby('updated_at','DESC')->get();
+
+
+        $l_obj=DB::table('punch_in_out as pio')
+            ->leftjoin('users as u','u.id','pio.pout_u_id')
+            ->select('u.id','pio.pout_date','pio.delete','u.name','u.delete as u_delete','u.is_active')
+            ->where(['pio.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'pio.pout_date'=>$pout_date,'pout_oth_id'=>$pout_oth_id])
+            ->orderby('u.created_at','DESC')
+            ->get();
+
+        $s_obj=DB::table('oa_tl_history as oth')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+            ->where(['oth.id'=>$pin_oth_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            ->orderby('oth.updated_at','DESC')
+            ->get();
+
+        // $s_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->orderby('created_at','DESC')->get();
+        if(!empty($data)){
+           return json_encode(array('status' => true ,'data' => $data,'l_obj'=>$l_obj,'s_obj'=>$s_obj));
+        }else{
+           return ['status' => false, 'message' => 'No Data Found'];
+        }
+    }
+
 
     public function postExpenseLPaymentAPI(Request $req)
     {
