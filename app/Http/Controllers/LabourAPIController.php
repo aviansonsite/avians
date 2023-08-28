@@ -209,7 +209,7 @@ class LabourAPIController extends Controller
     public function punchOutAPI(Request $req)
     {
         // $a_id=Session::get('USER_ID');
-        $a_id = $req->get('u_id');
+        $a_id = $req->get('u_ido');
         $pr=!empty($_POST['pr']) ? $_POST['pr'] : "" ;                   //punch in today id
         $pout_so=isset($_POST['pout_so']) ? $_POST['pout_so'] : "NA";
     	$pout_labour=isset($_POST['pout_labour']) ? $_POST['pout_labour'] : "NA";
@@ -218,8 +218,8 @@ class LabourAPIController extends Controller
     	$pout_date=isset($_POST['pout_date']) ? $_POST['pout_date'] : "NA";
         $pout_latitude=isset($_POST['pout_latitude']) ? $_POST['pout_latitude'] : "NA";
     	$pout_longitude=isset($_POST['pout_longitude']) ? $_POST['pout_longitude'] : "NA";
-        $photo_path_ext=isset($_POST['profile_photo_ext']) ? $_POST['profile_photo_ext'] : null;
-        $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
+        $photo_path_ext=isset($_POST['profile_photo_ext']) ? $_POST['profile_photo_exto'] : null;
+        $photo_path = $req->input('attachment') ?$req->input('attachmento'): '';
         // $photo_path = $req->hasfile('attachment');
 
         $u_id = strval($a_id); 
