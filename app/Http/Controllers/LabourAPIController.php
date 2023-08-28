@@ -281,7 +281,6 @@ class LabourAPIController extends Controller
                     // $img = $req->pout_img;                        //get image
                     if($photo_path!="" && str_contains($photo_path, '+'))
                     {   
-                    // return ['status' => false, 'message' => 'Please']; 
 
 
                         // $folderPath = public_path('files/attendance/punchOut/');     // folder path
@@ -328,6 +327,8 @@ class LabourAPIController extends Controller
 
                     // $img = $req->pout_img;                        //get image
                     if($photo_path!=""){
+                    return ['status' => false, 'message' => 'Please']; 
+
                         $u_obj=new PunchInOutModel();
                         $u_obj->pout_u_id=$pout_labour[$j];
                         $u_obj->pout_oth_id=$pout_so;
