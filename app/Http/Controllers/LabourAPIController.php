@@ -354,7 +354,7 @@ class LabourAPIController extends Controller
                             // $file = $folderPath . $fileName;
                             // file_put_contents($file, $image_base64);        //move to specific folder
 
-                            $destinationPath = 'files/attendance/punchIn/';
+                            $destinationPath = 'files/attendance/punchOut/';
                             if($photo_path!="" && str_contains($photo_path, '+'))
                             {              
                                 
