@@ -277,11 +277,12 @@ class LabourAPIController extends Controller
                 $check=PunchInOutModel::where(['pin_u_id'=>$pout_labour[$j],'pin_date'=>$pout_date])->get();
 
                 if(count($check) > 0){
-                    return ['status' => false, 'message' => 'Please Try Again..']; 
                     $u_obj=PunchInOutModel::where(['pin_u_id'=>$pout_labour[$j],'pin_date'=>$pout_date]);
                     // $img = $req->pout_img;                        //get image
                     if($photo_path!="" && str_contains($photo_path, '+'))
-                    {
+                    {   
+                    return ['status' => false, 'message' => 'Please']; 
+
 
                         // $folderPath = public_path('files/attendance/punchOut/');     // folder path
                     
