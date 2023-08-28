@@ -265,7 +265,7 @@ class LabourAPIController extends Controller
                             'pout_longitude' => $pout_longitude,
                             'delete' => 0, 
                             'a_id' => $a_id,
-                            'pout_img' => $fileName
+                            'pout_img' => $filename
                         ]);
 
                     }else{
