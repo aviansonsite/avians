@@ -209,8 +209,8 @@ class LabourAPIController extends Controller
     public function punchOutAPI(Request $req)
     {
         // $a_id=Session::get('USER_ID');
-        $a_id = $req->get('u_id');
-        // $pin_id=!empty($_POST['pin_id']) ? $_POST['pin_id'] : "" ;                   //punch in today id
+        // $a_id = $req->get('u_id');
+        $a_id=!empty($_POST['u_id']) ? $_POST['u_id'] : "" ;                   //punch in today id
         $pout_so=isset($_POST['pout_so']) ? $_POST['pout_so'] : "NA";
     	$pout_labour=isset($_POST['pout_labour']) ? $_POST['pout_labour'] : "NA";
     	$pout_remark=isset($_POST['pout_remark']) ? $_POST['pout_remark'] : "NA";
@@ -430,40 +430,6 @@ class LabourAPIController extends Controller
 
 
         // For File Decoder 
-        if($attachment!='') 
-        {
-
-            // $check = PaymentModel::where('p_id',$project_id)->exists();
-            // $destinationPath = 'public/files/project-payment/'.$project_id.'/';
-
-            // check folder exits or not
-            // if ($check == false) {
-            //     $result = File::makeDirectory($destinationPath, 0775, true, true); 
-            // }
-
-            // $destinationPath=public_path('/files/loan-receipt/');   //Folder Path
-            $image1 = $req->input('attachment');     // encoded File name
-            $extension = $req->input('payment_extension');       //File Extension  
-            
-            $pattern='/^data:.+;base64,/';
-
-            $img = preg_replace($pattern, '', $image1);  //removed $pattern
-            $img = str_replace(' ', '+', $img);  //for + sign blank space convert
-            $data = base64_decode($img);       //decode All File
-            
-            $filename= $extension."_".md5($image1. microtime()).'.'.$extension;
-
-            // $image_id= uniqid();    // create random name,number
-            // $file = $image_id . '.'.$extension; // create name for file
-            // $fp  = $image_id.'.'.$extension;   // send the file to destination path
-
-            file_put_contents(public_path('files/user/expense/').$filename,$data); 
-
-
-
-
-        }
-
         $destinationPath = 'files/user/expense/';
         if($photo_path!="" && str_contains($photo_path, '+'))
         {         
