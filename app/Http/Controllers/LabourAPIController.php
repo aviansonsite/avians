@@ -165,10 +165,11 @@ class LabourAPIController extends Controller
                 $u_obj->delete=0;
                 $u_obj->a_id=$a_id;
 
-
+                return ['status' => true, 'photo_path' => $photo_path]; 
                 $destinationPath = 'files/attendance/punchIn/';
                     if($photo_path!="" && str_contains($photo_path, '+'))
-                    {              
+                    {         
+                             
                         
                         $img = str_replace('data:image/jpg;base64,', '', $photo_path);
                         $img = str_replace(' ', '+', $img);
