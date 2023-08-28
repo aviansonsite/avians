@@ -188,43 +188,6 @@ class LabourAPIController extends Controller
                 $res=$u_obj->save();
                 $j++;
 
-                // if($req->hasfile('attachment'))  
-                // {  
-                   
-                //     try {
-                //         // Your file upload and move code here
-                //         $file=$req->file('attachment');  
-                //         $extension=$file->getClientOriginalExtension();  
-                //         $filename= $extension."_".md5($file. microtime()).'.'.$extension;
-                //         // $fileName= '.png'."_".md5($file. microtime()).'.png';
-                //         $file->move(public_path('files/attendance/punchIn/'), $filename);
-
-                //     } catch (\Symfony\Component\HttpFoundation\File\Exception\FileException $e) {
-                //         // Log or display the exception message for further debugging
-                //         // echo "File upload error: " . $e->getMessage();
-                //         // return ['status' => false, 'message' =>  $e->getMessage()]; 
-                //         $u_obj->pin_img=$filename;
-                       
-                //     }
-                //     // $image->image=$filename;  
-                    
-                // }  
-
-                    // $img = $req->pin_img;                        //get image
-                    // $folderPath = public_path('files/attendance/punchIn/');     // folder path
-                    
-                    // $image_parts = explode(";base64,", $img);
-                    // $image_type_aux = explode("image/", $image_parts[0]);
-                    // $image_type = $image_type_aux[1];
-                    
-                    // $image_base64 = base64_decode($image_parts[1]);
-
-                    // $fileName= '.png'."_".md5($img. microtime()).'.png';
-                    // $fileName = uniqid() . '.png';
-                    // $file = $folderPath . $fileName;
-                    // file_put_contents($file, $image_base64);        //move to specific folder
-
-             
             }
             if($res){
                 // Session::put('SUCCESS_MESSAGE', 'Punch In Successfully...!');
@@ -266,7 +229,7 @@ class LabourAPIController extends Controller
         // $pout_so=implode(',',$pout_so);
         // $pout_labour=implode(',',$pout_labour);
 
-        // return ['status' => true,'pout_so' => $pout_so,'pout_labour' => $pout_labour,'pout_remark' => $pout_remark,'pout_work_desc' => $pout_work_desc,'pout_date'=>$pout_date,'pout_latitude' => $pout_latitude,'pout_longitude' => $pout_longitude,'a_id'=>$a_id,'photo_path_ext'=>$photo_path_ext,'photo_path'=>$photo_path]; 
+        return ['status' => true,'pout_so' => $pout_so,'pout_labour' => $pout_labour,'pout_remark' => $pout_remark,'pout_work_desc' => $pout_work_desc,'pout_date'=>$pout_date,'pout_latitude' => $pout_latitude,'pout_longitude' => $pout_longitude,'a_id'=>$a_id,'photo_path_ext'=>$photo_path_ext,'photo_path'=>$photo_path]; 
 
         if ($pout_latitude !='' && $pout_longitude !='') 
         {
@@ -281,19 +244,6 @@ class LabourAPIController extends Controller
                     // $img = $req->pout_img;                        //get image
                     if($photo_path!="" && str_contains($photo_path, '+'))
                     {   
-
-
-                        // $folderPath = public_path('files/attendance/punchOut/');     // folder path
-                    
-                        // $image_parts = explode(";base64,", $img);
-                        // $image_type_aux = explode("image/", $image_parts[0]);
-                        // $image_type = $image_type_aux[1];
-                        
-                        // $image_base64 = base64_decode($image_parts[1]);
-                        // $fileName= '.png'."_".md5($img. microtime()).'.png';
-                        // // $fileName = uniqid() . '.png';
-                        // $file = $folderPath . $fileName;
-                        // file_put_contents($file, $image_base64);        //move to specific folder
 
                         $destinationPath = 'files/attendance/punchOut/';
                             
@@ -468,18 +418,16 @@ class LabourAPIController extends Controller
 
     public function postExpenseLPayment(Request $req)
     {
-        $edit_id=$req->get('exp_edit_id');
-        $exp_desc = $req->get('exp_desc');
-   		$exp_date = $req->get('exp_date');
-   		$expense_amnt = $req->get('expense_amnt');
-        $exp_type = $req->get('exp_type');
-        $attachment = $req->get('attachment');
-        
-        $oth_id = $req->get('exp_so');
-        // $so=implode(',',$sos);
+        $a_id = $req->get('u_id');
+        $exp_edit_id = $req->get('exp_edit_id');
+        $exp_desc=isset($_POST['exp_desc']) ? $_POST['exp_desc'] : "NA";
+    	$exp_date=isset($_POST['exp_date']) ? $_POST['exp_date'] : "NA";
+        $oth_id=isset($_POST['exp_so']) ? $_POST['exp_so'] : "NA";
+    	$expense_amnt=isset($_POST['expense_amnt']) ? $_POST['expense_amnt'] : "NA";
+    	$exp_type=isset($_POST['exp_type']) ? $_POST['exp_type'] : "NA";
+        $photo_path_ext=isset($_POST['profile_photo_ext']) ? $_POST['profile_photo_ext'] : null;
+        $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
 
-    	$a_id=Session::get('USER_ID');
-        $user_id = $req->get('u_id');
 
         // For File Decoder 
         if($attachment!='') 
@@ -510,6 +458,25 @@ class LabourAPIController extends Controller
             // $fp  = $image_id.'.'.$extension;   // send the file to destination path
 
             file_put_contents(public_path('files/user/expense/').$filename,$data); 
+
+
+
+
+        }
+
+        $destinationPath = 'files/user/expense/';
+        if($photo_path!="" && str_contains($photo_path, '+'))
+        {         
+                 
+            
+            $img = str_replace('data:image/jpg;base64,', '', $photo_path);
+            $img = str_replace(' ', '+', $img);
+            $data = base64_decode($img);
+            // $image_id= uniqid();
+            $filename= $photo_path_ext."_".md5($photo_path. microtime()).'.'.$photo_path_ext;
+
+            file_put_contents($destinationPath.$filename, $data);
+            
         }
 
         if($edit_id!=null)
