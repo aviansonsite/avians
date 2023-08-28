@@ -210,7 +210,7 @@ class LabourAPIController extends Controller
     {
         // $a_id=Session::get('USER_ID');
         $a_id = $req->get('u_id');
-        // $a_id=!empty($_POST['u_id']) ? $_POST['u_id'] : "" ;                   //punch in today id
+        $pr=!empty($_POST['pr']) ? $_POST['pr'] : "" ;                   //punch in today id
         $pout_so=isset($_POST['pout_so']) ? $_POST['pout_so'] : "NA";
     	$pout_labour=isset($_POST['pout_labour']) ? $_POST['pout_labour'] : "NA";
     	$pout_remark=isset($_POST['pout_remark']) ? $_POST['pout_remark'] : "NA";
@@ -229,7 +229,7 @@ class LabourAPIController extends Controller
         // $pout_so=implode(',',$pout_so);
         // $pout_labour=implode(',',$pout_labour);
 
-        return ['status' => true,'pout_so' => $pout_so,'pout_labour' => $pout_labour,'pout_remark' => $pout_remark,'pout_work_desc' => $pout_work_desc,'pout_date'=>$pout_date,'pout_latitude' => $pout_latitude,'pout_longitude' => $pout_longitude,'a_id'=>$a_id,'photo_path_ext'=>$photo_path_ext,'photo_path'=>$photo_path]; 
+        return ['status' => true,'pout_so' => $pout_so,'pout_labour' => $pout_labour,'pout_remark' => $pout_remark,'pout_work_desc' => $pout_work_desc,'pout_date'=>$pout_date,'pout_latitude' => $pout_latitude,'pout_longitude' => $pout_longitude,'a_id'=>$a_id,'pr'=>$pr,'photo_path_ext'=>$photo_path_ext,'photo_path'=>$photo_path]; 
 
         if ($pout_latitude !='' && $pout_longitude !='') 
         {
@@ -422,7 +422,7 @@ class LabourAPIController extends Controller
         $exp_edit_id = $req->get('exp_edit_id');
         $exp_desc=isset($_POST['exp_desc']) ? $_POST['exp_desc'] : "NA";
     	$exp_date=isset($_POST['exp_date']) ? $_POST['exp_date'] : "NA";
-        $oth_id=isset($_POST['exp_so']) ? $_POST['exp_so'] : "NA";
+        $oth_id=isset($_POST['exp_oth_id']) ? $_POST['exp_oth_id'] : "NA";
     	$expense_amnt=isset($_POST['expense_amnt']) ? $_POST['expense_amnt'] : "NA";
     	$exp_type=isset($_POST['exp_type']) ? $_POST['exp_type'] : "NA";
         $photo_path_ext=isset($_POST['profile_photo_ext']) ? $_POST['profile_photo_ext'] : null;
@@ -443,12 +443,12 @@ class LabourAPIController extends Controller
             
         }
 
-        if($edit_id!=null)
+        if($exp_edit_id!=null)
     	{
             if ($expense_amnt !='' && $exp_date !='') 
             {
                     
-                $u_obj=TechnicianExpenseModel::find($edit_id);
+                $u_obj=TechnicianExpenseModel::find($exp_edit_id);
                 $u_obj->exp_type=$exp_type;
                 $u_obj->oth_id=$oth_id;
                 $u_obj->exp_desc=$exp_desc;
