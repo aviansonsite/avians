@@ -209,8 +209,8 @@ class LabourAPIController extends Controller
     public function punchOutAPI(Request $req)
     {
         // $a_id=Session::get('USER_ID');
-        // $a_id = $req->get('u_ido');
-        $a_id=!empty($_POST['u_id']) ? $_POST['u_id'] : "" ;                   //punch in today id
+        $a_id = $req->get('u_id');
+        // $a_id=!empty($_POST['u_id']) ? $_POST['u_id'] : "" ;                   //punch in today id
         $pout_so=isset($_POST['pout_so']) ? $_POST['pout_so'] : "NA";
     	$pout_labour=isset($_POST['pout_labour']) ? $_POST['pout_labour'] : "NA";
     	$pout_remark=isset($_POST['pout_remark']) ? $_POST['pout_remark'] : "NA";
@@ -218,8 +218,8 @@ class LabourAPIController extends Controller
     	$pout_date=isset($_POST['pout_date']) ? $_POST['pout_date'] : "NA";
         $pout_latitude=isset($_POST['pout_latitude']) ? $_POST['pout_latitude'] : "NA";
     	$pout_longitude=isset($_POST['pout_longitude']) ? $_POST['pout_longitude'] : "NA";
-        $photo_path_ext=isset($_POST['profile_photo_exto']) ? $_POST['profile_photo_exto'] : null;
-        $photo_path = $req->input('attachmento') ?$req->input('attachmento'): '';
+        $photo_path_ext=isset($_POST['profile_photo_ext']) ? $_POST['profile_photo_ext'] : null;
+        $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
         // $photo_path = $req->hasfile('attachment');
 
         $u_id = strval($a_id); 
@@ -229,7 +229,7 @@ class LabourAPIController extends Controller
         // $pout_so=implode(',',$pout_so);
         // $pout_labour=implode(',',$pout_labour);
 
-        return ['status' => true,'pout_so' => $pout_so,'pout_labour' => $pout_labour,'pout_remark' => $pout_remark,'pout_work_desc' => $pout_work_desc,'pout_date'=>$pout_date,'pout_latitude' => $pout_latitude,'pout_longitude' => $pout_longitude,'a_id'=>$a_id,'photo_path_ext'=>$photo_path_ext,'photo_path'=>$photo_path]; 
+        return ['status' => true,'pout_so' => $pout_so,'pout_labour' => $pout_labour,'pout_remark' => $pout_remark,'pout_work_desc' => $pout_work_desc,'pout_date'=>$pout_date,'pout_latitude' => $pout_latitude,'pout_longitude' => $pout_longitude,'u_id'=>$a_id,'photo_path_ext'=>$photo_path_ext,'attachment'=>$photo_path]; 
 
         if ($pout_latitude !='' && $pout_longitude !='') 
         {
