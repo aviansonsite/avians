@@ -209,8 +209,8 @@ class LabourAPIController extends Controller
     public function punchOutAPI(Request $req)
     {
         // $a_id=Session::get('USER_ID');
-        // $a_id = $req->get('u_id');
-        $a_id=!empty($_POST['u_id']) ? $_POST['u_id'] : "" ;                   //punch in today id
+        $a_id = $req->get('u_id');
+        // $a_id=!empty($_POST['u_id']) ? $_POST['u_id'] : "" ;                   //punch in today id
         $pout_so=isset($_POST['pout_so']) ? $_POST['pout_so'] : "NA";
     	$pout_labour=isset($_POST['pout_labour']) ? $_POST['pout_labour'] : "NA";
     	$pout_remark=isset($_POST['pout_remark']) ? $_POST['pout_remark'] : "NA";
@@ -416,7 +416,7 @@ class LabourAPIController extends Controller
         }
     }
 
-    public function postExpenseLPayment(Request $req)
+    public function postExpenseLPaymentAPI(Request $req)
     {
         $a_id = $req->get('u_id');
         $exp_edit_id = $req->get('exp_edit_id');
@@ -433,8 +433,6 @@ class LabourAPIController extends Controller
         $destinationPath = 'files/user/expense/';
         if($photo_path!="" && str_contains($photo_path, '+'))
         {         
-                 
-            
             $img = str_replace('data:image/jpg;base64,', '', $photo_path);
             $img = str_replace(' ', '+', $img);
             $data = base64_decode($img);
@@ -447,18 +445,16 @@ class LabourAPIController extends Controller
 
         if($edit_id!=null)
     	{
-            
             if ($expense_amnt !='' && $exp_date !='') 
             {
                     
-
                 $u_obj=TechnicianExpenseModel::find($edit_id);
                 $u_obj->exp_type=$exp_type;
                 $u_obj->oth_id=$oth_id;
                 $u_obj->exp_desc=$exp_desc;
                 $u_obj->exp_date=$exp_date;
                 $u_obj->amount=$expense_amnt;
-                if($attachment!='') 
+                if($photo_path!="" && str_contains($photo_path, '+'))
                 {
                     $u_obj->attachment=$filename;
                 }
@@ -467,7 +463,7 @@ class LabourAPIController extends Controller
                 $res=$u_obj->update();
                 
                 if($res){
-                    return ['status' => true, 'message' => 'Payment Update Successfully'];
+                    return ['status' => true, 'message' => 'Expense Update Successfully'];
                 }else{
                     return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
                 }
@@ -485,19 +481,16 @@ class LabourAPIController extends Controller
                 $u_obj->exp_desc=$exp_desc;
                 $u_obj->exp_date=$exp_date;
                 $u_obj->amount=$expense_amnt;
-                if($attachment!='') 
+                if($photo_path!="" && str_contains($photo_path, '+'))
                 {
                     $u_obj->attachment=$filename;
                 }
                 $u_obj->delete=0;
-                $u_obj->a_id=$a_id;
-
-                
-
+                $u_obj->a_id=$a_id;            
                 $res=$u_obj->save();
                 
                 if($res){
-                    return ['status' => true, 'message' => 'Payment add Successfully'];
+                    return ['status' => true, 'message' => 'Expense add Successfully'];
                 }else{
                 return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
                 }
@@ -509,7 +502,7 @@ class LabourAPIController extends Controller
 
     }
 
-    public function postExpenseLPaymentAPI(Request $req)
+    public function postExpenseLPaymentAPIS(Request $req)
     {
         $edit_id=$req->get('exp_edit_id');
         $exp_desc = $req->get('exp_desc');
