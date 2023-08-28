@@ -141,7 +141,9 @@ class LabourAPIController extends Controller
         $p_in_latitude=isset($_POST['p_in_latitude']) ? $_POST['p_in_latitude'] : "NA";
     	$p_in_longitude=isset($_POST['p_in_longitude']) ? $_POST['p_in_longitude'] : "NA";
         $photo_path_ext=isset($_POST['profile_photo_ext']) ? $_POST['profile_photo_ext'] : null;
-        $photo_path = $req->hasfile('attachment');
+        // $photo_path = $req->hasfile('attachment');
+        $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
+
         
         $u_id = strval($a_id); 
         array_push($p_in_labour, $u_id);    //Push user id for attendance
@@ -459,6 +461,115 @@ class LabourAPIController extends Controller
         }
     }
 
+    public function postExpenseLPayment(Request $req)
+    {
+        $edit_id=$req->get('exp_edit_id');
+        $exp_desc = $req->get('exp_desc');
+   		$exp_date = $req->get('exp_date');
+   		$expense_amnt = $req->get('expense_amnt');
+        $exp_type = $req->get('exp_type');
+        $attachment = $req->get('attachment');
+        
+        $oth_id = $req->get('exp_so');
+        // $so=implode(',',$sos);
+
+    	$a_id=Session::get('USER_ID');
+        $user_id = $req->get('u_id');
+
+        // For File Decoder 
+        if($attachment!='') 
+        {
+
+            // $check = PaymentModel::where('p_id',$project_id)->exists();
+            // $destinationPath = 'public/files/project-payment/'.$project_id.'/';
+
+            // check folder exits or not
+            // if ($check == false) {
+            //     $result = File::makeDirectory($destinationPath, 0775, true, true); 
+            // }
+
+            // $destinationPath=public_path('/files/loan-receipt/');   //Folder Path
+            $image1 = $req->input('attachment');     // encoded File name
+            $extension = $req->input('payment_extension');       //File Extension  
+            
+            $pattern='/^data:.+;base64,/';
+
+            $img = preg_replace($pattern, '', $image1);  //removed $pattern
+            $img = str_replace(' ', '+', $img);  //for + sign blank space convert
+            $data = base64_decode($img);       //decode All File
+            
+            $filename= $extension."_".md5($image1. microtime()).'.'.$extension;
+
+            // $image_id= uniqid();    // create random name,number
+            // $file = $image_id . '.'.$extension; // create name for file
+            // $fp  = $image_id.'.'.$extension;   // send the file to destination path
+
+            file_put_contents(public_path('files/user/expense/').$filename,$data); 
+        }
+
+        if($edit_id!=null)
+    	{
+            
+            if ($expense_amnt !='' && $exp_date !='') 
+            {
+                    
+
+                $u_obj=TechnicianExpenseModel::find($edit_id);
+                $u_obj->exp_type=$exp_type;
+                $u_obj->oth_id=$oth_id;
+                $u_obj->exp_desc=$exp_desc;
+                $u_obj->exp_date=$exp_date;
+                $u_obj->amount=$expense_amnt;
+                if($attachment!='') 
+                {
+                    $u_obj->attachment=$filename;
+                }
+                $u_obj->delete=0;
+                $u_obj->a_id=$a_id;
+                $res=$u_obj->update();
+                
+                if($res){
+                    return ['status' => true, 'message' => 'Payment Update Successfully'];
+                }else{
+                    return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
+                }
+            }else{
+                return ['status' => false, 'message' => 'Please Try Again..']; 
+            }   
+
+        }else{       
+
+            if ($expense_amnt !='') 
+            {
+                $u_obj=new TechnicianExpenseModel();
+                $u_obj->exp_type=$exp_type;
+                $u_obj->oth_id=$oth_id;
+                $u_obj->exp_desc=$exp_desc;
+                $u_obj->exp_date=$exp_date;
+                $u_obj->amount=$expense_amnt;
+                if($attachment!='') 
+                {
+                    $u_obj->attachment=$filename;
+                }
+                $u_obj->delete=0;
+                $u_obj->a_id=$a_id;
+
+                
+
+                $res=$u_obj->save();
+                
+                if($res){
+                    return ['status' => true, 'message' => 'Payment add Successfully'];
+                }else{
+                return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
+                }
+            }else{
+                return ['status' => false, 'message' => 'Please Try Again..']; 
+            } 
+        }     
+        
+
+    }
 
     public function postExpenseLPaymentAPI(Request $req)
     {
@@ -467,13 +578,13 @@ class LabourAPIController extends Controller
    		$exp_date = $req->get('exp_date');
    		$expense_amnt = $req->get('expense_amnt');
         $exp_type = $req->get('exp_type');
-        $user_id = $req->get('user_id');
+        $user_id = $req->get('u_id');
         // $attachment = $req->get('attachment');
-        $oth_id = $req->get('exp_so');
+        $oth_id = $req->get('exp_oth_id');
         // $so=implode(',',$sos);
 
     	// $a_id=Session::get('USER_ID');
-        $user_id = CommonController::decode_ids($user_id);
+        // $user_id = CommonController::decode_ids($user_id);
         $check = UserModel::where('id',$user_id)->exists();
         if($check == true ){
 
