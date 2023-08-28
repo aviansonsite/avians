@@ -53,7 +53,16 @@ class LabourAPIController extends Controller
             $createdAt = PunchInOutModel::whereNotNull('created_at')->get();
             $updatedAt = PunchInOutModel::whereNotNull('updated_at')->get();
 
-            $p_id = PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate,'a_id'=>$a_id])->orderby('updated_at','DESC')->get();
+            $p_id = PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate,'pin_u_id'=>$a_id])->orderby('updated_at','DESC')->get();
+            foreach($p_id as $p){
+                $p_id1 = PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate,'a_id'=>$a_id])->orderby('updated_at','DESC')->get();
+                // dd($p_id1);
+                $pin_u_ids = [];
+                foreach($p_id1 as $p1){
+                    array_push($pin_u_ids, $p1->pin_u_id);    //Push user id for attendance
+                }
+                $p->pin_u_ids = implode(',',$pin_u_ids);
+            } 
             // dd($p_obj);
             // $p_id = $p_id[0];
             foreach($p_obj as $p){
@@ -68,7 +77,7 @@ class LabourAPIController extends Controller
             }
 
             if(!empty($p_obj)){
-                return json_encode(array('status' => true ,'data' => $p_obj,'u_obj' => $u_obj,'s_obj' => $s_obj ,'message' => 'Data Found'));
+                return json_encode(array('status' => true ,'data' => $p_obj,'u_obj' => $u_obj,'s_obj' => $s_obj,'p_id'=>$p_id,'t_count'=> $t_count ,'message' => 'Data Found'));
             }else{
             return ['status' => false, 'message' => 'No Data Found'];
             }
