@@ -229,7 +229,7 @@ class LabourAPIController extends Controller
         // $pout_so=implode(',',$pout_so);
         // $pout_labour=implode(',',$pout_labour);
 
-        return ['status' => true,'pout_so' => $pout_so,'pout_labour' => $pout_labour,'pout_remark' => $pout_remark,'pout_work_desc' => $pout_work_desc,'pout_date'=>$pout_date,'pout_latitude' => $pout_latitude,'pout_longitude' => $pout_longitude,'u_id'=>$a_id,'ext'=>$ext,'attachment'=>$photo_path]; 
+        // return ['status' => true,'pout_so' => $pout_so,'pout_labour' => $pout_labour,'pout_remark' => $pout_remark,'pout_work_desc' => $pout_work_desc,'pout_date'=>$pout_date,'pout_latitude' => $pout_latitude,'pout_longitude' => $pout_longitude,'u_id'=>$a_id,'ext'=>$ext,'attachment'=>$photo_path]; 
 
         if ($pout_latitude !='' && $pout_longitude !='') 
         {
@@ -404,7 +404,7 @@ class LabourAPIController extends Controller
             ->leftjoin('users as u','u.id','oth.lead_technician')
             ->leftjoin('sales_orders as so','so.id','oth.so_id')
             ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
-            ->where(['oth.id'=>$pin_oth_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            ->where(['oth.id'=>$pout_oth_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
             ->orderby('oth.updated_at','DESC')
             ->get();
 
