@@ -218,7 +218,7 @@ class LabourAPIController extends Controller
     	$pout_date=isset($_POST['pout_date']) ? $_POST['pout_date'] : "NA";
         $pout_latitude=isset($_POST['pout_latitude']) ? $_POST['pout_latitude'] : "NA";
     	$pout_longitude=isset($_POST['pout_longitude']) ? $_POST['pout_longitude'] : "NA";
-        $ext=isset($_POST['ext']) ? $_POST['ext'] : null;
+        $photo_path_ext=isset($_POST['ext']) ? $_POST['ext'] : null;
         $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
         // $photo_path = $req->hasfile('attachment');
 
