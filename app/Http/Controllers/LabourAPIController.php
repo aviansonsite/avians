@@ -256,8 +256,8 @@ class LabourAPIController extends Controller
         $pout_latitude=isset($_POST['pout_latitude']) ? $_POST['pout_latitude'] : "NA";
     	$pout_longitude=isset($_POST['pout_longitude']) ? $_POST['pout_longitude'] : "NA";
         $photo_path_ext=isset($_POST['profile_photo_ext']) ? $_POST['profile_photo_ext'] : null;
-        // $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
-        $photo_path = $req->hasfile('attachment');
+        $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
+        // $photo_path = $req->hasfile('attachment');
 
         $u_id = strval($a_id); 
         array_push($pout_labour, $u_id);    //Push user id for attendance
