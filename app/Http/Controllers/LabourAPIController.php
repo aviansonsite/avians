@@ -242,8 +242,8 @@ class LabourAPIController extends Controller
                 if(count($check) > 0){
                     $u_obj=PunchInOutModel::where(['pin_u_id'=>$pout_labour[$j],'pin_date'=>$pout_date]);
                     // $img = $req->pout_img;                        //get image
-                    if($photo_path!="" && str_contains($photo_path, '+'))
-                    {   
+                    // if($photo_path!="" && str_contains($photo_path, '+'))
+                    // {   
 
                         $destinationPath = 'files/attendance/punchOut/';
                             
@@ -268,10 +268,10 @@ class LabourAPIController extends Controller
                             'pout_img' => $fileName,
                         ]);
 
-                    }else{
-                        // Session::put('ERROR_MESSAGE', 'Something went wrong. Please try again.');
-                        return ['status' => false, 'message' => 'Something went wrong. Please try again.']; 
-                    }
+                    // }else{
+                    //     // Session::put('ERROR_MESSAGE', 'Something went wrong. Please try again.');
+                    //     return ['status' => false, 'message' => 'Something went wrong. Please try again.']; 
+                    // }
                     
                 }else{
 
