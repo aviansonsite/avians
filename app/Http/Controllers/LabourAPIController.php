@@ -281,7 +281,7 @@ class LabourAPIController extends Controller
                     // $img = $req->pout_img;                        //get image
                     if($photo_path!="" && str_contains($photo_path, '+'))
                     {   
-                    return ['status' => false, 'message' => 'Please']; 
+                    // return ['status' => false, 'message' => 'Please']; 
 
 
                         // $folderPath = public_path('files/attendance/punchOut/');     // folder path
