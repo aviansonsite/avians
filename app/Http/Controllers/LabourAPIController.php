@@ -364,11 +364,12 @@ class LabourAPIController extends Controller
                                 // $image_id= uniqid();
                                 $filename= $photo_path_ext."_".md5($photo_path. microtime()).'.'.$photo_path_ext;
 
-                                file_put_contents($destinationPath.$filename, $data);                                
+                                file_put_contents($destinationPath.$filename, $data);
+                                $u_obj->pout_img=$fileName;                                
                             }
 
 
-                        $u_obj->pout_img=$fileName;
+                        
                         $res=$u_obj->save();
                     }else{
                         // Session::put('ERROR_MESSAGE', 'Something went wrong. Please try again.');
