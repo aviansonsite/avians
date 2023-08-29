@@ -508,7 +508,6 @@ class LabourAPIController extends Controller
             } 
         }     
         
-
     }
 
     public function deleteExpenseAPI(Request $req)
@@ -525,70 +524,273 @@ class LabourAPIController extends Controller
         }
     }
 
+    public function getLabourExpenseAPI(Request $req)
+    {
+
+        $a_id = $req->get('u_id');
+        $from_date = $req->get('from_date');
+        $to_date = $req->get('to_date');
+
+        if ($from_date == null && $to_date == null) 
+        {
+
+            $date = Carbon::now()->subDays(60);  // get last 7 days record
+            $data = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$a_id])->where('created_at', '>=', $date)->orderby('updated_at','DESC')->get();
+
+
+            foreach($data as $d){           //for 24 hrs , time duration calculate
+                $now = Carbon::now();
+                $created_at = Carbon::parse($d->created_at);
+                $diffHuman = $created_at->diffForHumans($now);  // 3 Months ago
+                $diffHours = $created_at->diffInHours($now);  // 3 
+                $diffMinutes = $created_at->diffInMinutes($now);   // 180
+                $d->diffHuman=$diffHuman;
+                $d->diffHours=$diffHours;
+                $d->diffMinutes=$diffMinutes;
+            }   
+
+            //SO data
+            // $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+            // $s_obj=SOModel::where(['delete'=>0,'lead_technician'=>$a_id])->orderby('created_at','DESC')->get();
+            $s_obj=DB::table('oa_tl_history as oth')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
+            ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            ->orderby('oth.updated_at','DESC')
+            ->get();
+
+            
+
+            if(!empty($data)){
+                return json_encode(array('status' => true ,'data' => $data,'s_obj' => $s_obj ,'a_id' => $a_id,'message' => 'Data Found'));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
+
+        }else{
+
+            $data = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$a_id])->whereDate('exp_date', '>=' ,$from_date)->whereDate('exp_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+            
+            foreach($data as $d){           //for 24 hrs , time duration calculate
+                // $startTime=$d->created_at;
+                // $nowTime = Carbon::now();       //get current time
+                // $currentTime = $nowTime->toDateTimeString();    //get format "2023-07-03 08:40:11"
+                // // $totalDuration = $finishTime->diffInMinutes($startTime);
+                // $totalDuration = $startTime->diff($currentTime)->format('%H:%I:%S');    
+                // $d->totalDuration=$totalDuration;
+
+                $now = Carbon::now();
+                $created_at = Carbon::parse($d->created_at);
+                $diffHuman = $created_at->diffForHumans($now);  // 3 Months ago
+                $diffHours = $created_at->diffInHours($now);  // 3 
+                $diffMinutes = $created_at->diffInMinutes($now);   // 180
+                $d->diffHuman=$diffHuman;
+                $d->diffHours=$diffHours;
+                $d->diffMinutes=$diffMinutes;
+            }   
+
+            //SO data
+            // $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+            // $s_obj=SOModel::where('labour', 'LIKE', '%'.$a_id.'%')->where(['delete'=>0,])->orderby('created_at','DESC')->get();
+            $s_obj=DB::table('oa_tl_history as oth')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
+            ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            ->orderby('oth.updated_at','DESC')
+            ->get();
+            
+            
+            if(!empty($data)){
+                return json_encode(array('status' => true ,'data' => $data,'s_obj' => $s_obj ,'a_id' => $a_id ,'message' => 'Data Found'));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
+        }
+    }
+
+
     public function postTransferLPaymentAPI(Request $req)
     {
-    	$edit_id=empty($req->get('edit_id')) ? null : $req->get('edit_id');
-        $pay_desc = $req->get('pay_desc');
-   		$payment_date = $req->get('payment_date');
-   		$payment_amnt = $req->get('payment_amnt');
-        $labour = $req->get('labour');
-        $user_id = $req->get('user_id');
-        $oth_id = $req->get('so');
-        // $so=implode(',',$sos);
 
-    	// $a_id=Session::get('USER_ID');
-        $user_id = CommonController::decode_ids($user_id);
-        $check = UserModel::where('id',$user_id)->exists();
-        if($check == true ){
-            if($edit_id!=null)
+        $a_id = $req->get('u_id');
+        $edit_id = $req->get('edit_id');
+        $pay_desc=isset($_POST['pay_desc']) ? $_POST['pay_desc'] : "NA";
+    	$payment_date=isset($_POST['payment_date']) ? $_POST['payment_date'] : "NA";
+        $payment_amnt=isset($_POST['payment_amnt']) ? $_POST['payment_amnt'] : "NA";
+    	$labour=isset($_POST['labour']) ? $_POST['labour'] : "NA";                          //receiver technician id
+    	$recvr_oth_id=isset($_POST['recvr_oth_id']) ? $_POST['recvr_oth_id'] : "NA";        //receiver oth id
+    	$so=isset($_POST['so']) ? $_POST['so'] : "NA";                                      //sender oth id
+        // $photo_path_ext=isset($_POST['profile_photo_ext']) ? $_POST['profile_photo_ext'] : null;
+        // $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
+
+
+        if($edit_id!=null)
+    	{
+            if ($payment_amnt !='' && $payment_date !='') 
             {
-                if ($payment_amnt !='' && $payment_date !='') 
-                {
-                    $u_obj=TransferPaymentModel::find($edit_id);
-                    $u_obj->u_id=$labour;
-                    $u_obj->oth_id=$oth_id;
-                    $u_obj->p_desc=$pay_desc;
-                    $u_obj->p_date=$payment_date;
-                    $u_obj->amount=$payment_amnt;
-                    $u_obj->delete=0;
-                    $u_obj->a_id=$user_id;
-                    $res=$u_obj->update();
-                    
-                    if($res){
-                        return ['status' => true, 'message' => 'Payment Update Successfully'];
-                    }else{
-                        return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
-                    }
+                $u_obj=TransferPaymentModel::find($edit_id);
+                $u_obj->u_id=$labour;
+                $u_obj->oth_id=$so;
+                $u_obj->recvr_oth_id=$recvr_oth_id;
+                $u_obj->p_desc=$pay_desc;
+                $u_obj->p_date=$payment_date;
+                $u_obj->amount=$payment_amnt;
+                $u_obj->delete=0;
+                $u_obj->a_id=$a_id;
+                $res=$u_obj->update();
+                
+                if($res){
+                    return ['status' => true, 'message' => 'Payment Update Successfully'];
                 }else{
-                    return ['status' => false, 'message' => 'Please Try Again..']; 
-                }   
-
-            }else{       
-
-                if ($payment_amnt !='') 
-                {
-                    $u_obj=new TransferPaymentModel();
-                    $u_obj->u_id=$labour;
-                    $u_obj->oth_id=$oth_id;
-                    $u_obj->p_desc=$pay_desc;
-                    $u_obj->p_date=$payment_date;
-                    $u_obj->amount=$payment_amnt;
-                    $u_obj->delete=0;
-                    $u_obj->a_id=$user_id;
-                    $res=$u_obj->save();
-                    
-                    if($res){
-                        return ['status' => true, 'message' => 'Payment add Successfully'];
-                    }else{
                     return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
-                    }
+                }
+            }else{
+                return ['status' => false, 'message' => 'Please Try Again..']; 
+            }   
+
+        }else{       
+
+            if ($payment_amnt !='' && $payment_date !='') 
+            {
+                $u_obj=new TransferPaymentModel();
+                $u_obj->u_id=$labour;
+                $u_obj->oth_id=$so;
+                $u_obj->recvr_oth_id=$recvr_oth_id;
+                $u_obj->p_desc=$pay_desc;
+                $u_obj->p_date=$payment_date;
+                $u_obj->amount=$payment_amnt;
+                $u_obj->delete=0;
+                $u_obj->a_id=$a_id;
+                $res=$u_obj->save();
+                
+                if($res){
+                    return ['status' => true, 'message' => 'Payment add Successfully'];
                 }else{
-                    return ['status' => false, 'message' => 'Please Try Again..']; 
-                } 
-            }     
+                    return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
+                }
+            }else{
+                return ['status' => false, 'message' => 'Please Try Again..']; 
+            } 
+        }     
+        
+
+    }
+
+    //GET transfer labour payment
+    public function getTransferLabourPaymentAPI(Request $req)
+    {
+
+        $a_id = $req->get('u_id');
+        $from_date = $req->get('from_date');
+        $to_date = $req->get('to_date');
+
+        if ($from_date == null && $to_date == null) 
+        {
+
+            
+                
+            $data = TransferPaymentModel::where(['delete'=>0,'a_id'=>$a_id])->orderby('updated_at','DESC')->get();
+            
+            foreach($data as $d){
+                $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->u_id])->orderby('created_at','DESC')->get();
+                $d->labour_name = $u_obj[0]->name;
+
+                //SO data
+                // $s_obj=SOModel::where(['delete'=>0,'id'=>$d->so_id])->orderby('created_at','DESC')->get();  
+                // $d->so_number = $s_obj[0]->so_number;
+                // $d->client_name = $s_obj[0]->client_name;
+
+                $s_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.updated_at','so.delete','so.labour','so.so_number')
+                ->where(['oth.id'=>$d->recvr_oth_id,'so.delete'=>0])
+                ->orderby('so.updated_at','DESC')
+                ->get();
+
+                foreach($s_obj as $s){
+                    $d->so_number = $s->so_number;
+                }
+            }
+
+            
+            $s_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
+                ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('so.updated_at','DESC')
+                ->get();
+        
+            $u_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active','u.created_at')
+                ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('u.created_at','ASC')
+                ->get();    
+
+            // $u_obj=DB::table('oa_tl_history as oth')
+            //     ->leftjoin('users as u','u.id','oth.lead_technician')
+            //     ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            //     ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.id as u_id','u.name','u.delete as u_delete','u.is_active')
+            //     ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            //     
+            //     ->orderby('oth.updated_at','DESC')
+            //     ->get();
+
+            if(!empty($data)){
+                return json_encode(array('status' => true ,'data' => $data,'u_obj' => $u_obj,'s_obj' => $s_obj ,'a_id' => $a_id ,'message' => 'Data Found'));
+            }else{
+            return ['status' => false, 'message' => 'No Data Found'];
+            }
+
         }else{
-            return ['status' => false, 'message' => 'Please Try Again..']; 
-        }
+
+            $data = TransferPaymentModel::where(['delete'=>0,'a_id'=>$a_id])->whereDate('p_date', '>=' ,$from_date)->whereDate('p_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+            foreach($data as $d){
+                $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->u_id])->orderby('created_at','DESC')->get();
+                $d->labour_name = $u_obj[0]->name;
+
+                $s_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.updated_at','so.delete','so.labour','so.so_number')
+                ->where(['oth.id'=>$d->recvr_oth_id,'so.delete'=>0])
+                ->orderby('so.updated_at','DESC')
+                ->get();
+
+                foreach($s_obj as $s){
+                    $d->so_number = $s->so_number;
+                }
+                
+            }
+
+            // User Data
+            // $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,])->where('id', '!=', $a_id)->orderby('created_at','DESC')->get();
+            //SO data
+            // $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+            $s_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+                ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('so.updated_at','DESC')
+                ->get();
+
+                    $u_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active','u.created_at')
+                ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('u.created_at','ASC')
+                ->get(); 
+            if(!empty($data)){
+                return json_encode(array('status' => true ,'data' => $data,'u_obj' => $u_obj,'s_obj' => $s_obj,'fdate' =>$from_date ,'message' => 'Data Found'));
+            }else{
+            return ['status' => false, 'message' => 'No Data Found'];
+            }
+        }       
 
     }
 
@@ -606,137 +808,185 @@ class LabourAPIController extends Controller
         }
     }
 
+
     public function postTravelExpenseAPI(Request $req)
     {
-        $edit_id=$req->get('exp_edit_id');
-        $exp_so = $req->get('exp_so');
-        $mode_travel = $req->get('mode_travel');
-   		$from_location = $req->get('from_location');
-   		$to_location = $req->get('to_location');
-        $total_km = $req->get('total_km');
-        $attachment = $req->get('attachment');
-        $travel_date = $req->get('travel_date');
-        $travel_desc = $req->get('travel_desc');
-        $travel_amount = $req->get('travel_amnt');
-        $no_of_person = $req->get('no_of_person');
-        $user_id = $req->get('user_id');
-    	// $a_id=Session::get('USER_ID');
+        $a_id = $req->get('u_id');
+        $edit_id = $req->get('edit_id');
+        $exp_so=isset($_POST['exp_so']) ? $_POST['exp_so'] : "NA";
+    	$mode_travel=isset($_POST['mode_travel']) ? $_POST['mode_travel'] : "NA";
+        $from_location=isset($_POST['from_location']) ? $_POST['from_location'] : "NA";
+    	$to_location=isset($_POST['to_location']) ? $_POST['to_location'] : "NA";
+    	$total_km=isset($_POST['total_km']) ? $_POST['total_km'] : "NA";
+        $travel_date=isset($_POST['travel_date']) ? $_POST['travel_date'] : "NA";
+        $travel_desc=isset($_POST['travel_desc']) ? $_POST['travel_desc'] : "NA";
+    	$travel_amount=isset($_POST['travel_amnt']) ? $_POST['travel_amnt'] : "NA";
+    	$no_of_person=isset($_POST['no_of_person']) ? $_POST['no_of_person'] : "NA";
+        $photo_path_ext=isset($_POST['profile_photo_ext']) ? $_POST['profile_photo_ext'] : null;
+        $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
 
-        
-        $user_id = CommonController::decode_ids($user_id);
-        $check = UserModel::where('id',$user_id)->exists();
+        // For File Decoder 
+        $destinationPath = 'files/user/travel_expense/';
+        if($photo_path!="" && str_contains($photo_path, '+'))
+        {         
+            $img = str_replace('data:image/jpg;base64,', '', $photo_path);
+            $img = str_replace(' ', '+', $img);
+            $data = base64_decode($img);
+            // $image_id= uniqid();
+            $filename= $photo_path_ext."_".md5($photo_path. microtime()).'.'.$photo_path_ext;
 
-        if($check == true)
-        {
-            if($req->hasfile('attachment'))  
-            {  
-                $file=$req->file('attachment');  
-                $extension=$file->getClientOriginalExtension();  
-                $filename= $extension."_".md5($file. microtime()).'.'.$extension;
-
-                $file->move(public_path('files/user/travel_expense/'), $filename);
-                
-                // $image->image=$filename;  
-            }  
-
-
-            // For File Decoder 
-            // if($attachment!='') 
-            // {
-
-            //     // $check = PaymentModel::where('p_id',$project_id)->exists();
-            //     // $destinationPath = 'public/files/project-payment/'.$project_id.'/';
-
-            //     // check folder exits or not
-            //     // if ($check == false) {
-            //     //     $result = File::makeDirectory($destinationPath, 0775, true, true); 
-            //     // }
-
-            //     // $destinationPath=public_path('/files/loan-receipt/');   //Folder Path
-            //     $image1 = $req->input('attachment');     // encoded File name
-            //     $extension=$req->input('payment_extension');       //File Extension  
-                
-            //     $pattern='/^data:.+;base64,/';
-
-            //     $img = preg_replace($pattern, '', $image1);  //removed $pattern
-            //     $img = str_replace(' ', '+', $img);  //for + sign blank space convert
-            //     $data = base64_decode($img);       //decode All File
-
-            //     $filename= $extension."_".md5($image1. microtime()).'.'.$extension;
-
-            //     // $image_id= uniqid();    // create random name,number
-            //     // $file = $image_id . '.'.$extension; // create name for file
-            //     // $fp  = $image_id.'.'.$extension;   // send the file to destination path
-
-            //     file_put_contents(public_path('files/user/travel_expense/').$filename, $data); 
-            // }
-
-            if($edit_id!=null)
+            file_put_contents($destinationPath.$filename, $data);
+            
+        }
+        if($edit_id!=null)
+    	{
+            
+            if ($travel_amount !='' && $travel_date !='') 
             {
+                $u_obj=TravelExpenseModel::find($edit_id);
+                $u_obj->mode_travel=$mode_travel;
+                $u_obj->oth_id=$exp_so;
+                $u_obj->from_location=$from_location;
+                $u_obj->to_location=$to_location;
+                $u_obj->total_km=$total_km;
+                $u_obj->travel_date=$travel_date;
+                $u_obj->travel_desc=$travel_desc;
+                $u_obj->travel_amount=$travel_amount;
+                $u_obj->no_of_person=$no_of_person;
+                if($photo_path!="" && str_contains($photo_path, '+'))
+                {
+                    $u_obj->attachment=$filename;
+                }
+                $u_obj->delete=0;
+                $u_obj->a_id=$a_id;
+                $res=$u_obj->update();
                 
-                if ($travel_amount !='' && $travel_date !='') 
-                {
-                    $u_obj=TravelExpenseModel::find($edit_id);
-                    $u_obj->mode_travel=$mode_travel;
-                    $u_obj->oth_id=$exp_so;
-                    $u_obj->from_location=$from_location;
-                    $u_obj->to_location=$to_location;
-                    $u_obj->total_km=$total_km;
-                    $u_obj->travel_date=$travel_date;
-                    $u_obj->travel_desc=$travel_desc;
-                    $u_obj->travel_amount=$travel_amount;
-                    $u_obj->no_of_person=$no_of_person;
-
-                    if($req->hasfile('attachment'))
-                    {
-                        $u_obj->attachment=$filename;
-                    }
-                    $u_obj->delete=0;
-                    $u_obj->a_id=$user_id;
-                    $res=$u_obj->update();
-                    
-                    if($res){
-                        return ['status' => true, 'message' => 'Travel Expense Update Successfully'];
-                    }else{
-                        return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
-                    }
+                if($res){
+                    return ['status' => true, 'message' => 'Travel Expense Successfully'];
                 }else{
-                    return ['status' => false, 'message' => 'Please Try Again..']; 
-                }   
+                    return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
+                }
+            }else{
+                return ['status' => false, 'message' => 'Please Try Again..']; 
+            }   
 
-            }else{       
+        }else{       
 
-                if ($travel_amount !='' && $mode_travel !='' && $from_location !='' && $to_location !='') 
+            if ($travel_amount !='' && $mode_travel !='' && $from_location !='' && $to_location !='') 
+            {
+                $u_obj=new TravelExpenseModel();
+                $u_obj->mode_travel=$mode_travel;
+                $u_obj->oth_id=$exp_so;
+                $u_obj->from_location=$from_location;
+                $u_obj->to_location=$to_location;
+                $u_obj->total_km=$total_km;
+                $u_obj->travel_date=$travel_date;
+                $u_obj->travel_desc=$travel_desc;
+                $u_obj->travel_amount=$travel_amount;
+                $u_obj->no_of_person=$no_of_person;
+                if($photo_path!="" && str_contains($photo_path, '+'))
                 {
-                    $u_obj=new TravelExpenseModel();
-                    $u_obj->mode_travel=$mode_travel;
-                    $u_obj->oth_id=$exp_so;
-                    $u_obj->from_location=$from_location;
-                    $u_obj->to_location=$to_location;
-                    $u_obj->total_km=$total_km;
-                    $u_obj->travel_date=$travel_date;
-                    $u_obj->travel_desc=$travel_desc;
-                    $u_obj->travel_amount=$travel_amount;
-                    $u_obj->no_of_person=$no_of_person;
-                    if($req->hasfile('attachment'))
-                    {
-                        $u_obj->attachment=$filename;
-                    }
-                    $u_obj->delete=0;
-                    $u_obj->a_id=$user_id;
-                    $res=$u_obj->save();
-                    
-                    if($res){
-                        return ['status' => true, 'message' => 'Travel Expense add Successfully'];
-                    }else{
-                        return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
-                    }
+                    $u_obj->attachment=$filename;
+                }
+                $u_obj->delete=0;
+                $u_obj->a_id=$a_id;
+                $res=$u_obj->save();
+                
+                if($res){
+                    return ['status' => true, 'message' => 'Travel Expense add Successfully'];
                 }else{
-                    return ['status' => false, 'message' => 'Please Try Again..']; 
-                } 
-            }     
+                    return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
+                }
+            }else{
+                return ['status' => false, 'message' => 'Please Try Again..']; 
+            } 
+        }     
+        
+    }
+
+    public function getTravelExpenseAPI(Request $req)
+    {
+
+        $a_id = $req->get('u_id');
+        $from_date = $req->get('from_date');
+        $to_date = $req->get('to_date');
+
+        if ($from_date == null && $to_date == null) 
+        {
+            $date = Carbon::now()->subDays(60);  // get last 7 days record
+            $data = TravelExpenseModel::where(['delete'=>0,'a_id'=>$a_id])->where('created_at', '>=', $date)->orderby('updated_at','DESC')->get();
+            foreach($data as $d)
+            {
+                $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u)
+                {
+                    $d->labour_name = $u->name;
+                    $d->emp_number = $u->emp_number;
+
+                }
+
+                $now = Carbon::now();
+                $created_at = Carbon::parse($d->created_at);
+                $diffHuman = $created_at->diffForHumans($now);  // 3 Months ago
+                $diffHours = $created_at->diffInHours($now);  // 3 
+                $diffMinutes = $created_at->diffInMinutes($now);   // 180
+                $d->diffHuman=$diffHuman;
+                $d->diffHours=$diffHours;
+                $d->diffMinutes=$diffMinutes;
+            }
+
+            $s_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
+                ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('oth.updated_at','DESC')
+                ->get();
+
+
+            if(!empty($data)){
+                return json_encode(array('status' => true ,'data' => $data,'s_obj' => $s_obj,'message' => 'Data Found'));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
+
         }else{
-            return ['status' => false, 'message' => 'Please Try Again..']; 
+
+
+            $data = TravelExpenseModel::where(['delete'=>0,'a_id'=>$a_id])->whereDate('travel_date', '>=' ,$from_date)->whereDate('travel_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+            foreach($data as $d){
+                $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $d->labour_name = $u->name;
+                    $d->emp_number = $u->emp_number;
+
+                }
+
+                $now = Carbon::now();
+                $created_at = Carbon::parse($d->created_at);
+                $diffHuman = $created_at->diffForHumans($now);  // 3 Months ago
+                $diffHours = $created_at->diffInHours($now);  // 3 
+                $diffMinutes = $created_at->diffInMinutes($now);   // 180
+                $d->diffHuman=$diffHuman;
+                $d->diffHours=$diffHours;
+                $d->diffMinutes=$diffMinutes;
+            }
+
+            $s_obj=DB::table('oa_tl_history as oth')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+            ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            ->orderby('oth.updated_at','DESC')
+            ->get();
+
+
+           
+            if(count($data)>0){
+                return json_encode(array('status' => true ,'data' => $data,'s_obj' => $s_obj,'message' => 'Data Found'));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
         }
     }
 

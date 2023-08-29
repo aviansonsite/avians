@@ -36,16 +36,17 @@ Route::post('/get_pouth_labour', [LabourAPIController::class, 'getPoutHLabourAPI
 // Route::post('webcam', [AttendanceController::class, 'store'])->name('webcam.capture');
 
 
-
-
 //Technician Expenses
 Route::post('/post_elabour_payment_api', [LabourAPIController::class, 'postExpenseLPaymentAPI']);
 Route::post('/delete_expense_api', [LabourAPIController::class, 'deleteExpenseAPI']);
+Route::post('/get_labour_expenses_api', [LabourAPIController::class, 'getLabourExpenseAPI']);
 
 //transfer other technician
 Route::post('/post_tlabour_payment_api', [LabourAPIController::class, 'postTransferLPaymentAPI']);
+Route::post('/get_tran_lab_pay_api', [LabourAPIController::class, 'getTransferLabourPaymentAPI']);
 Route::post('/delete_tlabour_payment_api', [LabourAPIController::class, 'trLabourPaymentDeleteAPI']);
 
 //travel expense
 Route::post('/post_travel_expense_api', [LabourAPIController::class, 'postTravelExpenseAPI']);
+Route::post('/get_travel_expenses_api', [LabourAPIController::class, 'getTravelExpenseAPI']);
 Route::post('/delete_travel_expense_api', [LabourAPIController::class, 'deleteTravelExpenseAPI']);
