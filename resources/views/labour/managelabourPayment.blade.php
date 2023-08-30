@@ -1070,7 +1070,22 @@
     }
 
 
+    $('.nav-tabs a[href="#ucpayment_list"]').click(function(){
+        getLabourExpenses();
+    });
 
+    $('.nav-tabs a[href="#cllpayment"]').click(function(){
+        getLabourExpenses();
+    });
+
+    $('.nav-tabs a[href="#apprvdpayment"]').click(function(){
+        getLabourExpenses();
+    });
+
+    $('.nav-tabs a[href="#calpayment"]').click(function(){
+        getLabourExpenses();
+    });
+   
     //For admin Edit Expenses Operation
     $(document).on("click",'.exp_editU',function()
     {
