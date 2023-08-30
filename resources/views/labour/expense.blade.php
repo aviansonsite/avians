@@ -1271,6 +1271,33 @@
         $("#pdf,#img").hide();
     });
 
+    //For set/unset select field 
+    $('.nav-tabs a[href="#cllpayment"]').click(function()
+    {          
+        $("#exp_so").empty();
+        getLabourExpenses();
+        $("#attachment2").hide();
+        $("#pdf,#img").hide();
+    });
+
+    //For set/unset select field 
+    $('.nav-tabs a[href="#apprvdpayment"]').click(function()
+    {          
+        $("#exp_so").empty();
+        getLabourExpenses();
+        $("#attachment2").hide();
+        $("#pdf,#img").hide();
+    });
+
+    //For set/unset select field 
+    $('.nav-tabs a[href="#calpayment"]').click(function()
+    {          
+        $("#exp_so").empty();
+        getLabourExpenses();
+        $("#attachment2").hide();
+        $("#pdf,#img").hide();
+    });
+
     //For Edit Operation
     $(document).on("click",'.exp_editU',function()
     {
