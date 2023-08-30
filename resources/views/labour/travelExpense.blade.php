@@ -1715,7 +1715,7 @@
 
                 $("#apprvd_records").html(content3); //For append html data
                 $('#apprvdDatatable').dataTable();    
-
+                
                 //table footer
                 // $("#t_ucleamount").html(t_ucleamount+".00");
                 // $("#t_cllamount").html(t_cllamount+".00");
@@ -1808,13 +1808,31 @@
     });
 
     //For set/unset select field 
-    $('.nav-tabs a[href="#epayment_list"]').click(function()
+    $('.nav-tabs a[href="#ucpayment_list"]').click(function()
     {          
-        // $("#exp_so").empty();
-        // getLabourExpenses();
+        getTravelExpenses();
 
-        $("#attachment2").hide();
-        $("#pdf,#img").hide();
+    });
+
+     //For set/unset select field 
+     $('.nav-tabs a[href="#cllpayment"]').click(function()
+    {          
+        getTravelExpenses();
+
+    });
+
+     //For set/unset select field 
+     $('.nav-tabs a[href="#apprvdpayment"]').click(function()
+    {          
+        getTravelExpenses();
+
+    });
+
+     //For set/unset select field 
+     $('.nav-tabs a[href="#calpayment"]').click(function()
+    {          
+        getTravelExpenses();
+
     });
 
     //For Edit Operation
