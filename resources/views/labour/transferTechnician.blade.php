@@ -388,7 +388,7 @@
 @push('page_js')
 {!! Html::script('assets/libs/select2/js/select2.min.js') !!}
 
-<script>
+<!-- <script>
     
     $(document).ready(function(){
         var $body = $("body");
@@ -458,7 +458,7 @@
                             content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
                             content +="<td>";
                                 if(exp_date == $.datepicker.formatDate('dd-mm-yy', new Date())){
-                                    content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-so='"+row.so_id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delI' rel='tooltip' data-bs-placement='top' title='Delete Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+                                    content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-so='"+row.so_id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delI' rel='tooltip' data-bs-placement='top' title='Delete Expense' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
                                 }
                             content +="</td>";
                             content += "</tr>";
@@ -788,7 +788,7 @@
         $('#delete_modal').modal('show');
     });
 
-</script>
+</script> -->
 <script>
     $(document).ready(function(){
         var $body = $("body");
@@ -855,7 +855,7 @@
                             content +="<td>"+row.amount+"</td>";
                             content +="<td>";
                                 if(payment_date == $.datepicker.formatDate('dd-mm-yy', new Date())){
-                                    content +="<a class='btn btn-outline-secondary btn-sm editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Technician' data-id='"+row.id+"' data-so='"+row.so_id+"' data-payment_date='"+row.p_date+"' data-p_desc='"+row.p_desc+"' data-amount='"+row.amount+"' data-labour='"+row.u_id+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete Technician' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+                                    content +="<a class='btn btn-outline-secondary btn-sm editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Technician' data-id='"+row.id+"' data-so='"+row.so_id+"' data-payment_date='"+row.p_date+"' data-p_desc='"+row.p_desc+"' data-amount='"+row.amount+"' data-labour='"+row.u_id+"'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete Technician' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
                                 }
                             content +="</td>";
                             content += "</tr>";
@@ -968,7 +968,7 @@
                         content +="<td>"+row.amount+"</td>";
                         content +="<td>";
                             if(payment_date == $.datepicker.formatDate('dd-mm-yy', new Date())){
-                                content +="<a class='btn btn-outline-secondary btn-sm editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Technician' data-id='"+row.id+"' data-oth_id='"+row.oth_id+"' data-payment_date='"+row.p_date+"' data-p_desc='"+row.p_desc+"' data-amount='"+row.amount+"' data-labour='"+row.u_id+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete Technician' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+                                content +="<a class='btn btn-outline-secondary btn-sm editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Technician' data-id='"+row.id+"' data-oth_id='"+row.oth_id+"' data-payment_date='"+row.p_date+"' data-p_desc='"+row.p_desc+"' data-amount='"+row.amount+"' data-labour='"+row.u_id+"'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete Technician' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
                             }
                         content +="</td>";
                         content += "</tr>";
