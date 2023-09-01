@@ -862,7 +862,7 @@ class LabourAPIController extends Controller
                 $res=$u_obj->update();
                 
                 if($res){
-                    return ['status' => true, 'message' => 'Travel Expense Successfully'];
+                    return ['status' => true, 'message' => 'Travel Expense Updated Successfully'];
                 }else{
                     return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
                 }
