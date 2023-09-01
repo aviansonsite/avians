@@ -436,7 +436,7 @@ class LabourAPIController extends Controller
         $oth_id=isset($_POST['exp_oth_id']) ? $_POST['exp_oth_id'] : "NA";
     	$expense_amnt=isset($_POST['expense_amnt']) ? $_POST['expense_amnt'] : "NA";
     	$exp_type=isset($_POST['exp_type']) ? $_POST['exp_type'] : "NA";
-        $photo_path_ext=isset($_POST['profile_photo_ext']) ? $_POST['profile_photo_ext'] : null;
+        $photo_path_ext=isset($_POST['photo_path_ext']) ? $_POST['photo_path_ext'] : null;
         $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
 
 
@@ -824,7 +824,7 @@ class LabourAPIController extends Controller
         $travel_desc=isset($_POST['travel_desc']) ? $_POST['travel_desc'] : "NA";
     	$travel_amount=isset($_POST['travel_amnt']) ? $_POST['travel_amnt'] : "NA";
     	$no_of_person=isset($_POST['no_of_person']) ? $_POST['no_of_person'] : "NA";
-        $photo_path_ext=isset($_POST['profile_photo_ext']) ? $_POST['profile_photo_ext'] : null;
+        $photo_path_ext=isset($_POST['photo_path_ext']) ? $_POST['photo_path_ext'] : null;
         $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
 
         // For File Decoder 
