@@ -47,7 +47,8 @@ class LabourAPIController extends Controller
             $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->whereIn('id',$labour)->orderby('created_at','DESC')->get();
             $tdate=date("Y-m-d");
 
-            $t_count=PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate])->orderby('updated_at','DESC')->count();
+            // $t_count=PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate])->orderby('updated_at','DESC')->count();
+            $t_count=PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate,'pin_u_id'=>$a_id])->orderby('updated_at','DESC')->count();
             $p_obj=PunchInOutModel::where(['delete'=>0,'pin_u_id'=>$a_id])->orderby('updated_at','DESC')->get();
 
             $createdAt = PunchInOutModel::whereNotNull('created_at')->get();
@@ -111,7 +112,8 @@ class LabourAPIController extends Controller
             $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->whereIn('id',$labour)->orderby('created_at','DESC')->get();
             $tdate=date("Y-m-d");
 
-            $t_count=PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate])->orderby('updated_at','DESC')->count();
+            // $t_count=PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate])->orderby('updated_at','DESC')->count();
+            $t_count=PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate,'pin_u_id'=>$a_id])->orderby('updated_at','DESC')->count();
             $p_obj=PunchInOutModel::where(['delete'=>0,'pin_u_id'=>$a_id])->whereDate('pin_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
 
             $createdAt = PunchInOutModel::whereNotNull('created_at')->get();
