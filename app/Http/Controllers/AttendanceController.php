@@ -48,7 +48,7 @@ class AttendanceController extends Controller
 
         $t_count=PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate,'pin_u_id'=>$a_id])->orderby('updated_at','DESC')->count();
         $p_obj=PunchInOutModel::where(['delete'=>0])->orderby('updated_at','DESC')->get();
-        // dd($p_obj);
+        dd($t_count);
         $createdAt = PunchInOutModel::whereNotNull('created_at')->get();
         $updatedAt = PunchInOutModel::whereNotNull('updated_at')->get();
 
