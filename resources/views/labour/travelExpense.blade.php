@@ -515,12 +515,13 @@
                             <label for="status_change" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Expense Status<sup class="text-danger">*</sup></label>
                             <select class="form-control select2" id="status_change" required name="status_change">
                             @if($roles == 1)
+                                <option value="Approved" selected>Approved</option>
+                            @else
                                 <option value="" disabled selected>Select</option>
                                 <option value="Cleared">Cleared</option>
-                                <option value="Disapproved">Disapproved</option>
-                            @else
-                                <option value="Approved" selected>Approved</option>
                             @endif
+                                <option value="Disapproved">Disapproved</option>
+
                             </select>
                             <span class="text-danger error" id="eserror"></span>
                         </div>
@@ -1659,7 +1660,7 @@
 
                             if(data.role == 0){
                                 content2 +="<td>";
-                                content2 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
+                                content2 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-ad_remark='"+row.ad_remark+"' data-sa_remark='"+row.sa_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
                                 content2 +="</td>";
 
                             }
@@ -2267,6 +2268,8 @@
             var aprvd_amount = $(this).data('aprvd_amount');
             var travel_desc = $(this).data('travel_desc');
             var ad_remark = $(this).data('ad_remark');
+            var sa_remark = $(this).data('sa_remark');
+
             var attachment = $(this).data('attachment');
             // alert(aprvd_amount);
             if(attachment == null){
@@ -2292,6 +2295,9 @@
                 $('#sa_updated_amnt').val(travel_amount);
             }
             
+            if(sa_remark != null){
+                $('#sa_remark').val(sa_remark); 
+            }
 
             $('#acc_remark').val(ad_remark);
 

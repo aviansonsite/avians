@@ -372,13 +372,14 @@
                         <div class="form-group mb-3">
                             <label for="status_change" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Expense Status<sup class="text-danger">*</sup></label>
                             <select class="form-control select2" id="status_change" required name="status_change">
-                            @if($roles == 1)
+                            @if($roles == 0)
+                                <option value="Approved" selected>Approved</option>   
+                            @else
                                 <option value="" disabled selected>Select</option>
                                 <option value="Cleared">Cleared</option>
-                                <option value="Disapproved">Disapproved</option>
-                            @else
-                                <option value="Approved" selected>Approved</option>
                             @endif
+                                <option value="Disapproved">Disapproved</option>
+
                             </select>
                             <span class="text-danger error" id="eserror"></span>
                         </div>
@@ -1016,7 +1017,7 @@
                                 content2 +="<td>"+ ++k +"</td>";
                                 content2 +="<td>"+exp_date+"</td>";
                                 if(data.role == 0){
-                                    content2 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                    content2 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-sa_remark='"+row.sa_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
                                 }
                                 content2 +="<td>"+row.labour_name+"</td>";
                                 content2 +="<td>"+row.so_number+"</td>";
@@ -1167,6 +1168,7 @@
             var acc_remark = $(this).data('acc_remark');
             var amount = $(this).data('amount');
             var aprvd_amount = $(this).data('aprvd_amount');
+            var sa_remark = $(this).data('sa_remark');
             var attachment = $(this).data('attachment');
 
             var  attachment="files/user/expense/"+attachment;
@@ -1186,6 +1188,10 @@
             }else{
                 $('#updated_amnt').val(amount); 
                 $('#sa_updated_amnt').val(amount);
+            }
+
+            if(sa_remark != null){
+                $('#sa_remark').val(sa_remark); 
             }
 
             $("#exp_type").val(exp_type).trigger("change"); 
