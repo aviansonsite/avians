@@ -1007,7 +1007,210 @@ class LabourAPIController extends Controller
     }
 
 
+    public function incomeListAPI(Request $req)
+    {
+    	// $a_id=Session::get('USER_ID');
+        $a_id = $req->get('u_id');
+        // $us_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
 
+        $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$a_id])->orderby('created_at','DESC')->get();
+        // $l_obj = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->orderby('updated_at','DESC')->get();
+        // $s_obj=SOModel::where(['delete'=>0,'lead_technician'=>$a_id])->orderby('created_at','DESC')->get();
+        // $data = TransferPaymentModel::where(['delete'=>0,'u_id'=>$a_id])->orderby('updated_at','DESC')->get();
+
+        // $s_obj1=DB::table('oa_tl_history as oth')
+        // ->leftjoin('users as u','u.id','oth.lead_technician')
+        // ->leftjoin('sales_orders as so','so.id','oth.so_id')
+        // ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
+        // ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+        // ->orderby('oth.updated_at','DESC')
+        // ->get();
+        
+        // Avians account Payment
+        $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->sum('payment_amnt');
+        // fot - from other technician
+        $fot = TransferPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->sum('amount');
+        $total_wallet = $accountant_payment + $fot;
+        
+        //Technician Expense
+        $technician_expenses = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$u_obj[0]->id])->sum('amount');
+
+        //Travel Expense
+        $travel_expense = TravelExpenseModel::where(['delete'=>0,'a_id'=>$u_obj[0]->id])->sum('travel_amount');
+
+        $total_tech_expense = $technician_expenses + $travel_expense;
+
+        //transfer to other technician
+        $ttot = TransferPaymentModel::where(['delete'=>0,'a_id'=>$a_id])->sum('amount');
+        // dd($ttot);
+        $total_expense = $technician_expenses + $travel_expense + $ttot;
+
+
+        //Cleared Payment
+        $aprvd_technician_expenses = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$u_obj[0]->id,'status'=>'Approved'])->sum('aprvd_amount');
+    
+        //Cleared Payment
+        $apprvd_travel_expense = TravelExpenseModel::where(['delete'=>0,'a_id'=>$u_obj[0]->id,'status'=>'Approved'])->sum('aprvd_amount');
+           
+        $cleared_pay = $aprvd_technician_expenses +  $apprvd_travel_expense;
+
+        //uncleared Payment
+        $uncleared_pay = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$u_obj[0]->id])->where('status', '!=','Approved')->sum('amount');
+
+        $balance = $total_wallet - $total_expense;
+
+        // dd();
+        // //get so number payment wise
+        // foreach($l_obj as $l){
+
+        //     $so_id = array_map('intval', explode(',', $l->so_id));
+        //     foreach($so_id as $s){
+        //         $so_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->get();
+        //     }
+        //     $l->s_obj = $so_obj;
+        // }
+
+        if(!empty($u_obj)){
+            return json_encode(array('status' => true ,'data' => $u_obj,'accountant_payment'=> $accountant_payment,'fot'=> $fot,'total_wallet'=> $total_wallet,'technician_expenses'=> $technician_expenses,'ttot'=> $ttot,'total_expense'=> $total_expense,'cleared_pay'=> $cleared_pay,'uncleared_pay'=> $uncleared_pay,'balance'=> $balance,'total_tech_expense'=> $total_tech_expense,'message' => 'Data Found'));
+        }else{
+            return ['status' => false, 'message' => 'No Data Found'];
+        }
+        
+    }
 
    
+    public function getAccPaymentAPI(Request $req)
+    {
+
+
+        $a_id = $req->get('u_id');
+        $from_date = $req->get('from_date');
+        $to_date = $req->get('to_date');
+
+        if ($from_date == null && $to_date == null) 
+        {
+
+
+            $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$a_id])->orderby('created_at','DESC')->get();
+            $l_obj = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->orderby('updated_at','DESC')->get();
+            // $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+            // $data = TransferPaymentModel::where(['delete'=>0,'u_id'=>$a_id])->orderby('updated_at','DESC')->get();
+            
+            $s_obj=DB::table('oa_tl_history as oth')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
+            ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            ->orderby('oth.updated_at','DESC')
+            ->get();
+                
+            // dd();
+            //get so number payment wise
+            foreach($l_obj as $l){
+    
+                $so_id = array_map('intval', explode(',', $l->so_id));
+                foreach($so_id as $s){
+                    $so_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->get();
+                }
+                $l->s_obj = $so_obj;
+            }
+
+            if(!empty($l_obj)){
+                return json_encode(array('status' => true ,'data' => $l_obj,'s_obj' => $s_obj ,'message' => 'Data Found'));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
+
+        }else{
+
+            $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$a_id])->orderby('created_at','DESC')->get();
+            $l_obj = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+
+            $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+
+            //get so number payment wise
+            foreach($l_obj as $l){
+    
+                $so_id = array_map('intval', explode(',', $l->so_id));
+                foreach($so_id as $s){
+                    $so_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->get();
+                }
+                $l->s_obj = $so_obj;
+            }
+
+            if(!empty($l_obj)){
+                return json_encode(array('status' => true ,'data' => $l_obj,'s_obj' => $s_obj ,'message' => 'Data Found'));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
+        }
+    }
+
+    public function getOtTechPaymentAPI(Request $req)
+    {
+
+        $a_id = $req->get('u_id');
+        $from_date = $req->get('from_date');
+        $to_date = $req->get('to_date');
+
+        if ($from_date == null && $to_date == null) 
+        {
+
+            $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$a_id])->orderby('created_at','DESC')->get();
+            $l_obj = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->orderby('updated_at','DESC')->get();
+            $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+            $data = TransferPaymentModel::where(['delete'=>0,'u_id'=>$a_id])->orderby('updated_at','DESC')->get();
+            foreach($data as $d){
+    
+                $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $d->name = $u->name;
+                }
+                
+            }
+
+            //get so number payment wise
+            foreach($l_obj as $l){
+    
+                $so_id = array_map('intval', explode(',', $l->so_id));
+                foreach($so_id as $s){
+                    $so_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->get();
+                }
+                $l->s_obj = $so_obj;
+            }
+
+            if(!empty($l_obj)){
+                return json_encode(array('status' => true ,'data' => $data,'s_obj' => $s_obj ,'message' => 'Data Found'));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
+
+        }else{
+
+
+
+            $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$a_id])->orderby('created_at','DESC')->get();
+            $l_obj = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+
+            $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+            // $data = TransferPaymentModel::where(['delete'=>0,'u_id'=>$a_id])->orderby('updated_at','DESC')->get();
+    
+            // dd();
+            //get so number payment wise
+            foreach($l_obj as $l){
+    
+                $so_id = array_map('intval', explode(',', $l->so_id));
+                foreach($so_id as $s){
+                    $so_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->get();
+                }
+                $l->s_obj = $so_obj;
+            }
+
+            if(!empty($l_obj)){
+                return json_encode(array('status' => true ,'data' => $data,'s_obj' => $s_obj ,'message' => 'Data Found'));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
+        }
+    }
 }

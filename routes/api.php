@@ -50,3 +50,8 @@ Route::post('/delete_tlabour_payment_api', [LabourAPIController::class, 'trLabou
 Route::post('/post_travel_expense_api', [LabourAPIController::class, 'postTravelExpenseAPI']);
 Route::post('/get_travel_expenses_api', [LabourAPIController::class, 'getTravelExpenseAPI']);
 Route::post('/delete_travel_expense_api', [LabourAPIController::class, 'deleteTravelExpenseAPI']);
+
+//labour dashboard
+Route::post('/income_api', [LabourAPIController::class, 'incomeListAPI']);
+Route::post('/get_acc_payment_api', [LabourAPIController::class, 'getAccPaymentAPI']);
+Route::post('/get_ot_tech_payment_api', [LabourAPIController::class, 'getOtTechPaymentAPI']);
