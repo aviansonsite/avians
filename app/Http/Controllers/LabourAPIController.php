@@ -85,9 +85,9 @@ class LabourAPIController extends Controller
 
         }else{
 
-            return ['status' => false, 'message' => 'No Data Found','from_date'=>$from_date];
+           
             $a_idd [] =Session::get('USER_ID');
-            $a_id =Session::get('USER_ID');
+            // $a_id =Session::get('USER_ID');
             $id =Session::get('USER_ID');
             // $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->where('id', '!=', $a_id)->orderby('created_at','DESC')->get();
             // // $s_obj=SOModel::whereIn('labour',$a_idd)->where(['delete'=>0])->orderby('created_at','DESC')->get();
@@ -1207,7 +1207,7 @@ class LabourAPIController extends Controller
             }
 
             if(!empty($l_obj)){
-                return json_encode(array('status' => true ,'data' => $data,'s_obj' => $s_obj ,'message' => 'Data Found'));
+                return json_encode(array('status' => true ,'data' => $l_obj,'s_obj' => $s_obj ,'message' => 'Data Found'));
             }else{
                 return ['status' => false, 'message' => 'No Data Found'];
             }
