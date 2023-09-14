@@ -270,8 +270,8 @@ class ReportController extends Controller
         // }
 
 
-        dd($tech_exp);
-        return view('report.siteExpensePdf',compact('tech_exp','u_obj1'));
+        // dd($tech_exp);
+        // return view('report.siteExpensePdf',compact('tech_exp','u_obj1'));
         $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.siteExpensePdf',compact('tech_exp','u_obj1'))->setPaper('a4', 'landscape');
         
         $pdf1->getDomPDF()->setHttpContext(
