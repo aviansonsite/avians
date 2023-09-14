@@ -1759,50 +1759,50 @@ class LabourPaymentController extends Controller
 
     	$a_id=Session::get('USER_ID');
         
-        return ['status' => true,'sa_remark' => $sa_remark ,'a_id' => $a_id,'message' => 'found']; 
+        // return ['status' => true,'sa_remark' => $sa_remark ,'a_id' => $a_id,'message' => 'found']; 
 
-        // if($edit_id!=null)
-    	// {
+        if($edit_id!=null)
+    	{
             
-        //     $u_obj=TravelExpenseModel::find($edit_id);
+            $u_obj=TravelExpenseModel::find($edit_id);
 
-        //     if($role == 0){
-        //         $u_obj->sa_remark=$sa_remark;
-        //         $u_obj->status=$status;
+            if($role == 0){
+                $u_obj->sa_remark=$sa_remark;
+                $u_obj->status=$status;
     
-        //         if ($sa_updated_amnt >'0' && $status != '') 
-        //         {
-        //             $u_obj->aprvd_amount=$sa_updated_amnt;
-        //         }
+                if ($sa_updated_amnt >'0' && $status != '') 
+                {
+                    $u_obj->aprvd_amount=$sa_updated_amnt;
+                }
     
-        //         $u_obj->delete=0;
-        //         $u_obj->sa_id=$a_id;
-        //         $res=$u_obj->update();
-        //     }else{
-        //         $u_obj->ad_remark=$acc_remark;
-        //         $u_obj->status=$status;
+                $u_obj->delete=0;
+                $u_obj->sa_id=$a_id;
+                $res=$u_obj->update();
+            }else{
+                $u_obj->ad_remark=$acc_remark;
+                $u_obj->status=$status;
     
-        //         if ($updated_amnt >'0' && $status != 'Disapproved') 
-        //         {
-        //             $u_obj->aprvd_amount=$updated_amnt;
-        //         }
+                if ($updated_amnt >'0' && $status != 'Disapproved') 
+                {
+                    $u_obj->aprvd_amount=$updated_amnt;
+                }
     
-        //         $u_obj->delete=0;
-        //         $u_obj->ad_id=$a_id;
-        //         $res=$u_obj->update();
-        //     }
+                $u_obj->delete=0;
+                $u_obj->ad_id=$a_id;
+                $res=$u_obj->update();
+            }
            
             
-        //     if($res){
-        //         return ['status' => true, 'message' => 'Expense Update Successfully'];
-        //     }else{
-        //         return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
-        //     }
+            if($res){
+                return ['status' => true, 'message' => 'Expense Update Successfully'];
+            }else{
+                return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
+            }
             
 
-        // }else{
-        //     return ['status' => false, 'message' => 'Data Not Found Please Try Again..']; 
-        // }  
+        }else{
+            return ['status' => false, 'message' => 'Data Not Found Please Try Again..']; 
+        }  
         
 
     }
