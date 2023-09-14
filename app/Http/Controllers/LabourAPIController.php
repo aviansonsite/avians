@@ -689,9 +689,7 @@ class LabourAPIController extends Controller
         $to_date = $req->get('to_date');
 
         if ($from_date == null && $to_date == null) 
-        {
-
-            
+        {            
                 
             $data = TransferPaymentModel::where(['delete'=>0,'a_id'=>$a_id])->orderby('updated_at','DESC')->get();
             
@@ -714,6 +712,17 @@ class LabourAPIController extends Controller
                 foreach($s_obj as $s){
                     $d->so_number = $s->so_number;
                 }
+
+                //for 24 hrs , time duration calculate
+                $now = Carbon::now();
+                $created_at = Carbon::parse($d->created_at);
+                $diffHuman = $created_at->diffForHumans($now);  // 3 Months ago
+                $diffHours = $created_at->diffInHours($now);  // 3 
+                $diffMinutes = $created_at->diffInMinutes($now);   // 180
+                $d->diffHuman=$diffHuman;
+                $d->diffHours=$diffHours;
+                $d->diffMinutes=$diffMinutes;
+              
             }
 
             
@@ -766,6 +775,15 @@ class LabourAPIController extends Controller
                     $d->so_number = $s->so_number;
                 }
                 
+                //for 24 hrs , time duration calculate
+                $now = Carbon::now();
+                $created_at = Carbon::parse($d->created_at);
+                $diffHuman = $created_at->diffForHumans($now);  // 3 Months ago
+                $diffHours = $created_at->diffInHours($now);  // 3 
+                $diffMinutes = $created_at->diffInMinutes($now);   // 180
+                $d->diffHuman=$diffHuman;
+                $d->diffHours=$diffHours;
+                $d->diffMinutes=$diffMinutes;
             }
 
             // User Data
