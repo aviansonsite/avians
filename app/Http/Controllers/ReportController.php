@@ -150,7 +150,7 @@ class ReportController extends Controller
         $labours = $req->get('pdf_labours');
                                                                                                                                          
         $u_obj1=UserModel::where(['delete'=>0,'id'=>$labours])->where('role','!=','0')->orderby('created_at','DESC')->get();
-
+        // dd($u_obj1);
         foreach($u_obj1 as $u)
         {
             $u->from_date = date('d-m-Y', strtotime($from_date));
@@ -270,8 +270,8 @@ class ReportController extends Controller
         // }
 
 
-
-        // return view('report.siteExpensePdf');
+        dd($tech_exp);
+        return view('report.siteExpensePdf',compact('tech_exp','u_obj1'));
         $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.siteExpensePdf',compact('tech_exp','u_obj1'))->setPaper('a4', 'landscape');
         
         $pdf1->getDomPDF()->setHttpContext(

@@ -2271,6 +2271,7 @@
             var sa_remark = $(this).data('sa_remark');
 
             var attachment = $(this).data('attachment');
+            
             // alert(aprvd_amount);
             if(attachment == null){
                 $("#attachment2").hide();
@@ -2346,21 +2347,21 @@
             ++n;
         }
        
-        if( $.trim(acc_remark).length == 0 )
-        {
-            $('#arerror').text('Please Enter Project Admin Remark');
-            event.preventDefault();
-        }else{
-            $('#arerror').text('');
+        // if( $.trim(acc_remark).length == 0 )
+        // {
+        //     $('#arerror').text('Please Enter Project Admin Remark');
+        //     event.preventDefault();
+        // }else{
+        //     $('#arerror').text('');
             
-        }
+        // }
 
     });
 
     // For Add Labour Payment
     $(document).on("click",'#update_expense',function()
     {       
-        if(n>=2)
+        if(n>=1)
         {        
             var exp_edit_id= $('#exp_edit_id').val();
             var acc_remark = $('#acc_remark').val();

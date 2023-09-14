@@ -85,7 +85,7 @@ class LabourAPIController extends Controller
 
         }else{
 
-            
+            return ['status' => false, 'message' => 'No Data Found','from_date'=>$from_date];
             $a_idd [] =Session::get('USER_ID');
             $a_id =Session::get('USER_ID');
             $id =Session::get('USER_ID');

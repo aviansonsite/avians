@@ -43,15 +43,17 @@
             </td>
            
         </tr>
-
+        @foreach($u_obj1 as $uo)
+        <?php $adv_amnt = $uo->adv_amnt?>
         <tr>       
-            <td style="width:80px;"> Technician Name.: <br/> <b> {{$u_obj1[0]->name}} </b></td>
-            <td style="width:30px;"> Mobile No.: <br/> <b> {{$u_obj1[0]->mobile}} </b></td>
-            <td style="width:30px;"> Adv Total Amount.: <br/> <b> {{$u_obj1[0]->adv_amnt}} </b></td>
-            <td style="width:30px;"> From Date.: <br/> <b> {{$u_obj1[0]->from_date}} </b></td>
-            <td style="width:30px;"> To Date.: <br/> <b> {{$u_obj1[0]->to_date}} </b></td>
+            <td style="width:80px;"> Technician Name.: <br/> <b> {{$uo->name}} </b></td>
+            <td style="width:30px;"> Mobile No.: <br/> <b> {{$uo->mobile}} </b></td>
+            <td style="width:30px;"> Adv Total Amount.: <br/> <b> {{$uo->adv_amnt}} </b></td>
+            <td style="width:30px;"> From Date.: <br/> <b> {{$uo->from_date}} </b></td>
+            <td style="width:30px;"> To Date.: <br/> <b> {{$uo->to_date}} </b></td>
             <td style="width:30px;">  <br/> <b>  </b></td>
         </tr>
+        @endforeach
         <tr>       
             <td colspan="6"> Adv VH No.: <br/><br/><br/> <b>  </b></td>
         </tr>
@@ -143,7 +145,7 @@
         </tr>
         <tr style="border-bottom: none; border-top: none;">
             <td colspan="11" style="text-align: right; font-style: normal;"><strong>Balance /refundable Amount to Company,if any</strong></td>
-            <td style="width: 100px;text-align:center;">{{$u_obj1[0]->adv_amnt - $sa_aprvd_amount}}</td>
+            <td style="width: 100px;text-align:center;">{{$adv_amnt - $sa_aprvd_amount}}</td>
         </tr>   
         <tr style="border-bottom: none; border-top: none;">
             <td colspan="9" style="text-align: right; font-style: normal;"></td>
