@@ -514,7 +514,7 @@
                         <div class="form-group mb-3">
                             <label for="status_change" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Expense Status<sup class="text-danger">*</sup></label>
                             <select class="form-control select2" id="status_change" required name="status_change">
-                            @if($roles == 1)
+                            @if($roles == 0)
                                 <option value="Approved" selected>Approved</option>
                             @else
                                 <option value="" disabled selected>Select</option>
@@ -2271,7 +2271,7 @@
             var sa_remark = $(this).data('sa_remark');
 
             var attachment = $(this).data('attachment');
-            
+
             // alert(aprvd_amount);
             if(attachment == null){
                 $("#attachment2").hide();
