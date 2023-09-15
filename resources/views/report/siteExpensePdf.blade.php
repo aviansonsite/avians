@@ -189,7 +189,7 @@
             </table>
         @endif
         <br/>
-        <p style="font-family: monospace;">The product photographs provided above are only for reference & may vary with the actual product to be supplied.</p>
-        <footer style="page-break-after: always;"></footer>
+        <p style="font-family: monospace;">The Expenses photographs provided above are only for reference.</p>
+        <!-- <footer style="page-break-after: always;"></footer> -->
 </body>
 </html>
