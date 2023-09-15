@@ -850,6 +850,7 @@
                             content +="<tr>";
                             content +="<td>"+ ++i +"</td>";
                             content +="<td>"+payment_date+"</td>";
+                            content +="<td>"+row.so_number+"</td>";
                             content +="<td>"+row.labour_name+"</td>";
                             content +="<td>"+row.p_desc+"</td>";
                             content +="<td>"+row.amount+"</td>";
