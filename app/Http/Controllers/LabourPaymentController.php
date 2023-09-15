@@ -227,8 +227,6 @@ class LabourPaymentController extends Controller
                 foreach($u_obj as $u){
                     $d->name = $u->name;
                 }
-
-               
                 
             }
     

@@ -1205,13 +1205,23 @@ class LabourAPIController extends Controller
 
         }else{
 
-
+            $a_id=Session::get('USER_ID');
 
             $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$a_id])->orderby('created_at','DESC')->get();
             $l_obj = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->orderby('updated_at','DESC')->get();
 
             $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+
             $data = TransferPaymentModel::where(['delete'=>0,'u_id'=>$a_id])->whereDate('p_date', '>=' ,$from_date)->whereDate('p_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+            foreach($data as $d){
+    
+                $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $d->name = $u->name;
+                }
+                
+            }
+
     
             // dd();
             //get so number payment wise
