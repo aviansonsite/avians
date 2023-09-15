@@ -159,7 +159,7 @@
     <p style="text-align:center;font-size: 9px;">( This is computer generated Site Expenses Statement. )</p>
     <footer style="page-break-after: always;"></footer>
     <!-- PAGE 3 -->
-    <h2 style="text-align:center;">Expense attachment</h2>
+    <h2 style="text-align:center;">Expense Attachments</h2>
     <?php $count = count($tech_exp)?>
        
         @if($count >= 2)
