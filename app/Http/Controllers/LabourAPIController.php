@@ -1208,10 +1208,10 @@ class LabourAPIController extends Controller
 
 
             $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$a_id])->orderby('created_at','DESC')->get();
-            $l_obj = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+            $l_obj = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->orderby('updated_at','DESC')->get();
 
             $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
-            // $data = TransferPaymentModel::where(['delete'=>0,'u_id'=>$a_id])->orderby('updated_at','DESC')->get();
+            $data = TransferPaymentModel::where(['delete'=>0,'u_id'=>$a_id])->whereDate('p_date', '>=' ,$from_date)->whereDate('p_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
     
             // dd();
             //get so number payment wise
