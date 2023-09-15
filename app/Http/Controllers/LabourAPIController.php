@@ -1225,7 +1225,7 @@ class LabourAPIController extends Controller
             }
 
             if(!empty($l_obj)){
-                return json_encode(array('status' => true ,'data' => $l_obj,'s_obj' => $s_obj ,'message' => 'Data Found'));
+                return json_encode(array('status' => true ,'data' => $data,'s_obj' => $s_obj ,'message' => 'Data Found'));
             }else{
                 return ['status' => false, 'message' => 'No Data Found'];
             }
