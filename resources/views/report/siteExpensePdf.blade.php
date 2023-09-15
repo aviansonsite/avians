@@ -157,5 +157,39 @@
 
     </table>
     <p style="text-align:center;font-size: 9px;">( This is computer generated Site Expenses Statement. )</p>
+    <footer style="page-break-after: always;"></footer>
+    <!-- PAGE 3 -->
+    <h2 style="text-align:center;">Expense attachment</h2>
+    <?php $count = count($tech_exp)?>
+       
+        @if($count >= 2)
+            <table>
+                @foreach($tech_exp as $te) 
+                    @if(($te->exp_type == 'Bus') || ($te->exp_type == 'Train') || ($te->exp_type == 'Bike') || ($te->exp_type == 'Shared_Auto') || ($te->exp_type == 'Private_Auto') || ($te->exp_type == 'Own Car') )
+                        @if($te->attachment != null)
+                            <tr style="text-align:center;">
+                                <td >
+                                    <h4>{{$te->exp_type}} </h4>
+                                    <img style="height: 300px; width: 400px;" src='{{URL::asset("files/user/travel_expense/$te->attachment")}}'/>
+                                </td>
+                            </tr>
+                        @endif    
+                    @else
+                        @if($te->attachment != null)
+                            <tr  style="text-align:center;">
+                                <td >
+                                    <h4>{{$te->exp_type}} </h4>
+                                    <img style="height: 300px; width: 400px;" src='{{URL::asset("files/user/expense/$te->attachment")}}'/>
+                                </td>
+                            </tr>
+                        @endif    
+                    @endif 
+
+                @endforeach
+            </table>
+        @endif
+        <br/>
+        <p style="font-family: monospace;">The product photographs provided above are only for reference & may vary with the actual product to be supplied.</p>
+        <footer style="page-break-after: always;"></footer>
 </body>
 </html>
