@@ -231,26 +231,6 @@ class LabourPaymentController extends Controller
                
                 
             }
-
-            // Avians account Payment
-            $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->sum('payment_amnt');
-            // fot - from other technician
-            $fot = TransferPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->sum('amount');
-            $total_wallet = $accountant_payment + $fot;
-            
-            //Technician Expense
-            $technician_expenses = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$u_obj[0]->id])->sum('amount');
-            //transfer to other technician
-            $ttot = TransferPaymentModel::where(['delete'=>0])->where('u_id', '!=', $u_obj[0]->id)->sum('amount');
-            $total_expense = $technician_expenses + $ttot;
-    
-            //Cleared Payment
-            $cleared_pay = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$u_obj[0]->id,'status'=>'Approved'])->sum('amount');
-    
-            //uncleared Payment
-            $uncleared_pay = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$u_obj[0]->id,'status'=>'uncleared'])->sum('amount');
-    
-            $balance = $total_wallet - ($ttot + $cleared_pay);
     
             // dd();
             //get so number payment wise
@@ -274,30 +254,20 @@ class LabourPaymentController extends Controller
             $a_id=Session::get('USER_ID');
 
             $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$a_id])->orderby('created_at','DESC')->get();
-            $l_obj = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+            $l_obj = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->orderby('updated_at','DESC')->get();
 
             $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
-            // $data = TransferPaymentModel::where(['delete'=>0,'u_id'=>$a_id])->orderby('updated_at','DESC')->get();
+
+            $data = TransferPaymentModel::where(['delete'=>0,'u_id'=>$a_id])->whereDate('p_date', '>=' ,$from_date)->whereDate('p_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+            foreach($data as $d){
     
-            // Avians account Payment
-            $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->sum('payment_amnt');
-            // fot - from other technician
-            $fot = TransferPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->sum('amount');
-            $total_wallet = $accountant_payment + $fot;
-            
-            //Technician Expense
-            $technician_expenses = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$u_obj[0]->id])->sum('amount');
-            //transfer to other technician
-            $ttot = TransferPaymentModel::where(['delete'=>0])->where('u_id', '!=', $u_obj[0]->id)->sum('amount');
-            $total_expense = $technician_expenses + $ttot;
-    
-            //Cleared Payment
-            $cleared_pay = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$u_obj[0]->id,'status'=>'Approved'])->sum('amount');
-    
-            //uncleared Payment
-            $uncleared_pay = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$u_obj[0]->id,'status'=>'uncleared'])->sum('amount');
-    
-            $balance = $total_wallet - ($ttot + $cleared_pay);
+                $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $d->name = $u->name;
+                }
+                
+            }
+
     
             // dd();
             //get so number payment wise
