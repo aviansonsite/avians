@@ -189,7 +189,7 @@
             </table>
         @endif
         <br/>
-        <p style="font-family: monospace;">The Expenses photographs provided above are only for reference.</p>
+        <p style="font-family: monospace;text-align:center;">The Expenses photographs provided above are only for reference.</p>
         <!-- <footer style="page-break-after: always;"></footer> -->
 </body>
 </html>
