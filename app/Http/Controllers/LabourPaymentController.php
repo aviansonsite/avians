@@ -959,8 +959,6 @@ class LabourPaymentController extends Controller
                 return ['status' => false, 'message' => 'Please Try Again..']; 
             } 
         }     
-        
-
     }
 
     public function getLabourExpense(Request $req)

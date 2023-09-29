@@ -842,7 +842,7 @@
         var from_date = $('#from_date').val();
         var to_date = $('#to_date').val();
 
-        alert(from_date);
+        // alert(from_date);
         $.ajax({
             headers:{
                 'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
