@@ -53,15 +53,33 @@ class UserController extends Controller
 			foreach($u_obj as $u){
 				$so_number = [];
 				//get labour/sub technician so number
-				$s_obj=SOModel::where('lead_technician','!=',0)->where(['delete'=>0,'labour'=>$u->id])->orderby('created_at','DESC')->get();
+				// $s_obj=SOModel::where('lead_technician','!=',0)->where(['delete'=>0,'labour'=>$u->id])->orderby('created_at','DESC')->get();
 				
+
+				$s_obj=DB::table('sales_orders as so')
+					->leftjoin('users as u','u.id','so.a_id')
+					->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','u.name','u.delete as u_delete','u.is_active')
+					->where('so.lead_technician','!=',0)
+					->where(['so.delete'=>0,'so.labour'=>$u->id])
+					->orderby('so.updated_at','DESC')
+					->get();
+
 				array_push($so_number, $s_obj); 
+
 				// foreach($s_obj as $s){
 				// 	array_push($so_number, $s->so_number);  
 				// }
 
 				//get lead technician so number
 				$s_obj1=SOModel::where(['delete'=>0,'lead_technician'=>$u->id])->orderby('created_at','DESC')->get();
+
+				$s_obj1=DB::table('sales_orders as so')
+					->leftjoin('users as u','u.id','so.a_id')
+					->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','u.name','u.delete as u_delete','u.is_active')
+					->where(['so.delete'=>0,'so.lead_technician'=>$u->id])
+					->orderby('so.updated_at','DESC')
+					->get();
+
 				array_push($so_number, $s_obj1);
 
 				// foreach($s_obj1 as $s1){

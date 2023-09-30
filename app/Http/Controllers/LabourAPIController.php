@@ -158,6 +158,7 @@ class LabourAPIController extends Controller
         
         $u_id = strval($a_id); 
         array_push($p_in_labour, $u_id);    //Push user id for attendance
+        $p_in_labour = array_unique($p_in_labour);
         $tech_count = count($p_in_labour);
         // return ['status' => true,'p_in_so' => $p_in_so,'p_in_labour' => $p_in_labour,'p_in_remark' => $p_in_remark,'p_in_date' => $p_in_date,'p_in_latitude' => $p_in_latitude,'p_in_longitude' => $p_in_longitude,'a_id'=>$a_id,'photo_path_ext'=>$photo_path_ext,'photo_path'=>$photo_path]; 
         // $p_in_so=implode(',',$p_in_so);
@@ -235,6 +236,7 @@ class LabourAPIController extends Controller
 
         $u_id = strval($a_id); 
         array_push($pout_labour, $u_id);    //Push user id for attendance
+        $pout_labour = array_unique($pout_labour);
         $tech_count = count($pout_labour);
         // dd($tech_count);
         // $pout_so=implode(',',$pout_so);

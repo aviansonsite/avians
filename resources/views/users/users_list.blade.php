@@ -168,7 +168,7 @@ $roles=Session::get('ROLES');
                                                 <th scope="col">Action</th>
                                                 <th scope="col" style="white-space: normal;">Full Name</th>
                                                 @if($roles != 0)
-                                                    <th scope="col" style="white-space: normal;">Active OA - Client Name</th>
+                                                    <th scope="col" style="white-space: normal;">Active OA - Client Name - Project Admin</th>
                                                 @endif
                                                 <th scope="col">Email</th>
                                                 <th scope="col">Mobile</th>
@@ -311,7 +311,7 @@ $roles=Session::get('ROLES');
                                                         <td>
                                                             @foreach($u->so_number as $so)
                                                                 @foreach($so as $s)
-                                                                    ({{$s->so_number}} -  {{$s->client_name}}) <br>
+                                                                    ({{$s->so_number}} -  {{$s->client_name}} - {{$s->name}}) <br>
                                                                 @endforeach 
                                                             @endforeach
                                                         </td>

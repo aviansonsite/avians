@@ -110,9 +110,10 @@ class AttendanceController extends Controller
     	$p_in_date=isset($_POST['p_in_date']) ? $_POST['p_in_date'] : "NA";
         $p_in_latitude=isset($_POST['p_in_latitude']) ? $_POST['p_in_latitude'] : "NA";
     	$p_in_longitude=isset($_POST['p_in_longitude']) ? $_POST['p_in_longitude'] : "NA";
-        // dd($p_in_labour);
+
         $u_id = strval($a_id); 
         array_push($p_in_labour, $u_id);    //Push user id for attendance
+        $p_in_labour = array_unique($p_in_labour);
         $tech_count = count($p_in_labour);
         
         // $p_in_so=implode(',',$p_in_so);
@@ -181,6 +182,7 @@ class AttendanceController extends Controller
 
         $u_id = strval($a_id); 
         array_push($pout_labour, $u_id);    //Push user id for attendance
+        $pout_labour = array_unique($pout_labour);
         $tech_count = count($pout_labour);
         // dd($tech_count);
 
