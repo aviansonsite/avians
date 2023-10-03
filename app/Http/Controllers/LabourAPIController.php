@@ -1120,7 +1120,7 @@ class LabourAPIController extends Controller
             ->leftjoin('users as u','u.id','oth.lead_technician')
             ->leftjoin('sales_orders as so','so.id','oth.so_id')
             ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
-            ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'u.delete'=>0,'u.is_active'=>0])
+            ->where(['oth.lead_technician'=>$a_id,'u.delete'=>0,'u.is_active'=>0])
             ->orderby('oth.updated_at','DESC')
             ->get();
                 
