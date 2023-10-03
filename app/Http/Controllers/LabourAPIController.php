@@ -1153,7 +1153,7 @@ class LabourAPIController extends Controller
     
                 $so_id = array_map('intval', explode(',', $l->so_id));
                 foreach($so_id as $s){
-                    $so_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->get();
+                    $so_obj=SOModel::whereIn('id',$so_id)->get();
                 }
                 $l->s_obj = $so_obj;
             }
