@@ -174,13 +174,13 @@
                                                 @if($roles == 1)
                                                     <th scope="col">Action</th>
                                                 @endif
-                                                <th scope="col" style="width: 100px">Technician Name</th>
+                                                <th scope="col" style="width: 80px">Technician Name</th>
                                                 <th scope="col" style="width: 100px">OA Number</th>
-                                                <th scope="col" style="width: 100px">Client Name</th>
-                                                <th scope="col" style="width: 100px">Project Name</th>
-                                                <th scope="col" style="width: 100px">Project Admin</th>
+                                                <th scope="col" style="width: 100px;white-space:wrap;">Project Name</th>
                                                 <th scope="col" style="width: 100px">Expense Type</th>
                                                 <th scope="col" style="width: 100px">Description</th>
+                                                <th scope="col" style="width: 100px">Client Name</th>
+                                                <th scope="col" style="width: 100px">Project Admin</th>
                                                 <th scope="col" style="width: 100px">Admin Remark</th>
                                                 <th scope="col" style="width: 100px">Status</th>
                                                 <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
@@ -216,11 +216,11 @@
                                                 @endif
                                                 <th scope="col" style="width: 100px">Technician Name</th>
                                                 <th scope="col" style="width: 100px">OA Number</th>
-                                                <th scope="col" style="width: 100px">Client Name</th>
                                                 <th scope="col" style="width: 100px">Project Name</th>
-                                                <th scope="col" style="width: 100px">Project Admin</th>
                                                 <th scope="col" style="width: 100px">Expense Type</th>
                                                 <th scope="col" style="width: 100px">Description</th>
+                                                <th scope="col" style="width: 100px">Client Name</th>
+                                                <th scope="col" style="width: 100px">Project Admin</th>
                                                 <th scope="col" style="width: 100px">Admin Remark</th>
                                                 <th scope="col" style="width: 100px">Status</th>
                                                 <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
@@ -254,11 +254,11 @@
                                                 <th scope="col" style="white-space: normal;">Expense Date</th>
                                                 <th scope="col" style="width: 100px">Technician Name</th>
                                                 <th scope="col" style="width: 100px">OA Number</th>
-                                                <th scope="col" style="width: 100px">Client Name</th>
                                                 <th scope="col" style="width: 100px">Project Name</th>
-                                                <th scope="col" style="width: 100px">Project Admin</th>
                                                 <th scope="col" style="width: 100px">Expense Type</th>
                                                 <th scope="col" style="width: 100px">Description</th>
+                                                <th scope="col" style="width: 100px">Client Name</th>
+                                                <th scope="col" style="width: 100px">Project Admin</th>
                                                 <th scope="col" style="width: 100px">Admin Remark</th>
                                                 <th scope="col" style="width: 100px">SA Remark</th>
                                                 <th scope="col" style="width: 100px">Status</th>
@@ -290,11 +290,11 @@
                                                 @endif
                                                 <th scope="col" style="width: 100px">Technician Name</th>
                                                 <th scope="col" style="width: 100px">OA Number</th>
-                                                <th scope="col" style="width: 100px">Client Name</th>
                                                 <th scope="col" style="width: 100px">Project Name</th>
-                                                <th scope="col" style="width: 100px">Project Admin</th>
                                                 <th scope="col" style="width: 100px">Expense Type</th>
                                                 <th scope="col" style="width: 100px">Description</th>
+                                                <th scope="col" style="width: 100px">Client Name</th>
+                                                <th scope="col" style="width: 100px">Project Admin</th>
                                                 <th scope="col" style="width: 100px">Admin Remark</th>
                                                 <th scope="col" style="width: 100px">Status</th>
                                                 <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
@@ -470,8 +470,6 @@
             $('#clearedDatatable').dataTable();    
             $('#cancelDatatable').dataTable(); 
             $('#apprvdDatatable').dataTable();    
-
-
         });
     </script>
 @endpush
@@ -596,9 +594,7 @@
                                 }
                                 content +="<td>"+row.labour_name+"</td>";
                                 content +="<td>"+row.so_number+"</td>";
-                                content +="<td>"+row.client_name+"</td>";
                                 content +="<td>"+row.project_name+"</td>";
-                                content +="<td>"+row.project_admin+"</td>";
                                 if(row.exp_type == "Material_Purchase"){
                                     content +="<td> Material Purchase </td>";
                                 }else if(row.exp_type == "Labour_Hired"){
@@ -607,6 +603,9 @@
                                     content +="<td>"+row.exp_type+"</td>";
                                 }
                                 content +="<td>"+row.exp_desc+"</td>";
+                                content +="<td>"+row.client_name+"</td>";
+                                content +="<td>"+row.project_admin+"</td>";
+                                
                                 if(row.acc_remark != null){
                                     content +="<td>"+row.acc_remark+"</td>";
                                 }else{
@@ -647,9 +646,7 @@
                                 }
                                 content1 +="<td>"+row.labour_name+"</td>";
                                 content1 +="<td>"+row.so_number+"</td>";
-                                content1 +="<td>"+row.client_name+"</td>";
                                 content1 +="<td>"+row.project_name+"</td>";
-                                content1 +="<td>"+row.project_admin+"</td>";
                                 if(row.exp_type == "Material_Purchase"){
                                     content1 +="<td> Material Purchase </td>";
                                 }else if(row.exp_type == "Labour_Hired"){
@@ -658,6 +655,10 @@
                                     content1 +="<td>"+row.exp_type+"</td>";
                                 }
                                 content1 +="<td>"+row.exp_desc+"</td>";
+                                content1 +="<td>"+row.client_name+"</td>";
+
+                                content1 +="<td>"+row.project_admin+"</td>";
+                                
                                 if(row.acc_remark != null){
                                     content1 +="<td>"+row.acc_remark+"</td>";
                                 }else{
@@ -691,10 +692,7 @@
                                 content3 +="<td>"+exp_date+"</td>";
                                 content3 +="<td>"+row.labour_name+"</td>";
                                 content3 +="<td>"+row.so_number+"</td>";
-                                content3 +="<td>"+row.client_name+"</td>";
                                 content3 +="<td>"+row.project_name+"</td>";
-                                content3 +="<td>"+row.project_admin+"</td>";
-
                                 if(row.exp_type == "Material_Purchase"){
                                     content3 +="<td> Material Purchase </td>";
                                 }else if(row.exp_type == "Labour_Hired"){
@@ -703,6 +701,11 @@
                                     content3 +="<td>"+row.exp_type+"</td>";
                                 }
                                 content3 +="<td>"+row.exp_desc+"</td>";
+                                content3 +="<td>"+row.client_name+"</td>";
+
+                                content3 +="<td>"+row.project_admin+"</td>";
+
+                                
                                 if(row.acc_remark != null){
                                     content3 +="<td>"+row.acc_remark+"</td>";
                                 }else{
@@ -745,10 +748,7 @@
                                 }
                                 content2 +="<td>"+row.labour_name+"</td>";
                                 content2 +="<td>"+row.so_number+"</td>";
-                                content2 +="<td>"+row.client_name+"</td>";
                                 content2 +="<td>"+row.project_name+"</td>";
-                                content2 +="<td>"+row.project_admin+"</td>";
-
                                 if(row.exp_type == "Material_Purchase"){
                                     content2 +="<td> Material Purchase </td>";
                                 }else if(row.exp_type == "Labour_Hired"){
@@ -757,6 +757,11 @@
                                     content2 +="<td>"+row.exp_type+"</td>";
                                 }
                                 content2 +="<td>"+row.exp_desc+"</td>";
+                                content2 +="<td>"+row.client_name+"</td>";
+
+                                content2 +="<td>"+row.project_admin+"</td>";
+
+                                
                                 if(row.acc_remark != null){
                                     content2 +="<td>"+row.acc_remark+"</td>";
                                 }else{
@@ -870,19 +875,20 @@
                                 if(data.role == 1){
                                     content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
                                 }
-                                content +="<td>"+row.labour_name+"</td>";
+                                content +="<td style='white-space:wrap;'>"+row.labour_name+"</td>";
                                 content +="<td>"+row.so_number+"</td>";
-                                content +="<td>"+row.client_name+"</td>";
-                                content +="<td>"+row.project_name+"</td>";
-                                content +="<td>"+row.project_admin+"</td>";
+                                content +="<td style='white-space:wrap;'>"+row.project_name+"</td>";
                                 if(row.exp_type == "Material_Purchase"){
-                                    content +="<td> Material Purchase </td>";
+                                    content +="<td style='white-space:wrap;'> Material Purchase </td>";
                                 }else if(row.exp_type == "Labour_Hired"){
-                                    content +="<td> Labour Hired </td>";
+                                    content +="<td style='white-space:wrap;'> Labour Hired </td>";
                                 }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                    content +="<td>"+row.exp_type+"</td>";
+                                    content +="<td style='white-space:wrap;'>"+row.exp_type+"</td>";
                                 }
                                 content +="<td>"+row.exp_desc+"</td>";
+                                content +="<td>"+row.client_name+"</td>";
+                                content +="<td>"+row.project_admin+"</td>";
+
                                 if(row.acc_remark != null){
                                     content +="<td>"+row.acc_remark+"</td>";
                                 }else{
@@ -921,19 +927,20 @@
                                 if(data.role == 0){
                                     content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
                                 }
-                                content1 +="<td>"+row.labour_name+"</td>";
+                                content1 +="<td style='white-space:wrap;'>"+row.labour_name+"</td>";
                                 content1 +="<td>"+row.so_number+"</td>";
-                                content1 +="<td>"+row.client_name+"</td>";
-                                content1 +="<td>"+row.project_name+"</td>";
-                                content1 +="<td>"+row.project_admin+"</td>";
+                                content1 +="<td style='white-space:wrap;'>"+row.project_name+"</td>";
                                 if(row.exp_type == "Material_Purchase"){
-                                    content1 +="<td> Material Purchase </td>";
+                                    content1 +="<td style='white-space:wrap;'> Material Purchase </td>";
                                 }else if(row.exp_type == "Labour_Hired"){
-                                    content1 +="<td> Labour Hired </td>";
+                                    content1 +="<td style='white-space:wrap;'> Labour Hired </td>";
                                 }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                    content1 +="<td>"+row.exp_type+"</td>";
+                                    content1 +="<td style='white-space:wrap;'>"+row.exp_type+"</td>";
                                 }
                                 content1 +="<td>"+row.exp_desc+"</td>";
+                                content1 +="<td>"+row.client_name+"</td>";
+                                content1 +="<td>"+row.project_admin+"</td>";
+                                
                                 if(row.acc_remark != null){
                                     content1 +="<td>"+row.acc_remark+"</td>";
                                 }else{
@@ -965,20 +972,19 @@
                                 content3 +="<tr>";
                                 content3 +="<td>"+ ++l +"</td>";
                                 content3 +="<td>"+exp_date+"</td>";
-                                content3 +="<td>"+row.labour_name+"</td>";
+                                content3 +="<td style='white-space:wrap;'>"+row.labour_name+"</td>";
                                 content3 +="<td>"+row.so_number+"</td>";
-                                content3 +="<td>"+row.client_name+"</td>";
-                                content3 +="<td>"+row.project_name+"</td>";
-                                content3 +="<td>"+row.project_admin+"</td>";
-
+                                content3 +="<td style='white-space:wrap;'>"+row.project_name+"</td>";
                                 if(row.exp_type == "Material_Purchase"){
-                                    content3 +="<td> Material Purchase </td>";
+                                    content3 +="<td style='white-space:wrap;'> Material Purchase </td>";
                                 }else if(row.exp_type == "Labour_Hired"){
-                                    content3 +="<td> Labour Hired </td>";
+                                    content3 +="<td style='white-space:wrap;'> Labour Hired </td>";
                                 }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                    content3 +="<td>"+row.exp_type+"</td>";
+                                    content3 +="<td style='white-space:wrap;'>"+row.exp_type+"</td>";
                                 }
                                 content3 +="<td>"+row.exp_desc+"</td>";
+                                content3 +="<td>"+row.client_name+"</td>";
+                                content3 +="<td>"+row.project_admin+"</td>";
                                 if(row.acc_remark != null){
                                     content3 +="<td>"+row.acc_remark+"</td>";
                                 }else{
@@ -1019,20 +1025,19 @@
                                 if(data.role == 0){
                                     content2 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-sa_remark='"+row.sa_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
                                 }
-                                content2 +="<td>"+row.labour_name+"</td>";
+                                content2 +="<td style='white-space:wrap;'>"+row.labour_name+"</td>";
                                 content2 +="<td>"+row.so_number+"</td>";
-                                content2 +="<td>"+row.client_name+"</td>";
-                                content2 +="<td>"+row.project_name+"</td>";
-                                content2 +="<td>"+row.project_admin+"</td>";
-
+                                content2 +="<td style='white-space:wrap;'>"+row.project_name+"</td>";
                                 if(row.exp_type == "Material_Purchase"){
-                                    content2 +="<td> Material Purchase </td>";
+                                    content2 +="<td style='white-space:wrap;'> Material Purchase </td>";
                                 }else if(row.exp_type == "Labour_Hired"){
-                                    content2 +="<td> Labour Hired </td>";
+                                    content2 +="<td style='white-space:wrap;'> Labour Hired </td>";
                                 }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                    content2 +="<td>"+row.exp_type+"</td>";
+                                    content2 +="<td style='white-space:wrap;'>"+row.exp_type+"</td>";
                                 }
                                 content2 +="<td>"+row.exp_desc+"</td>";
+                                content2 +="<td>"+row.client_name+"</td>";
+                                content2 +="<td>"+row.project_admin+"</td>";
                                 if(row.acc_remark != null){
                                     content2 +="<td>"+row.acc_remark+"</td>";
                                 }else{

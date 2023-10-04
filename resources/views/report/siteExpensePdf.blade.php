@@ -169,8 +169,8 @@
                         @if($te->attachment != null)
                             <tr style="text-align:center;">
                                 <td >
-                                    <h4>{{$te->exp_type}} </h4>
-                                    <img style="height: 300px; width: 400px;" src='{{URL::asset("files/user/travel_expense/$te->attachment")}}'/>
+                                    <h3>{{$te->exp_type}} </h3>
+                                    <img style="height: 500px; width: 500px;" src='{{URL::asset("files/user/travel_expense/$te->attachment")}}'/>
                                 </td>
                             </tr>
                         @endif    
@@ -178,8 +178,8 @@
                         @if($te->attachment != null)
                             <tr  style="text-align:center;">
                                 <td >
-                                    <h4>{{$te->exp_type}} </h4>
-                                    <img style="height: 300px; width: 400px;" src='{{URL::asset("files/user/expense/$te->attachment")}}'/>
+                                    <h3>{{$te->exp_type}} </h3>
+                                    <img style="height: 500px; width: 500px;" src='{{URL::asset("files/user/expense/$te->attachment")}}'/>
                                 </td>
                             </tr>
                         @endif    

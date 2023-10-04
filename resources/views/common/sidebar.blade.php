@@ -50,17 +50,6 @@ $count=count($role);
                             </li>
                         @endif
 
-                        <!-- Accountant -->
-                        @if($roles==0 || $roles==2)
-
-                            <li class="nav-item">
-                                <a href="{{route('labour_payment.page')}}" class="waves-effect nav-link">
-                                    <i class="bx bx-user"></i>
-                                    <span key="t-dashboards">Technician Payment</span>
-                                </a>
-                            </li>
-                        @endif
-
                         <!-- labour -->
                         @if($roles==3)
                             <li class="nav-item">
@@ -103,7 +92,14 @@ $count=count($role);
                                 </a>
                             </li>
                         @endif
+                     
                         @if($roles!=3)
+                            <li class="nav-item">
+                                <a href="{{route('labour_payment.page')}}" class="waves-effect nav-link">
+                                    <i class="bx bx-user"></i>
+                                    <span key="t-dashboards">Technician Payment</span>
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a href="{{route('SO_payment_history.page')}}" class="waves-effect nav-link">
                                     <i class="bx bx-file"></i>
@@ -122,7 +118,7 @@ $count=count($role);
                                 </div>
                             </li>
                         @endif
-                        <!-- labour -->
+                        <!-- Admin -->
                         @if($roles==1)
                             <li class="nav-item">
                                 <a href="{{route('technician_attendance.page')}}" class="waves-effect nav-link">
