@@ -14,6 +14,7 @@ use App\Models\LabourPaymentModel;
 use App\Models\TransferPaymentModel;
 use App\Models\TechnicianExpenseModel;
 use App\Models\TravelExpenseModel;
+use Carbon\Carbon;
 use Session;
 use DB;
 use Hash;
@@ -1140,20 +1141,16 @@ class AdminAPIController extends Controller
     
     public function postExpense(Request $req)
     {
-        $role=Session::get('ROLES');
+        $role = $req->get('role');                                  
+        $a_id = $req->get('u_id');
 
         $edit_id=isset($_POST['exp_edit_id']) ? $_POST['exp_edit_id'] : "NA";
-        $updated_amnt = $req->get('updated_amnt');
-        $edit_id=isset($_POST['edit_id']) ? $_POST['edit_id'] : "NA";
-   		$status = $req->get('status');
-        $edit_id=isset($_POST['edit_id']) ? $_POST['edit_id'] : "NA";
-   		$acc_remark = $req->get('acc_remark');
-        $edit_id=isset($_POST['edit_id']) ? $_POST['edit_id'] : "NA";
-        $sa_remark = $req->get('sa_remark');
-        $edit_id=isset($_POST['edit_id']) ? $_POST['edit_id'] : "NA";
-        $sa_updated_amnt = $req->get('sa_updated_amnt');
-        $edit_id=isset($_POST['edit_id']) ? $_POST['edit_id'] : "NA";
-    	$a_id=Session::get('USER_ID');
+        $updated_amnt=isset($_POST['updated_amnt']) ? $_POST['updated_amnt'] : "NA";
+        $status=isset($_POST['status']) ? $_POST['status'] : "NA";
+        $acc_remark=isset($_POST['acc_remark']) ? $_POST['acc_remark'] : "NA";
+        $sa_remark=isset($_POST['sa_remark']) ? $_POST['sa_remark'] : "NA";
+        $sa_updated_amnt=isset($_POST['sa_updated_amnt']) ? $_POST['sa_updated_amnt'] : "NA";
+    	
 
         if($edit_id!=null)
     	{
@@ -1200,4 +1197,321 @@ class AdminAPIController extends Controller
         
 
     }
+
+    public function travelExpTechnicians(Request $req)
+    {
+        $role = $req->get('role');                                  
+        $a_id = $req->get('u_id');
+
+        if($role == 0){
+    	    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+        }else{
+
+            $so_obj=SOModel::where(['delete'=>0,'a_id'=>$a_id])->orderby('created_at','DESC')->get();  // get admin created all oa
+
+            $technicians= array(); //create empty array
+
+            foreach($so_obj as $s){
+                $technician = array_map('intval', explode(',', $s->labour));      // create array all sub technician
+                // foreach($technician as $t)
+                // {   
+                //     array_push($technicians,$t);        // push sub technician in technicians 
+                // }
+                
+                $lead_tech = array_map('intval', explode(',', $s->lead_technician));    // lead technician
+                foreach($lead_tech as $l)
+                {   
+                    array_push($technicians,$l);        // push lead technician in all technicians
+                }
+            }
+
+            $all_technician = array_unique($technicians);           //remove duplicate technician id
+            
+
+    	    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->whereIn('id',$all_technician)->orderby('created_at','DESC')->get();
+    	   
+        }
+
+        return json_encode(array('status' => true ,'u_obj' => $u_obj,'roles' => $role,'message' => 'Data Found'));
+
+
+    }
+
+    public function getTravelExpense(Request $req)
+    {
+        $role = $req->get('role');                                  
+        $a_id = $req->get('u_id');
+        $from_date = $req->get('from_date');
+        $to_date = $req->get('to_date');
+        $labours = $req->get('labours');
+
+        if ($from_date == null && $to_date == null) 
+        {
+            if($role == 3)      // for technician
+            {
+                $date = Carbon::now()->subDays(60);  // get last 7 days record
+                $data = TravelExpenseModel::where(['delete'=>0,'a_id'=>$a_id])->where('created_at', '>=', $date)->orderby('updated_at','DESC')->get();
+                foreach($data as $d)
+                {
+                    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
+                    foreach($u_obj as $u)
+                    {
+                        $d->labour_name = $u->name;
+                        $d->emp_number = $u->emp_number;
+    
+                    }
+
+                    $now = Carbon::now();
+                    $created_at = Carbon::parse($d->created_at);
+                    $diffHuman = $created_at->diffForHumans($now);  // 3 Months ago
+                    $diffHours = $created_at->diffInHours($now);  // 3 
+                    $diffMinutes = $created_at->diffInMinutes($now);   // 180
+                    $d->diffHuman=$diffHuman;
+                    $d->diffHours=$diffHours;
+                    $d->diffMinutes=$diffMinutes;
+                }
+
+                $s_obj=DB::table('oa_tl_history as oth')
+                    ->leftjoin('users as u','u.id','oth.lead_technician')
+                    ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                    ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
+                    ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                    ->orderby('oth.updated_at','DESC')
+                    ->get();
+
+            }
+            else
+            {
+                if($role == 0)      // for super admin
+                {
+                    
+                    $date = Carbon::now()->subDays(60);  // get last 7 days record
+
+                    $data=DB::table('travel_expenses as te')
+                        ->leftjoin('users as u','u.id','te.a_id')
+                        ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+                        ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                        ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id','u.emp_number','u.a_id as u_a_id','te.id','te.oth_id','te.ad_id','te.sa_id','te.mode_travel','te.from_location','te.to_location','te.total_km','te.travel_date','te.travel_desc','te.ad_remark','te.sa_remark','te.attachment','te.no_of_person','te.travel_amount','te.aprvd_amount','te.status','te.a_id','te.delete','te.created_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.a_id as so_aid')
+                        ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                        ->where('te.created_at', '>=', $date)
+                        ->orderby('te.updated_at','DESC')
+                        ->get();
+
+                    foreach($data as $d)
+                    {
+                        
+                        $u_obj=UserModel::where(['delete'=>0,'id'=>$d->so_aid])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                        foreach($u_obj as $u){
+                            $d->project_admin = $u->name;
+                        }
+                    }
+
+
+                    $s_obj=DB::table('oa_tl_history as oth')
+                        ->leftjoin('users as u','u.id','oth.lead_technician')
+                        ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                        ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','u.name','u.delete as u_delete','u.is_active')
+                        ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                        ->orderby('oth.updated_at','DESC')
+                        ->get();
+                    
+
+                }else{      //admin
+                    
+                    $date = Carbon::now()->subDays(60);  // get last 7 days record
+
+
+                    $data=DB::table('travel_expenses as te')
+                        ->leftjoin('users as u','u.id','te.a_id')
+                        ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+                        ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                        ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id as u_a_id','u.emp_number','te.id','te.oth_id','te.ad_id','te.sa_id','te.mode_travel','te.from_location','te.to_location','te.total_km','te.travel_date','te.travel_desc','te.ad_remark','te.sa_remark','te.attachment','te.no_of_person','te.travel_amount','te.aprvd_amount','te.status','te.a_id','te.delete','te.created_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.a_id as so_aid')
+                        ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'so.a_id'=>$a_id])
+                        ->where('te.created_at', '>=', $date)
+                        ->orderby('te.updated_at','DESC')
+                        ->get();
+
+                        foreach($data as $d)
+                        {
+                            $u_obj=UserModel::where(['delete'=>0,'id'=>$d->so_aid])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                            foreach($u_obj as $u){
+                                $d->project_admin = $u->name;
+                            }
+                        }
+
+                    $s_obj=DB::table('oa_tl_history as oth')
+                    ->leftjoin('users as u','u.id','oth.lead_technician')
+                    ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                    ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active','u.a_id')
+                    ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                    ->orderby('oth.updated_at','DESC')
+                    ->get();  
+                }
+            }
+
+          
+
+            if(!empty($data)){
+                return json_encode(array('status' => true ,'data' => $data,'s_obj' => $s_obj,'role'=>$role,'message' => 'Data Found'));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
+
+        }else{
+
+            if($role == 3)
+            {
+                $data = TravelExpenseModel::where(['delete'=>0,'a_id'=>$a_id])->whereDate('travel_date', '>=' ,$from_date)->whereDate('travel_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+                foreach($data as $d){
+                    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
+                    foreach($u_obj as $u){
+                        $d->labour_name = $u->name;
+                        $d->emp_number = $u->emp_number;
+    
+                    }
+
+                    $now = Carbon::now();
+                    $created_at = Carbon::parse($d->created_at);
+                    $diffHuman = $created_at->diffForHumans($now);  // 3 Months ago
+                    $diffHours = $created_at->diffInHours($now);  // 3 
+                    $diffMinutes = $created_at->diffInMinutes($now);   // 180
+                    $d->diffHuman=$diffHuman;
+                    $d->diffHours=$diffHours;
+                    $d->diffMinutes=$diffMinutes;
+                }
+
+                $s_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+                ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('oth.updated_at','DESC')
+                ->get();
+
+            }else{
+
+                if($role == 0){
+
+                    $data=DB::table('travel_expenses as te')
+                    ->leftjoin('users as u','u.id','te.a_id')
+                    ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+                    ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                    ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id','u.emp_number','u.a_id as u_a_id','te.id','te.oth_id','te.ad_id','te.sa_id','te.mode_travel','te.from_location','te.to_location','te.total_km','te.travel_date','te.travel_desc','te.ad_remark','te.sa_remark','te.attachment','te.no_of_person','te.travel_amount','te.aprvd_amount','te.status','te.a_id','te.delete','te.created_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.a_id as so_aid')
+                        ->whereDate('travel_date', '>=' ,$from_date)
+                        ->whereDate('travel_date', '<=' ,$to_date)
+                        ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'te.a_id'=>$labours])
+                        ->orderby('te.updated_at','DESC')
+                        ->get();
+
+                    foreach($data as $d)
+                    {
+                        
+                        $u_obj=UserModel::where(['delete'=>0,'id'=>$d->so_aid])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                        foreach($u_obj as $u){
+                            $d->project_admin = $u->name;
+                        }
+                    }
+
+                    $s_obj=DB::table('oa_tl_history as oth')
+                    ->leftjoin('users as u','u.id','oth.lead_technician')
+                    ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                    ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+                    ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                    ->orderby('oth.updated_at','DESC')
+                    ->get();
+
+                }
+                else
+                {
+                    $data=DB::table('travel_expenses as te')
+                        ->leftjoin('users as u','u.id','te.a_id')
+                        ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+                        ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                        ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id as u_a_id','u.emp_number','te.id','te.oth_id','te.ad_id','te.sa_id','te.mode_travel','te.from_location','te.to_location','te.total_km','te.travel_date','te.travel_desc','te.ad_remark','te.sa_remark','te.attachment','te.no_of_person','te.travel_amount','te.aprvd_amount','te.status','te.a_id','te.delete','te.created_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.a_id as so_aid')
+                        ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'te.a_id'=>$labours])
+                        ->whereDate('travel_date', '>=' ,$from_date)
+                        ->whereDate('travel_date', '<=' ,$to_date)
+                        ->orderby('te.updated_at','DESC')
+                        ->get();
+
+                    foreach($data as $d)
+                    {
+                        $u_obj=UserModel::where(['delete'=>0,'id'=>$d->so_aid])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                        foreach($u_obj as $u){
+                            $d->project_admin = $u->name;
+                        }
+                    }
+
+                    $s_obj=DB::table('oa_tl_history as oth')
+                    ->leftjoin('users as u','u.id','oth.lead_technician')
+                    ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                    ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active','u.a_id')
+                    ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                    ->orderby('oth.updated_at','DESC')
+                    ->get();
+                }
+            }
+           
+            if(count($data)>0){
+                return json_encode(array('status' => true ,'data' => $data,'s_obj' => $s_obj,'role'=>$role,'message' => 'Data Found'));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
+        }
+    }
+
+    public function updateTravelExpenses(Request $req)
+    {
+        $role = $req->get('role');                                  
+        $a_id = $req->get('u_id');
+        $edit_id=$req->get('exp_edit_id');
+        $updated_amnt = $req->get('updated_amnt');
+   		$status = $req->get('status');
+   		$acc_remark = $req->get('acc_remark');
+        $sa_remark = $req->get('sa_remark');
+        $sa_updated_amnt = $req->get('sa_updated_amnt');
+        
+        if($edit_id!=null)
+    	{
+            $u_obj=TravelExpenseModel::find($edit_id);
+
+            if($role == 0){
+                $u_obj->sa_remark=$sa_remark;
+                $u_obj->status=$status;
+    
+                if ($sa_updated_amnt >'0' && $status != '') 
+                {
+                    $u_obj->aprvd_amount=$sa_updated_amnt;
+                }
+    
+                $u_obj->delete=0;
+                $u_obj->sa_id=$a_id;
+                $res=$u_obj->update();
+            }else{
+                $u_obj->ad_remark=$acc_remark;
+                $u_obj->status=$status;
+    
+                if ($updated_amnt >'0' && $status != 'Disapproved') 
+                {
+                    $u_obj->aprvd_amount=$updated_amnt;
+                }
+    
+                $u_obj->delete=0;
+                $u_obj->ad_id=$a_id;
+                $res=$u_obj->update();
+            }
+           
+            
+            if($res){
+                return ['status' => true, 'message' => 'Expense Update Successfully'];
+            }else{
+                return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
+            }
+            
+
+        }else{
+            return ['status' => false, 'message' => 'Data Not Found Please Try Again..']; 
+        }  
+    }
+
 }   

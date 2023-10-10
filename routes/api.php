@@ -47,6 +47,10 @@ Route::post('/manage_exp_tech', [AdminAPIController::class, 'manageExpTechnician
 Route::post('/get_all_expenses', [AdminAPIController::class, 'getAllExpense']);
 Route::post('/post_expense', [AdminAPIController::class, 'postExpense']);
 
+//Travel Expense
+Route::post('/travel_exp_tech', [AdminAPIController::class, 'travelExpTechnicians']);       
+Route::post('/get_travel_expenses', [AdminAPIController::class, 'getTravelExpense']);
+Route::post('/update_travel_expense', [AdminAPIController::class, 'updateTravelExpenses']);
 
 // ---------------------------------------- LABOUR API -------------------------------- 
 //Attendance Management
