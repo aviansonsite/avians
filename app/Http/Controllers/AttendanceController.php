@@ -965,15 +965,6 @@ class AttendanceController extends Controller
         }
 
 
-
-
-
-
-
-
-
-
-
         // if($so_id[0] == "all"){
 
 

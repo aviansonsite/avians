@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LabourAPIController;
+use App\Http\Controllers\AdminAPIController;
 
 
 /*
@@ -25,6 +26,29 @@ Route::post('/check_login_api', [LoginController::class, 'checkLoginAPI']);
 Route::post('/profile_edit_api', [LoginController::class, 'profileEditAPI']);
 Route::post('/check_pass_api', [LoginController::class, 'checkPassAPI']);
 
+//User Management
+Route::post('/users', [AdminAPIController::class, 'users']);
+Route::post('/post_user', [AdminAPIController::class, 'postUser']);
+Route::post('/change_status', [AdminAPIController::class, 'change_status']);
+Route::post('/user_del', [AdminAPIController::class, 'user_delete']);
+Route::post('/res_pass', [AdminAPIController::class, 'resPass']);
+
+//oa Management
+Route::post('/check_tl_status', [AdminAPIController::class, 'checkTlStatus']);
+Route::post('/post_oa', [AdminAPIController::class, 'postOA']);
+Route::post('/get_so', [AdminAPIController::class, 'getSO']);
+Route::post('/get_so_technician', [AdminAPIController::class, 'getSOTechnician']);
+Route::post('/remove_tl', [AdminAPIController::class, 'removeTL']);
+Route::post('/delete_so', [AdminAPIController::class, 'soDelete']);
+
+
+//Manage Expense Requests
+Route::post('/manage_exp_tech', [AdminAPIController::class, 'manageExpTechnicians']);       
+Route::post('/get_all_expenses', [AdminAPIController::class, 'getAllExpense']);
+Route::post('/post_expense', [AdminAPIController::class, 'postExpense']);
+
+
+// ---------------------------------------- LABOUR API -------------------------------- 
 //Attendance Management
 Route::post('/get_pio_records', [LabourAPIController::class, 'getPIORecords']);
 

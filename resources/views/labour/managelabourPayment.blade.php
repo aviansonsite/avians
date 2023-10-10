@@ -837,7 +837,6 @@
                     $("#cancelDatatable").DataTable().destroy();
                     $("#apprvdDatatable").DataTable().destroy();
 
-                    
                     $("#tucledata").show();
                     $("#tclldata").show();
                     $("#tcaldata").show();

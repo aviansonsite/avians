@@ -471,7 +471,7 @@
     $('#labours').change(function(e)
     {
         var id = $(this).val();
-        var so_id= $('#edit_id').val();
+        var so_id= $('#edit_id').val();         //so_id
         
         // alert(id);
       
