@@ -346,7 +346,7 @@
                                         <tbody id="oth_tech_records">
                                         <?php $v=0; $roless=Session::get('ROLES'); ?>
                                         @foreach($receiver_payment as $rp)
-                                            <?php $p_date = Common::dateDMY($ap->payment_date); ?>
+                                            <?php $p_date = Common::dateDMY($rp->p_date); ?>
                                             <tr>
                                             <td>{{++$v}}</td>
                                             <td>{{$p_date}}</td>
