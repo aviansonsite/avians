@@ -1514,4 +1514,184 @@ class AdminAPIController extends Controller
         }  
     }
 
+    public function techniciansPayments()
+    {
+    	$u_obj=DB::table('users as u')
+            ->leftjoin('oa_tl_history as oth','oth.lead_technician','u.id')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','u.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active','u.role')
+            ->where(['u.delete'=>0,'u.is_active'=>0,'u.role'=>3])
+            ->orderby('u.updated_at','DESC')
+            ->get();
+
+    	$s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+        
+        return json_encode(array('status' => true ,'u_obj' => $u_obj,'s_obj' => $s_obj,'message' => 'Data Found'));
+
+    }
+
+    public function postLabourPayment(Request $req)
+    {   
+    	$edit_id=empty($req->get('edit_id')) ? null : $req->get('edit_id');
+        $so_id = $req->get('so');
+        $pay_desc = $req->get('pay_desc');
+   		$payment_date = $req->get('payment_date');
+   		$payment_amnt = $req->get('payment_amnt');
+        $labour = $req->get('labour');
+        $oth_id = $req->get('oth_id');
+    	$role = $req->get('role');                                  
+        $a_id = $req->get('u_id');
+
+        if($edit_id!=null)
+    	{
+            if ($payment_amnt !='' && $payment_date !='' && $labour !='' && $so_id !='') 
+            {
+                $u_obj=LabourPaymentModel::find($edit_id);
+                $u_obj->u_id=$labour;
+                $u_obj->so_id=$so_id;
+                $u_obj->oth_id=$oth_id;
+                $u_obj->p_desc=$pay_desc;
+                $u_obj->payment_date=$payment_date;
+                $u_obj->payment_amnt=$payment_amnt;
+                $u_obj->created_by=$a_id;
+                $u_obj->delete=0;
+                $u_obj->a_id=$a_id;
+                $res=$u_obj->update();
+                
+                if($res){
+                    return ['status' => true, 'message' => 'Payment Update Successfully'];
+                }else{
+                    return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
+                }
+            }else{
+                return ['status' => false, 'message' => 'Please Try Again..']; 
+            }   
+
+        }else{       
+
+            if ($payment_amnt !='' && $payment_date !='' && $labour !='' && $so_id !='') 
+            {
+                $u_obj=new LabourPaymentModel();
+                $u_obj->u_id=$labour;
+                $u_obj->so_id=$so_id;
+                $u_obj->oth_id=$oth_id;
+                $u_obj->p_desc=$pay_desc;
+                $u_obj->payment_date=$payment_date;
+                $u_obj->payment_amnt=$payment_amnt;
+                $u_obj->created_by=$a_id;
+                $u_obj->delete=0;
+                $u_obj->a_id=$a_id;
+                $res=$u_obj->save();
+
+                if($res){
+                    return ['status' => true, 'message' => 'Payment add Successfully'];
+                }else{
+                    return ['status' => false, 'message' => 'Something went wrong. Please try again.'];
+                }
+            }else{
+                return ['status' => false, 'message' => 'Please Try Again..']; 
+            } 
+        }     
+        
+
+    }
+
+    public function getLabourPayment(Request $req)
+    {
+    	$role = $req->get('role');                                  
+        $a_id = $req->get('u_id');
+        $from_date = $req->get('from_date');
+        $to_date = $req->get('to_date');
+        $labours = $req->get('labours');
+
+        if ($from_date == null && $to_date == null && $labours == null) 
+        {
+
+            $data=DB::table('labour_payments as lp')
+                ->leftjoin('users as u','u.id','lp.u_id')
+                ->leftjoin('sales_orders as so','so.id','lp.so_id')
+                ->select('lp.id','lp.oth_id','lp.so_id','lp.p_desc','lp.payment_date','lp.payment_amnt','lp.created_by','lp.delete','lp.updated_at','lp.created_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name as labour_name','u.delete as u_delete','u.is_active','u.role')
+                ->where(['u.delete'=>0,'u.is_active'=>0,'u.role'=>3,'so.delete'=>0,'lp.delete'=>0])
+                ->orderby('lp.updated_at','DESC')
+                ->get();
+
+                foreach($data as $d){           //for 24 hrs , time duration calculate
+                    // $startTime=$d->created_at;
+                    // $nowTime = Carbon::now();       //get current time
+                    // $currentTime = $nowTime->toDateTimeString();    //get format "2023-07-03 08:40:11"
+                    // // $totalDuration = $finishTime->diffInMinutes($startTime);
+                    // $totalDuration = $startTime->diff($currentTime)->format('%H:%I:%S');    
+                    // $d->totalDuration=$totalDuration;
+
+                    $now = Carbon::now();
+                    $created_at = Carbon::parse($d->created_at);
+                    $diffHuman = $created_at->diffForHumans($now);  // 3 Months ago
+                    $diffHours = $created_at->diffInHours($now);  // 3 
+                    $diffMinutes = $created_at->diffInMinutes($now);   // 180
+                    $d->diffHuman=$diffHuman;
+                    $d->diffHours=$diffHours;
+                    $d->diffMinutes=$diffMinutes;
+                }   
+
+           
+
+            if(!empty($data)){
+                return json_encode(array('status' => true ,'data' => $data,'role'=>$role ,'message' => 'Data Found'));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
+
+        }else{
+
+            $data=DB::table('labour_payments as lp')
+                ->leftjoin('users as u','u.id','lp.u_id')
+                ->leftjoin('sales_orders as so','so.id','lp.so_id')
+                ->select('lp.id','lp.oth_id','lp.u_id','lp.so_id','lp.p_desc','lp.payment_date','lp.payment_amnt','lp.created_by','lp.delete','lp.updated_at','lp.created_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name as labour_name','u.delete as u_delete','u.is_active','u.role')
+                ->where(['u.delete'=>0,'u.is_active'=>0,'u.role'=>3,'so.delete'=>0,'lp.delete'=>0,'lp.u_id'=>$labours])
+                ->whereDate('lp.payment_date', '>=' ,$from_date)
+                ->whereDate('lp.payment_date', '<=' ,$to_date)
+                ->orderby('lp.updated_at','DESC')
+                ->get();
+
+
+                foreach($data as $d){           //for 24 hrs , time duration calculate
+                    // $startTime=$d->created_at;
+                    // $nowTime = Carbon::now();       //get current time
+                    // $currentTime = $nowTime->toDateTimeString();    //get format "2023-07-03 08:40:11"
+                    // // $totalDuration = $finishTime->diffInMinutes($startTime);
+                    // $totalDuration = $startTime->diff($currentTime)->format('%H:%I:%S');    
+                    // $d->totalDuration=$totalDuration;
+
+                    $now = Carbon::now();
+                    $created_at = Carbon::parse($d->created_at);
+                    $diffHuman = $created_at->diffForHumans($now);  // 3 Months ago
+                    $diffHours = $created_at->diffInHours($now);  // 3 
+                    $diffMinutes = $created_at->diffInMinutes($now);   // 180
+                    $d->diffHuman=$diffHuman;
+                    $d->diffHours=$diffHours;
+                    $d->diffMinutes=$diffMinutes;
+                }   
+
+            if(count($data)>0){
+                return json_encode(array('status' => true ,'data' => $data,'role'=>$role ,'message' => 'Data Found'));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
+
+        }
+    }
+
+    public function LabourPaymentDelete(Request $req)
+    {
+        $id=$req->get('id');
+        $u_obj=LabourPaymentModel::find($id);
+        $u_obj->delete=1;
+        $res=$u_obj->update();
+        
+        if($res){
+            return ['status' => true, 'message' => 'Labour Payment Deleted Successfully'];
+        }else{
+           return ['status' => false, 'message' => 'Labour Payment Unsuccessfull...!'];
+        }
+    }
 }   

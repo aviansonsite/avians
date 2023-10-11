@@ -971,10 +971,7 @@ class SOController extends Controller
     {
         $roles=Session::get('ROLES');
         $a_id=Session::get('USER_ID');
-
-    	$u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
-       
-    	return view('so.soPaymentHistory',compact('u_obj'));
+    	return view('so.soPaymentHistory');
 
     }
 
@@ -999,6 +996,7 @@ class SOController extends Controller
         }
         // Avians account Payment
         $accountant_payment = LabourPaymentModel::where(['delete'=>0])->whereIn('oth_id',$oth_id)->sum('payment_amnt');
+
         // fot - from other technician
         $fot = TransferPaymentModel::where(['delete'=>0])->whereIn('recvr_oth_id',$oth_id)->sum('amount');
         $total_wallet = $accountant_payment + $fot;
@@ -1036,8 +1034,8 @@ class SOController extends Controller
             ->leftjoin('oa_tl_history as oth','oth.so_id','so.id')
             ->leftjoin('labour_payments as lp','lp.oth_id','oth.id')
             ->leftjoin('users as u','u.id','oth.lead_technician')
-            ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','oth.id as oth_id','oth.status','lp.p_desc','lp.payment_date','lp.payment_amnt','u.name','u.delete as u_delete',)
-            ->where(['so.delete'=>0,'u.delete'=>0])
+            ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','oth.id as oth_id','oth.status','lp.p_desc','lp.payment_date','lp.payment_amnt','lp.delete','u.name','u.delete as u_delete',)
+            ->where(['so.delete'=>0,'lp.delete'=>0,'u.delete'=>0])
             ->whereIn('oth_id',$oth_id)
             ->orderby('so.updated_at','DESC')
             ->get();

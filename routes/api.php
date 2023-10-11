@@ -52,9 +52,11 @@ Route::post('/travel_exp_tech', [AdminAPIController::class, 'travelExpTechnician
 Route::post('/get_travel_expenses', [AdminAPIController::class, 'getTravelExpense']);
 Route::post('/update_travel_expense', [AdminAPIController::class, 'updateTravelExpenses']);
 
-
-
-
+//Technician Payment
+Route::post('/tech_paymets', [AdminAPIController::class, 'techniciansPayments']);
+Route::post('/post_labour_payment', [AdminAPIController::class, 'postLabourPayment']);
+Route::post('/get_labour_payment', [AdminAPIController::class, 'getLabourPayment']);
+Route::post('/delete_labour_payment', [AdminAPIController::class, 'LabourPaymentDelete']);
 
 
 // ---------------------------------------- LABOUR API -------------------------------- 
