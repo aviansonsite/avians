@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\UserModel;
+use App\Models\SOModel;
 use App\Models\TechnicianExpenseModel;
 use App\Models\TravelExpenseModel;
 use App\Models\LabourPaymentModel;
@@ -20,8 +21,8 @@ class ReportController extends Controller
      
 
     	$u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
-       
-    	return view('report.siteExpenseReport',compact('u_obj'));
+        $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+    	return view('report.siteExpenseReport',compact('u_obj','s_obj'));
 
     }
 

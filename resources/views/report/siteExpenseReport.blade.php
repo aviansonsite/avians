@@ -125,7 +125,20 @@
                                     <span class="text-danger error" id="lerror"></span>
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-12 col-lg-3 mt-4">
+
+                            <div class="col-md-3 col-sm-12 col-lg-3">
+                                <div class="form-group mb-3">
+                                    <label for="so" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA <sup class="text-danger">*</sup></label>
+                                    <select class="form-control select2" id="so" required name="so">
+                                        <option value="" disabled selected>Select</option>
+                                        @foreach($s_obj as $s)
+                                            <option value="{{$s->id}}">{{$s->so_number}}</option>
+                                        @endforeach
+                                    </select>
+                                    <span class="text-danger error" id="serror"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-12 col-lg-2 mt-4">
                                 <button type="button" class="btn btn-primary btn-sm waves-effect waves-light w-sm" id="exp_records">Search</button>
                             </div>
                              
@@ -217,7 +230,7 @@
     {   
         var $body = $("body");
         $("#exp_records").prop('disabled', true);
-        $('#labours').select2();
+        $('#labours,#so').select2();
 
         $("#f_rec").DataTable({
             dom: "<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>tp",
@@ -259,12 +272,47 @@
                 {extend: 'print', className: 'btn-sm'}
             ]
         });
-
-       
        
     });      
 
+    // get projects from project type wise
     $('#labours').change(function(e)
+    {
+        var labour = $(this).val(); 
+        // alert(project_type);
+        $("#so").empty();
+        // $("#att_records").prop('disabled', true);
+        $.ajax({    
+            url:"{{url('get_tech_so')}}",
+            type :'get',
+            data : {labour:labour},
+            async: true,
+            cache: true,
+            dataType: 'json',
+            success: function(response) 
+            {
+                console.log(response);
+
+                //get project type wise project records
+                $('#so').append("<option value='all' class='text-muted' selected disabled>"+'Select'+"</option>");
+
+                $.each(response.data,function(index,row){
+
+                    //get project type wise project records
+                    $('#so').append("<option value='"+row.id+"'>"+row.converted_no+" ("+row.project_name+")</option>");
+                                    
+                });
+            },
+            complete:function(response){
+                // For Button Loader
+                // $("#att_records").prop('disabled', false); 
+                // $("#labours").prop('disabled', false);
+                
+            }
+        });
+
+    });
+    $('#so').change(function(e)
     {
         $("#exp_records").prop('disabled', false); 
 
@@ -278,6 +326,7 @@
         var from_date= $('#from_date').val();
         var to_date = $('#to_date').val();
         var labours = $('#labours').val();
+        var so = $('#so').val();
 
         n=0;               
         if( $.trim(from_date).length == 0 )
