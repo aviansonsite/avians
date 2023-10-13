@@ -58,6 +58,23 @@ Route::post('/post_labour_payment', [AdminAPIController::class, 'postLabourPayme
 Route::post('/get_labour_payment', [AdminAPIController::class, 'getLabourPayment']);
 Route::post('/delete_labour_payment', [AdminAPIController::class, 'LabourPaymentDelete']);
 
+//Technician Payment
+Route::post('/view_oa_payment_history', [AdminAPIController::class, 'viewOAPaymentHistory']);
+
+//Report Technician
+Route::post('/site_exp_technicians', [AdminAPIController::class, 'siteExpTechnicians']);
+Route::post('/get_exp_record', [AdminAPIController::class, 'getExpRecord']);;
+Route::post('/generate-pdf', [AdminAPIController::class, 'generatePdf']);
+
+
+//Technician Attendance Regularise
+Route::post('/technician_attendance', [AdminAPIController::class, 'technicianAttendance']);
+Route::post('/get_labour', [AdminAPIController::class, 'getLabour']);
+Route::post('/tech_att_record', [AdminAPIController::class, 'techAttRecord']);
+
+
+
+
 
 // ---------------------------------------- LABOUR API -------------------------------- 
 //Attendance Management

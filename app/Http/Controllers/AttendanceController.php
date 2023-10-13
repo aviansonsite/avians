@@ -413,6 +413,7 @@ class AttendanceController extends Controller
             ->orderby('oth.updated_at','DESC')
             ->get();
             $us_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+            
         }else{
             //only project admin wise OA Records access
 

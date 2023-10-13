@@ -14,11 +14,14 @@ use App\Models\LabourPaymentModel;
 use App\Models\TransferPaymentModel;
 use App\Models\TechnicianExpenseModel;
 use App\Models\TravelExpenseModel;
+use App\Models\PunchInOutModel;
+
 use Carbon\Carbon;
 use Session;
 use DB;
 use Hash;
 use File;
+use PDF;
 use App\Http\Controllers\CommonController as Common;
 class AdminAPIController extends Controller
 {
@@ -1693,5 +1696,703 @@ class AdminAPIController extends Controller
         }else{
            return ['status' => false, 'message' => 'Labour Payment Unsuccessfull...!'];
         }
+    }
+
+    public function viewOAPaymentHistory(Request $req)
+    {
+        $so_id=$req->get('so_id');
+        $so_id = CommonController::decode_ids($so_id);
+
+        $data=DB::table('sales_orders as so')
+            ->leftjoin('oa_tl_history as oth','oth.so_id','so.id')
+            ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','oth.id as oth_id','oth.status')
+            ->where(['so.id'=>$so_id,'so.delete'=>0])
+            ->orderby('so.updated_at','DESC')
+            ->get();
+
+        // dd($data);
+
+        $oth_id= array(); //create empty array
+
+        foreach($data as $dl)
+        {   
+            array_push($oth_id,$dl->oth_id);        // push lead technician in all technicians
+        }
+        // Avians account Payment
+        $accountant_payment = LabourPaymentModel::where(['delete'=>0])->whereIn('oth_id',$oth_id)->sum('payment_amnt');
+
+        // fot - from other technician
+        $fot = TransferPaymentModel::where(['delete'=>0])->whereIn('recvr_oth_id',$oth_id)->sum('amount');
+        $total_wallet = $accountant_payment + $fot;
+      
+        //Technician Expense
+        $technician_expenses = TechnicianExpenseModel::where(['delete'=>0])->whereIn('oth_id',$oth_id)->whereIn('oth_id',$oth_id)->sum('amount');
+
+        //Travel Expense
+        $travel_expense = TravelExpenseModel::where(['delete'=>0])->whereIn('oth_id',$oth_id)->sum('travel_amount');
+
+        $total_tech_expense = $technician_expenses + $travel_expense;
+
+        //transfer to other technician
+        $ttot = TransferPaymentModel::where(['delete'=>0])->whereIn('oth_id',$oth_id)->sum('amount');
+        // dd($ttot);
+        $total_expense = $technician_expenses + $travel_expense + $ttot;
+
+        //Cleared Payment
+        $aprvd_technician_expenses = TechnicianExpenseModel::where(['delete'=>0,'status'=>'Approved'])->whereIn('oth_id',$oth_id)->sum('aprvd_amount');
+    
+        //Cleared Payment
+        $apprvd_travel_expense = TravelExpenseModel::where(['delete'=>0,'status'=>'Approved'])->whereIn('oth_id',$oth_id)->sum('aprvd_amount');
+           
+        $cleared_pay = $aprvd_technician_expenses +  $apprvd_travel_expense;
+
+        //uncleared Payment
+        $uncleared_pay = TechnicianExpenseModel::where(['delete'=>0])->whereIn('oth_id',$oth_id)->where('status', '!=','Approved')->sum('amount');
+
+        $balance = $total_wallet - $total_expense;
+
+        $s_obj=SOModel::where(['delete'=>0,'id'=>$so_id])->orderby('created_at','DESC')->get();
+        // dd($s_obj);
+        //from avians account payment
+        $avians_payment=DB::table('sales_orders as so')
+            ->leftjoin('oa_tl_history as oth','oth.so_id','so.id')
+            ->leftjoin('labour_payments as lp','lp.oth_id','oth.id')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','oth.id as oth_id','oth.status','lp.p_desc','lp.payment_date','lp.payment_amnt','lp.delete','u.name','u.delete as u_delete',)
+            ->where(['so.delete'=>0,'lp.delete'=>0,'u.delete'=>0])
+            ->whereIn('oth_id',$oth_id)
+            ->orderby('so.updated_at','DESC')
+            ->get();   
+
+        // dd($avians_payment);
+        $general_expense=DB::table('technician_expenses as te')
+            ->leftjoin('users as u','u.id','te.a_id')
+            ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','te.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+            ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'so.id'=>$so_id])
+            ->orderby('te.created_at','DESC')
+            ->get();
+
+            foreach($general_expense as $ge){
+                $u_obj=UserModel::where(['delete'=>0,'id'=>$ge->u_a_id])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $ge->project_admin = $u->name;
+                }
+            }
+            
+        $travel_expense=DB::table('travel_expenses as te')
+            ->leftjoin('users as u','u.id','te.a_id')
+            ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id as u_a_id','u.emp_number','te.id','te.oth_id','te.ad_id','te.sa_id','te.mode_travel','te.from_location','te.to_location','te.total_km','te.travel_date','te.travel_desc','te.ad_remark','te.sa_remark','te.attachment','te.no_of_person','te.travel_amount','te.aprvd_amount','te.status','te.a_id','te.delete','te.created_at','te.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.a_id as so_aid')
+            ->where(['te.delete'=>0,'u.delete'=>0,'so.id'=>$so_id])
+            // ->where('te.created_at', '>=', $date)
+            ->orderby('te.created_at','DESC')
+            ->get();
+
+            foreach($travel_expense as $tr)
+            {
+                $u_obj=UserModel::where(['delete'=>0,'id'=>$tr->u_a_id])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $tr->project_admin = $u->name;
+                }
+            }
+        
+
+        $transfer_payment=DB::table('transfer_payments as tp')
+            ->leftjoin('oa_tl_history as oth','oth.id','tp.oth_id')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id as u_a_id','u.emp_number','tp.id','tp.oth_id','tp.u_id','tp.recvr_oth_id','tp.p_date','tp.p_desc','tp.amount','tp.a_id','tp.delete','tp.created_at','tp.updated_at','so.id as so_id','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.a_id as so_aid')
+            ->where(['tp.delete'=>0,'u.delete'=>0,'so.id'=>$so_id])
+            ->orderby('tp.created_at','DESC')
+            ->get();
+
+            foreach($transfer_payment as $tp)
+            {
+                $s_obj1=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id as u_a_id','u.emp_number','oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.updated_at','so.delete','so.labour','so.so_number')
+                ->where(['oth.id'=>$tp->recvr_oth_id,'so.delete'=>0])
+                ->orderby('so.updated_at','DESC')
+                ->get();
+
+                foreach($s_obj1 as $s){
+                    $tp->recvr_so_number = $s->so_number;
+                    $tp->recvr_labour_name = $s->labour_name;
+                }
+            }
+        
+        $receiver_payment=DB::table('transfer_payments as tp')
+            ->leftjoin('oa_tl_history as oth','oth.id','tp.recvr_oth_id')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id as u_a_id','u.emp_number','tp.id','tp.oth_id','tp.u_id','tp.recvr_oth_id','tp.p_date','tp.p_desc','tp.amount','tp.a_id','tp.delete','tp.created_at','tp.updated_at','so.id as so_id','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.a_id as so_aid')
+            ->where(['tp.delete'=>0,'u.delete'=>0,'so.id'=>$so_id])
+            ->orderby('tp.created_at','DESC')
+            ->get();
+
+            foreach($receiver_payment as $tp)
+            {
+                $s_obj1=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id as u_a_id','u.emp_number','oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.updated_at','so.delete','so.labour','so.so_number')
+                ->where(['oth.id'=>$tp->oth_id,'so.delete'=>0])
+                ->orderby('so.updated_at','DESC')
+                ->get();
+
+                foreach($s_obj1 as $s){
+                    $tp->sender_so_number = $s->so_number;
+                    $tp->sender_labour_name = $s->labour_name;
+                }
+            }    
+        // dd($receiver_payment);
+        return json_encode(array('status' => true ,'s_obj' => $s_obj,'data'=>$data ,'accountant_payment' => $accountant_payment,'total_wallet'=>$total_wallet,'technician_expenses' => $technician_expenses,'fot'=>$fot,'ttot' => $ttot,'total_expense'=>$total_expense,'cleared_pay' => $cleared_pay,'uncleared_pay'=>$uncleared_pay,'balance' => $balance,'total_tech_expense'=>$total_tech_expense,'avians_payment' => $avians_payment,'general_expense'=>$general_expense,'travel_expense' => $travel_expense,'transfer_payment'=>$transfer_payment,'receiver_payment,'=>$receiver_payment,'message' => 'Data Found'));
+    }
+
+    public function siteExpTechnicians()
+    {
+    	$u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+        
+        return json_encode(array('status' => true ,'u_obj' => $u_obj, 'message' => 'Data Found'));
+
+    }
+
+    public function getExpRecord(Request $req)
+    {
+        $from_date = $req->get('from_date');
+        $to_date = $req->get('to_date');
+        $labours = $req->get('labours');
+                                                                                                                                         
+        $u_obj1=UserModel::where(['delete'=>0,'id'=>$labours])->where('role','!=','0')->orderby('created_at','DESC')->get();
+
+        foreach($u_obj1 as $u)
+        {
+            $u->from_date = date('d-m-Y', strtotime($from_date));
+            $u->to_date = date('d-m-Y', strtotime($to_date));
+            $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u->id])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->sum('payment_amnt');
+            $u->adv_amnt = $accountant_payment;
+        }
+
+        $total_date =  array();
+        //Technician Expense
+        $exp_date = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$labours])->whereDate('exp_date', '>=' ,$from_date)->whereDate('exp_date', '<=' ,$to_date)->groupBy('exp_date')->get('exp_date');
+
+        $trav_date = TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours])->whereDate('travel_date', '>=' ,$from_date)->whereDate('travel_date', '<=' ,$to_date)->groupBy('travel_date')->get('travel_date');
+
+        // push unique date in one object
+        foreach($trav_date as $t)
+        {
+            array_push($total_date,$t);
+        }
+
+        foreach($exp_date as $ed)
+        {
+            array_push($total_date,$ed);
+        }
+
+        foreach ($total_date as $td) {
+            if (isset($td->travel_date)) {
+                $td->exp_date = $td->travel_date;
+                unset($td->travel_date);
+            }
+        }
+
+        // Convert the array to a Laravel Collection
+        $collection = collect($total_date);
+
+        // Use the unique() method with a custom key ('exp_date') to remove duplicates
+        $uniqueDates = $collection->unique('exp_date')->values();
+
+        // Sort the collection to ensure the dates are in sequential order
+        $sortedDates = $uniqueDates->sortBy('exp_date')->values();
+
+        // $uniqueDates = array_values(array_unique($total_date));
+        // $uniqueDates = $uniqueDates->sortBy('exp_date');
+        $tech_exp= array(); //create empty array
+        foreach($sortedDates as $ed)
+        {
+
+            $data=DB::table('technician_expenses as te')
+                ->leftjoin('users as u','u.id','te.a_id')
+                ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+                ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.status'=>"Approved",'te.exp_date'=>$ed->exp_date])
+                ->orderby('u.created_at','DESC')
+                ->get();
+
+            foreach($data as $d){
+                $u_obj=UserModel::where(['delete'=>0,'id'=>$d->so_aid])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $d->project_admin = $u->name;
+                }
+
+                $u_obj=UserModel::where(['delete'=>0,'id'=>$d->sa_id])->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $d->super_admin = $u->name;
+                }
+            }
+
+            foreach($data as $d){
+                array_push($tech_exp,$d);
+            }
+
+            $t_data=DB::table('travel_expenses as te')
+            ->leftjoin('users as u','u.id','te.a_id')
+            ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.oth_id','te.travel_date as exp_date','te.travel_desc as exp_desc','te.mode_travel as exp_type','te.a_id','te.delete','te.attachment','te.ad_id','te.ad_remark','te.status','te.sa_remark','te.sa_id','te.travel_amount as amount','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+            ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.status'=>"Approved",'te.travel_date'=>$ed->exp_date])
+            ->orderby('u.created_at','DESC')
+            ->get();
+
+            foreach($t_data as $td){
+                $u_obj=UserModel::where(['delete'=>0,'id'=>$td->so_aid])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $td->project_admin = $u->name;
+                }
+
+                $u_obj=UserModel::where(['delete'=>0,'id'=>$td->sa_id])->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $td->super_admin = $u->name;
+                }
+            }
+
+            foreach($t_data as $td){
+                array_push($tech_exp,$td);
+            }
+  
+        }
+
+    
+        if(count($tech_exp)>0){
+            return json_encode(array('status' => true ,'data' => $tech_exp,'u_obj1'=>$u_obj1,'message' => 'Data Found'));
+        }else{
+            return ['status' => false, 'message' => 'No Data Found'];
+        }
+    }
+
+    public function generatePdf(Request $req)
+    {
+        $a_id=Session::get('USER_ID');
+        $from_date = $req->get('pdf_from_date');
+        $to_date = $req->get('pdf_to_date');
+        $labours = $req->get('pdf_labours');
+                                                                                                                                         
+        $u_obj1=UserModel::where(['delete'=>0,'id'=>$labours])->where('role','!=','0')->orderby('created_at','DESC')->get();
+        // dd($u_obj1);
+        foreach($u_obj1 as $u)
+        {
+            $u->from_date = date('d-m-Y', strtotime($from_date));
+            $u->to_date = date('d-m-Y', strtotime($to_date));
+            $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u->id])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->sum('payment_amnt');
+            $u->adv_amnt = $accountant_payment;
+            
+        }
+
+        $total_date =  array();
+        //Technician Expense
+        $exp_date = TechnicianExpenseModel::where(['delete'=>0,'a_id'=>$labours])->whereDate('exp_date', '>=' ,$from_date)->whereDate('exp_date', '<=' ,$to_date)->groupBy('exp_date')->get('exp_date');
+
+        $trav_date = TravelExpenseModel::where(['delete'=>0,'a_id'=>$labours])->whereDate('travel_date', '>=' ,$from_date)->whereDate('travel_date', '<=' ,$to_date)->groupBy('travel_date')->get('travel_date');
+
+        // push unique date in one object
+        foreach($trav_date as $t)
+        {
+            array_push($total_date,$t);
+        }
+
+        foreach($exp_date as $ed)
+        {
+            array_push($total_date,$ed);
+        }
+
+        foreach ($total_date as $td) {
+            if (isset($td->travel_date)) {
+                $td->exp_date = $td->travel_date;
+                unset($td->travel_date);
+            }
+        }
+        
+        // Convert the array to a Laravel Collection
+        $collection = collect($total_date);
+
+        // Use the unique() method with a custom key ('exp_date') to remove duplicates
+        $uniqueDates = $collection->unique('exp_date')->values();
+
+        // Sort the collection to ensure the dates are in sequential order
+        $sortedDates = $uniqueDates->sortBy('exp_date')->values();
+
+        // $uniqueDates = array_values(array_unique($total_date));
+        // $uniqueDates = $uniqueDates->sortBy('exp_date');
+        $tech_exp= array(); //create empty array
+        foreach($sortedDates as $ed)
+        {
+
+            $data=DB::table('technician_expenses as te')
+                ->leftjoin('users as u','u.id','te.a_id')
+                ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+                ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.status'=>"Approved",'te.exp_date'=>$ed->exp_date])
+                ->orderby('u.created_at','DESC')
+                ->get();
+
+            foreach($data as $d){
+                $u_obj=UserModel::where(['delete'=>0,'id'=>$d->so_aid])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $d->project_admin = $u->name;
+                }
+
+                $u_obj=UserModel::where(['delete'=>0,'id'=>$d->sa_id])->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $d->super_admin = $u->name;
+                }
+            }
+
+            foreach($data as $d){
+                array_push($tech_exp,$d);
+            }
+
+            $t_data=DB::table('travel_expenses as te')
+            ->leftjoin('users as u','u.id','te.a_id')
+            ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.oth_id','te.travel_date as exp_date','te.travel_desc as exp_desc','te.mode_travel as exp_type','te.a_id','te.delete','te.attachment','te.ad_id','te.ad_remark','te.status','te.sa_remark','te.sa_id','te.travel_amount as amount','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+            ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.status'=>"Approved",'te.travel_date'=>$ed->exp_date])
+            ->orderby('u.created_at','DESC')
+            ->get();
+
+            foreach($t_data as $td){
+                $u_obj=UserModel::where(['delete'=>0,'id'=>$td->so_aid])->where('role','!=','0')->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $td->project_admin = $u->name;
+                }
+
+                $u_obj=UserModel::where(['delete'=>0,'id'=>$td->sa_id])->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $td->super_admin = $u->name;
+                }
+            }
+
+            foreach($t_data as $td){
+                array_push($tech_exp,$td);
+            }
+  
+        }
+
+        // dd($tech_exp);
+        // return view('report.siteExpensePdf',compact('tech_exp','u_obj1'));
+        $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.siteExpensePdf',compact('tech_exp','u_obj1'))->setPaper('a4', 'landscape');
+        
+        $pdf1->getDomPDF()->setHttpContext(
+                stream_context_create([
+                    'ssl' => [
+                        'allow_self_signed'=> TRUE,
+                        'verify_peer' => FALSE,
+                        'verify_peer_name' => FALSE,
+                    ]
+                ])
+            );
+   
+        
+        return $pdf1->download();
+    }
+
+    public function technicianAttendance(Request $req)
+    {
+        // $a_idd [] =Session::get('USER_ID');
+        // $a_id =Session::get('USER_ID');
+        // $role =Session::get('ROLES');
+
+        $role = $req->get('role');                                  
+        $a_id = $req->get('u_id');
+        $a_idd []= $req->get('u_id');
+
+    	$u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->where('id', '!=', $a_id)->orderby('created_at','DESC')->get();
+    	// $s_obj=SOModel::whereIn('labour',$a_idd)->where(['delete'=>0])->orderby('created_at','DESC')->get();
+       
+        if($role == 0 || $role == 2){
+            //only super admin and accountant can access all OA Records
+
+    	    // $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+            $s_obj=DB::table('oa_tl_history as oth')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
+            ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            ->orderby('oth.updated_at','DESC')
+            ->get();
+           
+        }else{
+            //only project admin wise OA Records access
+
+    	    // $s_obj=SOModel::where(['delete'=>0,'a_id'=>$a_id])->orderby('created_at','DESC')->get();
+
+            $s_obj=DB::table('oa_tl_history as oth')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.a_id','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
+            ->where(['so.a_id'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            ->orderby('oth.updated_at','DESC')
+            ->get();
+           
+        }
+
+
+        $tdate=date("Y-m-d");
+
+        $t_count=PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate])->orderby('updated_at','DESC')->count();
+        $p_obj=PunchInOutModel::where(['delete'=>0])->orderby('updated_at','DESC')->get();
+
+        $createdAt = PunchInOutModel::whereNotNull('created_at')->get();
+        $updatedAt = PunchInOutModel::whereNotNull('updated_at')->get();
+
+        $p_id = PunchInOutModel::where(['delete'=>0,'pin_date'=>$tdate,'a_id'=>$a_id])->orderby('updated_at','DESC')->get();
+        // dd($p_obj);
+        // $p_id = $p_id[0];
+        foreach($p_obj as $p){
+            $startTime=$p->created_at;
+            $finishTime=$p->updated_at;
+            // $totalDuration = $finishTime->diffInMinutes($startTime);
+            $totalDuration = $startTime->diff($finishTime)->format('%H:%I:%S');
+            $p->totalDuration=$totalDuration;
+            $p->pin_time=$p->created_at->format('H:i:s');          
+            $p->pout_time=$p->updated_at->format('H:i:s');  
+        }   
+        
+    	// return view('labour.test',compact('u_obj','s_obj'));
+    	// return view('report.technicianAttendanceReport',compact('u_obj','s_obj','t_count','p_obj','p_id'));
+        return json_encode(array('status' => true ,'u_obj' => $u_obj,'s_obj'=>$s_obj,'message' => 'Data Found'));
+    }
+
+    public function getLabour(Request $req)
+    {
+        $so_id = $req->get('oth_id');
+        $u_id="";
+        // if($so_id[0] == 'all'){
+            
+        //     $data=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+
+        //     if(!empty($data)){
+        //         return json_encode(array('status' => true ,'data' => $data));
+        //     }else{
+        //         return ['status' => false, 'message' => 'No Data Found'];
+        //     }
+
+        // }else{
+            
+            $s_obj=DB::table('oa_tl_history as oth')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.a_id','u.name','u.delete as u_delete','u.is_active')
+            ->where(['oth.id'=>$so_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            ->orderby('oth.updated_at','DESC')
+            ->get();
+
+            $u_id1 = explode(",",$s_obj[0]->labour);
+            array_push($u_id1,$s_obj[0]->lead_technician);
+            // $s_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->orderby('created_at','DESC')->get();
+
+            // $u_id1 = [];
+            // foreach($s_obj as $s){
+            //     $u_id = array_map('intval', explode(',', $s->labour));
+                
+            //     foreach($u_id as $u){
+
+            //         array_push($u_id1, $u); 
+            //     }
+            // }
+
+            $data=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->whereIn('id',$u_id1)->orderby('created_at','DESC')->get();
+
+            // $data=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+            
+            if(!empty($data)){
+                return json_encode(array('status' => true ,'data' => $data,'so_id'=>$so_id,'s_obj'=>$s_obj,'u_id'=>$u_id));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
+
+        // }
+        
+    }
+
+    //get punch in out records
+    public function techAttRecord(Request $req)
+    {
+        $from_date = $req->get('from_date');
+        $to_date = $req->get('to_date');
+        $so_id = $req->get('so_id'); 
+        $labours = $req->get('labours');                                 
+        $a_id = $req->get('u_id');
+
+        // $so_id1 = implode(",",$so_id);
+        $tdate=date("Y-m-d");
+
+        if($so_id[0] == "all"){
+
+
+            $p_obj=PunchInOutModel::where(['delete'=>0,'pin_u_id'=>$labours])->whereDate('pin_date', '>=' ,$from_date)->whereDate('pin_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+
+            if(count($p_obj) > 0){
+                //punch out records
+                    // $p_obj=PunchInOutModel::where(['delete'=>0,'pin_u_id'=>$labours])->whereDate('pin_date', '>=' ,$from_date)->whereDate('pin_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+
+                // $p_obj=PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+
+                foreach($p_obj as $p){
+                    $startTime=$p->created_at;
+                    $finishTime=$p->updated_at;
+        
+                    // $totalDuration = $finishTime->diffInMinutes($startTime);
+                    $totalDuration = $startTime->diff($finishTime)->format('%H:%I:%S');
+                    $p->totalDuration=$totalDuration;
+                    $p->pin_time=$p->created_at->format('H:i:s');          
+                    $p->pout_time=$p->updated_at->format('H:i:s');  
+        
+                    $u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$labours])->orderby('created_at','DESC')->get();
+                    foreach($u_obj as $u){
+                        $p->technician_name = $u->name;
+                    }
+                    
+                    $tl_u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$p->a_id])->orderby('created_at','DESC')->get();
+        
+                    foreach($tl_u_obj as $tl){
+                        $p->tl_name = $tl->name;
+                    }
+        
+                    $so_id = explode(",",$p->pin_so_id);
+        
+                    $s_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->orderby('created_at','DESC')->get();
+                    $p->s_obj = $s_obj;
+
+                }
+
+            }else{
+
+                //punch in records
+                $p_obj=PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+
+                foreach($p_obj as $p){
+                    $startTime=$p->created_at;
+                    $finishTime=$p->updated_at;
+        
+                    // $totalDuration = $finishTime->diffInMinutes($startTime);
+                    $totalDuration = $startTime->diff($finishTime)->format('%H:%I:%S');
+                    $p->totalDuration=$totalDuration;
+                    $p->pin_time=$p->created_at->format('H:i:s');          
+                    $p->pout_time=$p->updated_at->format('H:i:s');  
+        
+                    $u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$labours])->orderby('created_at','DESC')->get();
+                    foreach($u_obj as $u){
+                        $p->technician_name = $u->name;
+                    }
+                    
+                    $tl_u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$p->a_id])->orderby('created_at','DESC')->get();
+        
+                    foreach($tl_u_obj as $tl){
+                        $p->tl_name = $tl->name;
+                    }
+        
+                    $so_id = explode(",",$p->pout_so_id);
+        
+                    $s_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->orderby('created_at','DESC')->get();
+                    $p->s_obj = $s_obj;
+                }
+            }
+
+
+        }else{
+
+
+            $p_obj=PunchInOutModel::where(['delete'=>0,'pin_u_id'=>$labours,'pin_oth_id'=>$so_id])->whereDate('pin_date', '>=' ,$from_date)->whereDate('pin_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+
+            if(count($p_obj) > 0)
+            {
+
+                //for punch in regularies
+
+                // $p_obj=PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+                foreach($p_obj as $p){
+                    $startTime=$p->created_at;
+                    $finishTime=$p->updated_at;
+        
+                    // $totalDuration = $finishTime->diffInMinutes($startTime);
+                    $totalDuration = $startTime->diff($finishTime)->format('%H:%I:%S');
+                    $p->totalDuration=$totalDuration;
+                    $p->pin_time=$p->created_at->format('H:i:s');          
+                    $p->pout_time=$p->updated_at->format('H:i:s');  
+        
+                    $u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$labours])->orderby('created_at','DESC')->get();
+                    foreach($u_obj as $u){
+                        $p->technician_name = $u->name;
+                    }
+                    $tl_u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$p->a_id])->orderby('created_at','DESC')->get();
+        
+                    foreach($tl_u_obj as $tl){
+                        $p->tl_name = $tl->name;
+                    }
+        
+                    // $so_id = explode(",",$p->pin_so_id);
+        
+                    // $s_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0,])->orderby('created_at','DESC')->get();
+                    // $p->s_obj = $s_obj;
+
+                    $oth_obj=OATLHistoryModel::where(['id'=>$so_id])->orderby('created_at','DESC')->get();
+                    
+                    $s_obj=SOModel::where(['delete'=>0,'id'=>$oth_obj[0]->so_id])->orderby('created_at','DESC')->get();
+                    $p->s_obj = $s_obj;
+                    
+                }
+            }
+            else
+            {
+                
+                // for punch out regularies
+                $p_obj=PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours,'pout_oth_id'=>$so_id])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+                foreach($p_obj as $p){
+                    $startTime=$p->created_at;
+                    $finishTime=$p->updated_at;
+        
+                    // $totalDuration = $finishTime->diffInMinutes($startTime);
+                    $totalDuration = $startTime->diff($finishTime)->format('%H:%I:%S');
+                    $p->totalDuration=$totalDuration;
+                    $p->pin_time=$p->created_at->format('H:i:s');          
+                    $p->pout_time=$p->updated_at->format('H:i:s');  
+        
+                    $u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$labours])->orderby('created_at','DESC')->get();
+                    foreach($u_obj as $u){
+                        $p->technician_name = $u->name;
+                    }
+                    $tl_u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$p->a_id])->orderby('created_at','DESC')->get();
+        
+                    foreach($tl_u_obj as $tl){
+                        $p->tl_name = $tl->name;
+                    }
+        
+        
+                    // $so_id = explode(",",$p->pin_so_id);
+                    $oth_obj=OATLHistoryModel::where(['id'=>$so_id])->orderby('created_at','DESC')->get();
+                    
+                    $s_obj=SOModel::where(['delete'=>0,'id'=>$oth_obj[0]->so_id])->orderby('created_at','DESC')->get();
+                    $p->s_obj = $s_obj;
+                }
+
+            }
+        }
+
+        
+        if(count($p_obj)>0){
+            return json_encode(array('status' => true ,'data' => $p_obj,'fdate' =>$from_date ,'labours' =>$labours,'message' => 'Data Found'));
+        }else{
+        return ['status' => false, 'message' => 'No Data Found'];
+        }
+        
+
     }
 }   
