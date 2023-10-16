@@ -26,13 +26,34 @@ class ReportController extends Controller
 
     }
 
+    public function getTechSO(Request $req)
+    {
+        $a_id=Session::get('USER_ID');
+        $labour = $req->get('labour');
+
+        $data=DB::table('oa_tl_history as oth')
+        ->leftjoin('sales_orders as so','so.id','oth.so_id')
+        ->select('oth.id','oth.so_id','oth.lead_technician','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid','so.delete','so.created_at')
+        ->where(['so.delete'=>0,'oth.lead_technician'=>$labour])
+        ->orderby('so.created_at','DESC')
+        ->get();
+
+        if(count($data)>0){
+            return json_encode(array('status' => true ,'data' => $data,'labour'=>$labour,'message' => 'Data Found'));
+        }else{
+            return ['status' => false, 'message' => 'No Data Found'];
+        }
+    }
+
     public function getExpRecord(Request $req)
     {
         $a_id=Session::get('USER_ID');
         $from_date = $req->get('from_date');
         $to_date = $req->get('to_date');
         $labours = $req->get('labours');
-                                                                                                                                         
+        $so = $req->get('so');
+        $oth_id = $req->get('oth_id');
+
         $u_obj1=UserModel::where(['delete'=>0,'id'=>$labours])->where('role','!=','0')->orderby('created_at','DESC')->get();
 
         foreach($u_obj1 as $u)
@@ -88,7 +109,7 @@ class ReportController extends Controller
                 ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
                 ->leftjoin('sales_orders as so','so.id','oth.so_id')
                 ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
-                ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.status'=>"Approved",'te.exp_date'=>$ed->exp_date])
+                ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.oth_id'=>$oth_id,'te.status'=>"Approved",'te.exp_date'=>$ed->exp_date])
                 ->orderby('u.created_at','DESC')
                 ->get();
 
@@ -113,7 +134,7 @@ class ReportController extends Controller
             ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
             ->leftjoin('sales_orders as so','so.id','oth.so_id')
             ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.oth_id','te.travel_date as exp_date','te.travel_desc as exp_desc','te.mode_travel as exp_type','te.a_id','te.delete','te.attachment','te.ad_id','te.ad_remark','te.status','te.sa_remark','te.sa_id','te.travel_amount as amount','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
-            ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.status'=>"Approved",'te.travel_date'=>$ed->exp_date])
+            ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.oth_id'=>$oth_id,'te.status'=>"Approved",'te.travel_date'=>$ed->exp_date])
             ->orderby('u.created_at','DESC')
             ->get();
 
@@ -149,7 +170,8 @@ class ReportController extends Controller
         $from_date = $req->get('pdf_from_date');
         $to_date = $req->get('pdf_to_date');
         $labours = $req->get('pdf_labours');
-                                                                                                                                         
+        $oth_id = $req->get('pdf_oth_id');
+
         $u_obj1=UserModel::where(['delete'=>0,'id'=>$labours])->where('role','!=','0')->orderby('created_at','DESC')->get();
         // dd($u_obj1);
         foreach($u_obj1 as $u)
@@ -205,7 +227,7 @@ class ReportController extends Controller
                 ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
                 ->leftjoin('sales_orders as so','so.id','oth.so_id')
                 ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
-                ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.status'=>"Approved",'te.exp_date'=>$ed->exp_date])
+                ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.oth_id'=>$oth_id,'te.status'=>"Approved",'te.exp_date'=>$ed->exp_date])
                 ->orderby('u.created_at','DESC')
                 ->get();
 
@@ -230,7 +252,7 @@ class ReportController extends Controller
             ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
             ->leftjoin('sales_orders as so','so.id','oth.so_id')
             ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.oth_id','te.travel_date as exp_date','te.travel_desc as exp_desc','te.mode_travel as exp_type','te.a_id','te.delete','te.attachment','te.ad_id','te.ad_remark','te.status','te.sa_remark','te.sa_id','te.travel_amount as amount','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
-            ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.status'=>"Approved",'te.travel_date'=>$ed->exp_date])
+            ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.oth_id'=>$oth_id,'te.status'=>"Approved",'te.travel_date'=>$ed->exp_date])
             ->orderby('u.created_at','DESC')
             ->get();
 
@@ -643,4 +665,6 @@ class ReportController extends Controller
         
         return $pdf1->download();
     }
+
+    
 }

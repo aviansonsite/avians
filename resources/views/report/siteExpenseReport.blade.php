@@ -130,10 +130,8 @@
                                 <div class="form-group mb-3">
                                     <label for="so" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA <sup class="text-danger">*</sup></label>
                                     <select class="form-control select2" id="so" required name="so">
-                                        <option value="" disabled selected>Select</option>
-                                        @foreach($s_obj as $s)
-                                            <option value="{{$s->id}}">{{$s->so_number}}</option>
-                                        @endforeach
+                                       
+                                        
                                     </select>
                                     <span class="text-danger error" id="serror"></span>
                                 </div>
@@ -165,6 +163,8 @@
                                 <input type="hidden" name="pdf_from_date" id="pdf_from_date" value="">
                                 <input type="hidden" name="pdf_to_date" id="pdf_to_date" value="">
                                 <input type="hidden" name="pdf_labours" id="pdf_labours" value="">
+                                <input type="hidden" name="pdf_oth_id" id="pdf_oth_id" value="">
+
                                 <button type="submit" class="btn btn-primary waves-effect waves-light w-sm btn-sm">Generate Pdf</button>
                             {!! Form::close() !!}
                             </div>
@@ -299,7 +299,7 @@
                 $.each(response.data,function(index,row){
 
                     //get project type wise project records
-                    $('#so').append("<option value='"+row.id+"'>"+row.converted_no+" ("+row.project_name+")</option>");
+                    $('#so').append("<option value='"+row.so_id+"' data-oth_id='"+row.id+"'>"+row.so_number+" ("+row.project_name+")</option>");
                                     
                 });
             },
@@ -365,11 +365,13 @@
             var from_date = $('#from_date').val();
             var to_date = $('#to_date').val();
             var labours = $('#labours').val();
+            var so= $('#so').val();
+            var oth_id = $('#so').find('option:selected').data('oth_id');
 
             $('#pdf_from_date').val(from_date);   
             $('#pdf_to_date').val(to_date); 
             $('#pdf_labours').val(labours); 
-
+            $('#pdf_oth_id').val(oth_id);
 
             //date convert into dd/mm/yyyy
             function formatDate (input) {
@@ -391,7 +393,7 @@
                 },
                 url:"get-exp-record",
                 type :'get',
-                data : {from_date:from_date,to_date:to_date,labours:labours},
+                data : {from_date:from_date,to_date:to_date,labours:labours,so:so,oth_id:oth_id},
                 async: false,
                 cache: true,
                 dataType: 'json',

@@ -68,6 +68,7 @@ Route::group(['middleware' => 'login'], function ()
 
     //Expense
     Route::get('/site_exp_report', [ReportController::class, 'siteExpReport'])->name('site_exp_report.page');
+    Route::get('/get_tech_so', [ReportController::class, 'getTechSO']);
     Route::get('/get-exp-record', [ReportController::class, 'getExpRecord']);
     Route::post('/generate-pdf', [ReportController::class, 'generatePdf']);
     // ****** Start Accountant **********
@@ -86,13 +87,13 @@ Route::group(['middleware' => 'login'], function ()
     Route::get('/regularise-attendance', [AttendanceController::class, 'regulariseAttendance']);
 
 
-    // Accountant Manage Payment
+    // Manage Labour Payment
     Route::get('/manage_labour_payment', [LabourPaymentController::class, 'managelabourPayment'])->name('manage_labour_payment.page');
     Route::get('/get_all_expenses', [LabourPaymentController::class, 'getAllExpense']);
     Route::get('/post_expense', [LabourPaymentController::class, 'postExpense']);
 
 
-    // Accountant Manage Payment
+    // SO Payment History
     Route::get('/SO_payment_history', [SOController::class, 'SOPaymentHistory'])->name('SO_payment_history.page');
     Route::get('/view_oa_payment_history/{id}', [SOController::class, 'viewOAPaymentHistory']);
     // Route::get('/get_all_expenses', [LabourPaymentController::class, 'getAllExpense']);
