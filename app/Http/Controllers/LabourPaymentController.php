@@ -758,7 +758,7 @@ class LabourPaymentController extends Controller
                 ->orderby('so.updated_at','DESC')
                 ->get();
 
-                 $u_obj=DB::table('oa_tl_history as oth')
+            $u_obj=DB::table('oa_tl_history as oth')
                 ->leftjoin('users as u','u.id','oth.lead_technician')
                 ->leftjoin('sales_orders as so','so.id','oth.so_id')
                 ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active','u.created_at')
