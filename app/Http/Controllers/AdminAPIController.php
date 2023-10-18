@@ -1535,12 +1535,12 @@ class AdminAPIController extends Controller
 
     public function techniciansPayments()
     {
-    	$u_obj=DB::table('users as u')
-            ->leftjoin('oa_tl_history as oth','oth.lead_technician','u.id')
+    	$u_obj=DB::table('oa_tl_history as oth')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
             ->leftjoin('sales_orders as so','so.id','oth.so_id')
-            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','u.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active','u.role')
-            ->where(['u.delete'=>0,'u.is_active'=>0,'u.role'=>3])
-            ->orderby('u.updated_at','DESC')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active','u.created_at')
+            ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+            ->orderby('u.created_at','ASC')
             ->get();
 
     	$s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
