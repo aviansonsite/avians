@@ -1988,6 +1988,25 @@ class AdminAPIController extends Controller
         }
     }
 
+    public function getTechSO(Request $req)
+    {
+        $a_id=Session::get('USER_ID');
+        $labour = $req->get('labour');
+
+        $data=DB::table('oa_tl_history as oth')
+        ->leftjoin('sales_orders as so','so.id','oth.so_id')
+        ->select('oth.id','oth.so_id','oth.lead_technician','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid','so.delete','so.created_at')
+        ->where(['so.delete'=>0,'oth.lead_technician'=>$labour])
+        ->orderby('so.created_at','DESC')
+        ->get();
+
+        if(count($data)>0){
+            return json_encode(array('status' => true ,'data' => $data,'labour'=>$labour,'message' => 'Data Found'));
+        }else{
+            return ['status' => false, 'message' => 'No Data Found'];
+        }
+    }
+    
     public function generatePdf(Request $req)
     {
         $delOldPDF = "files/temp/";

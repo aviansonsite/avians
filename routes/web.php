@@ -66,7 +66,7 @@ Route::group(['middleware' => 'login'], function ()
     //Visit OA Management
     Route::get('/visit_so', [SOController::class, 'visitSoList'])->name('visit_so.page');
 
-    //Expense
+    //Site Expense
     Route::get('/site_exp_report', [ReportController::class, 'siteExpReport'])->name('site_exp_report.page');
     Route::get('/get_tech_so', [ReportController::class, 'getTechSO']);
     Route::get('/get-exp-record', [ReportController::class, 'getExpRecord']);
