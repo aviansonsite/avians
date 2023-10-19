@@ -64,7 +64,7 @@ Route::post('/view_oa_payment_history', [AdminAPIController::class, 'viewOAPayme
 //Report Technician
 Route::post('/site_exp_technicians', [AdminAPIController::class, 'siteExpTechnicians']);
 Route::post('/get_exp_record', [AdminAPIController::class, 'getExpRecord']);;
-Route::post('/generate-pdf', [AdminAPIController::class, 'generatePdf']);
+Route::post('/generate_pdf', [AdminAPIController::class, 'generatePdf']);
 
 
 //Technician Attendance Regularise
