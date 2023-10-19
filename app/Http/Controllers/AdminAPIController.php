@@ -1995,7 +1995,6 @@ class AdminAPIController extends Controller
         $to_date = $req->get('pdf_to_date');
         $labours = $req->get('pdf_labours');
         $oth_id = $req->get('pdf_oth_id'); 
-        
 
 
         $u_obj1=UserModel::where(['delete'=>0,'id'=>$labours])->where('role','!=','0')->orderby('created_at','DESC')->get();
