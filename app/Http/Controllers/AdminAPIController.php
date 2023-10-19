@@ -1990,6 +1990,9 @@ class AdminAPIController extends Controller
 
     public function generatePdf(Request $req)
     {
+        $delOldPDF = "files/temp/";
+        File::cleanDirectory($delOldPDF);
+
         $a_id=Session::get('USER_ID');
         $from_date = $req->get('pdf_from_date');
         $to_date = $req->get('pdf_to_date');
@@ -2112,9 +2115,16 @@ class AdminAPIController extends Controller
                     ]
                 ])
             );
-   
-        
-        return $pdf1->download();
+
+        $file_name="SITE_EXPENSE_REPORT_".$u_obj1[0]->id.".pdf";
+        $delOldPDF = "files/temp/$file_name";
+        file_put_contents("files/temp/$file_name", $pdf1->download());
+        if(count($tech_exp)>0){
+            return json_encode(array('status' => true ,'data' => $file_name,'message' => 'Generate PDF Successfully'));
+        }else{
+            return ['status' => false, 'message' => 'Generate PDF UnSuccessfull'];
+        }
+       
     }
 
     public function technicianAttendance(Request $req)
