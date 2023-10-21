@@ -74,7 +74,7 @@ Route::post('/get_labour', [AdminAPIController::class, 'getLabour']);
 Route::post('/tech_att_record', [AdminAPIController::class, 'techAttRecord']);
 
 
-
+ 
 
 // ---------------------------------------- LABOUR API -------------------------------- 
 //Attendance Management

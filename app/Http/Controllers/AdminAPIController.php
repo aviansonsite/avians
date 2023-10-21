@@ -2138,6 +2138,7 @@ class AdminAPIController extends Controller
         $file_name="SITE_EXPENSE_REPORT_".$u_obj1[0]->id.".pdf";
         $delOldPDF = "files/temp/$file_name";
         file_put_contents("files/temp/$file_name", $pdf1->download());
+        return json_encode(array('status' => true ,'data' => $file_name,'message' => 'Generate PDF Successfully'));
         if(count($tech_exp)>0){
             return json_encode(array('status' => true ,'data' => $file_name,'message' => 'Generate PDF Successfully'));
         }else{
