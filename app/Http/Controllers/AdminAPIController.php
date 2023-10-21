@@ -900,72 +900,147 @@ class AdminAPIController extends Controller
         // $a_id=Session::get('USER_ID');
         $roles = $req->get('role');                                  
         $a_id = $req->get('u_id');
-        // $data = SOModel::where(['delete'=>0])->orderby('updated_at','DESC')->get();
+        $from_date = $req->get('from_date');
+        $to_date = $req->get('to_date');
        
+        if ($from_date == null && $to_date == null) 
+        {   
+            $date = Carbon::now()->subDays(30);  // get last 7 days record
+            $from_date = date('d-m-Y', strtotime($date));
+            $currentDate = date('d-m-Y'); // Current date in 'd-m-Y' format
+            if($roles == 0){
 
-        if($roles == 0){
-            $data=DB::table('sales_orders as so')
-            ->leftjoin('users as u','u.id','so.a_id')
-            ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','u.name','u.delete as u_delete','u.is_active')
-            ->where(['so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
-            ->orderby('so.updated_at','DESC')
-            ->get();
+                $data=DB::table('sales_orders as so')
+                ->leftjoin('users as u','u.id','so.a_id')
+                ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','u.name','u.delete as u_delete','u.is_active')
+                ->where('so.created_at', '>=', $date)
+                ->where(['so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('so.updated_at','DESC')
+                ->get();
 
-            foreach($data as $d){
-                $oth_obj=OATLHistoryModel::where(['so_id'=>$d->id,'status'=>1])->orderby('created_at','DESC')->get();
+                foreach($data as $d){
+                    $oth_obj=OATLHistoryModel::where(['so_id'=>$d->id,'status'=>1])->orderby('created_at','DESC')->get();
 
-                foreach($oth_obj as $o){
-                    $d->oth_status = $o->status;
-                    $d->oth_id = $o->id;
+                    foreach($oth_obj as $o){
+                        $d->oth_status = $o->status;
+                        $d->oth_id = $o->id;
+                    }
+
+                    // User Data
+                    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->lead_technician])->orderby('created_at','DESC')->get();
+
+                    foreach($u_obj as $u){
+                        $d->lead_technician_name = $u->name;
+                    }
+
+                    $d->enc_id = CommonController::encode_ids($d->id);
+                }
+                // $oth_obj=OATLHistoryModel::where(['id'=>$so_id])->orderby('created_at','DESC')->get();
+
+            }else{
+                $data=DB::table('sales_orders as so')
+                ->leftjoin('users as u','u.id','so.a_id')
+                ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','u.name','u.delete as u_delete','u.is_active')
+                ->where('so.created_at', '>=', $date)
+                ->where(['so.a_id'=>$a_id,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('so.updated_at','DESC')
+                ->get();
+                
+                foreach($data as $d){
+                    $oth_obj=OATLHistoryModel::where(['so_id'=>$d->id,'status'=>1])->orderby('created_at','DESC')->get();
+
+                    foreach($oth_obj as $o){
+                        $d->oth_status = $o->status;
+                        $d->oth_id = $o->id;
+                    }
+
+                    // User Data
+                    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->lead_technician])->orderby('created_at','DESC')->get();
+
+                    foreach($u_obj as $u){
+                        $d->lead_technician_name = $u->name;
+                    }
+
+                    $d->enc_id = CommonController::encode_ids($d->id);
                 }
 
-                // User Data
-                $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->lead_technician])->orderby('created_at','DESC')->get();
-
-                foreach($u_obj as $u){
-                    $d->lead_technician_name = $u->name;
-                }
-
-                $d->enc_id = CommonController::encode_ids($d->id);
             }
-            // $oth_obj=OATLHistoryModel::where(['id'=>$so_id])->orderby('created_at','DESC')->get();
 
+             // User Data
+            $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+
+            if(!empty($data)){
+                return json_encode(array('status' => true ,'data' => $data,'roles' => $roles,'from_date'=>$from_date,'to_date'=> $currentDate,'message' => 'Data Found'));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
         }else{
-            $data=DB::table('sales_orders as so')
-            ->leftjoin('users as u','u.id','so.a_id')
-            ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','u.name','u.delete as u_delete','u.is_active')
-            ->where(['so.a_id'=>$a_id,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
-            ->orderby('so.updated_at','DESC')
-            ->get();
-            
-            foreach($data as $d){
-                $oth_obj=OATLHistoryModel::where(['so_id'=>$d->id,'status'=>1])->orderby('created_at','DESC')->get();
+            if($roles == 0){
 
-                foreach($oth_obj as $o){
-                    $d->oth_status = $o->status;
-                    $d->oth_id = $o->id;
+                $data=DB::table('sales_orders as so')
+                ->leftjoin('users as u','u.id','so.a_id')
+                ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','u.name','u.delete as u_delete','u.is_active')
+                ->where(['so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('so.updated_at','DESC')
+                ->get();
+
+                foreach($data as $d){
+                    $oth_obj=OATLHistoryModel::where(['so_id'=>$d->id,'status'=>1])->orderby('created_at','DESC')->get();
+
+                    foreach($oth_obj as $o){
+                        $d->oth_status = $o->status;
+                        $d->oth_id = $o->id;
+                    }
+
+                    // User Data
+                    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->lead_technician])->orderby('created_at','DESC')->get();
+
+                    foreach($u_obj as $u){
+                        $d->lead_technician_name = $u->name;
+                    }
+
+                    $d->enc_id = CommonController::encode_ids($d->id);
+                }
+                // $oth_obj=OATLHistoryModel::where(['id'=>$so_id])->orderby('created_at','DESC')->get();
+
+            }else{
+                $data=DB::table('sales_orders as so')
+                ->leftjoin('users as u','u.id','so.a_id')
+                ->select('so.id','so.address','so.a_id','so.client_name','so.cp_name','so.cp_ph_no','so.delete','so.labour','so.project_name','so.so_number','so.lead_technician','so.updated_at','so.oa_type','u.name','u.delete as u_delete','u.is_active')
+                ->where(['so.a_id'=>$a_id,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('so.updated_at','DESC')
+                ->get();
+                
+                foreach($data as $d){
+                    $oth_obj=OATLHistoryModel::where(['so_id'=>$d->id,'status'=>1])->orderby('created_at','DESC')->get();
+
+                    foreach($oth_obj as $o){
+                        $d->oth_status = $o->status;
+                        $d->oth_id = $o->id;
+                    }
+
+                    // User Data
+                    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->lead_technician])->orderby('created_at','DESC')->get();
+
+                    foreach($u_obj as $u){
+                        $d->lead_technician_name = $u->name;
+                    }
+
+                    $d->enc_id = CommonController::encode_ids($d->id);
                 }
 
-                // User Data
-                $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->lead_technician])->orderby('created_at','DESC')->get();
-
-                foreach($u_obj as $u){
-                    $d->lead_technician_name = $u->name;
-                }
-
-                $d->enc_id = CommonController::encode_ids($d->id);
             }
 
-        }
-        
-        // User Data
-        $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+             // User Data
+            $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
 
-        if(!empty($data)){
-            return json_encode(array('status' => true ,'data' => $data,'roles' => $roles ,'message' => 'Data Found'));
-        }else{
-            return ['status' => false, 'message' => 'No Data Found'];
+            if(!empty($data)){
+                return json_encode(array('status' => true ,'data' => $data,'roles' => $roles ,'message' => 'Data Found'));
+            }else{
+                return ['status' => false, 'message' => 'No Data Found'];
+            }
         }
+       
 
     }
 
@@ -1078,13 +1153,16 @@ class AdminAPIController extends Controller
        
         if ($from_date == null && $to_date == null && $labours == null) 
         {
-
+            $date = Carbon::now()->subDays(30);  // get last 7 days record
+            $from_date = date('d-m-Y', strtotime($date));
+            $currentDate = date('d-m-Y'); // Current date in 'd-m-Y' format
             if($role == 0){
                 $data=DB::table('technician_expenses as te')
                 ->leftjoin('users as u','u.id','te.a_id')
                 ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
                 ->leftjoin('sales_orders as so','so.id','oth.so_id')
                 ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+                ->where('te.created_at', '>=', $date)
                 ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'so.delete'=>0])
                 ->orderby('u.created_at','DESC')
                 ->get();
@@ -1098,18 +1176,12 @@ class AdminAPIController extends Controller
     
             }else{
 
-                // $data=DB::table('technician_expenses as te')
-                // ->leftjoin('users as u','u.id','te.a_id')
-                // ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount')
-                // ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'u.a_id'=>$a_id])
-                // ->orderby('u.created_at','DESC')
-                // ->get();
-
                 $data=DB::table('technician_expenses as te')
                 ->leftjoin('users as u','u.id','te.a_id')
                 ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
                 ->leftjoin('sales_orders as so','so.id','oth.so_id')
                 ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+                ->where('te.created_at', '>=', $date)
                 ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'so.delete'=>0,'so.a_id'=>$a_id])
                 ->orderby('u.created_at','DESC')
                 ->get();
@@ -1123,7 +1195,7 @@ class AdminAPIController extends Controller
             }
 
             if(!empty($data)){
-                return json_encode(array('status' => true ,'data' => $data,'role'=> $role,'message' => 'Data Found'));
+                return json_encode(array('status' => true ,'data' => $data,'role'=> $role,'from_date'=>$from_date,'to_date'=> $currentDate,'message' => 'Data Found'));
             }else{
                 return ['status' => false, 'message' => 'No Data Found'];
             }
@@ -1266,9 +1338,12 @@ class AdminAPIController extends Controller
 
         if ($from_date == null && $to_date == null) 
         {
+            $date = Carbon::now()->subDays(30);  // get last 7 days record
+            $from_date = date('d-m-Y', strtotime($date));
+            $currentDate = date('d-m-Y'); // Current date in 'd-m-Y' format
+
             if($role == 3)      // for technician
             {
-                $date = Carbon::now()->subDays(60);  // get last 7 days record
                 $data = TravelExpenseModel::where(['delete'=>0,'a_id'=>$a_id])->where('created_at', '>=', $date)->orderby('updated_at','DESC')->get();
                 foreach($data as $d)
                 {
@@ -1304,8 +1379,6 @@ class AdminAPIController extends Controller
                 if($role == 0)      // for super admin
                 {
                     
-                    $date = Carbon::now()->subDays(60);  // get last 7 days record
-
                     $data=DB::table('travel_expenses as te')
                         ->leftjoin('users as u','u.id','te.a_id')
                         ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
@@ -1337,9 +1410,6 @@ class AdminAPIController extends Controller
 
                 }else{      //admin
                     
-                    $date = Carbon::now()->subDays(60);  // get last 7 days record
-
-
                     $data=DB::table('travel_expenses as te')
                         ->leftjoin('users as u','u.id','te.a_id')
                         ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
@@ -1371,7 +1441,7 @@ class AdminAPIController extends Controller
           
 
             if(!empty($data)){
-                return json_encode(array('status' => true ,'data' => $data,'s_obj' => $s_obj,'role'=>$role,'message' => 'Data Found'));
+                return json_encode(array('status' => true ,'data' => $data,'s_obj' => $s_obj,'from_date'=>$from_date,'to_date'=> $currentDate,'role'=>$role,'message' => 'Data Found'));
             }else{
                 return ['status' => false, 'message' => 'No Data Found'];
             }
@@ -1619,11 +1689,15 @@ class AdminAPIController extends Controller
 
         if ($from_date == null && $to_date == null && $labours == null) 
         {
+            $date = Carbon::now()->subDays(30);  // get last 7 days record
+            $from_date = date('d-m-Y', strtotime($date));
+            $currentDate = date('d-m-Y'); // Current date in 'd-m-Y' format
 
             $data=DB::table('labour_payments as lp')
                 ->leftjoin('users as u','u.id','lp.u_id')
                 ->leftjoin('sales_orders as so','so.id','lp.so_id')
                 ->select('lp.id','lp.oth_id','lp.so_id','lp.p_desc','lp.payment_date','lp.payment_amnt','lp.created_by','lp.delete','lp.updated_at','lp.created_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name as labour_name','u.delete as u_delete','u.is_active','u.role')
+                ->where('lp.created_at', '>=', $date)
                 ->where(['u.delete'=>0,'u.is_active'=>0,'u.role'=>3,'so.delete'=>0,'lp.delete'=>0])
                 ->orderby('lp.updated_at','DESC')
                 ->get();
@@ -1649,7 +1723,7 @@ class AdminAPIController extends Controller
            
 
             if(!empty($data)){
-                return json_encode(array('status' => true ,'data' => $data,'role'=>$role ,'message' => 'Data Found'));
+                return json_encode(array('status' => true ,'data' => $data,'role'=>$role,'from_date'=>$from_date,'to_date'=> $currentDate,'message' => 'Data Found'));
             }else{
                 return ['status' => false, 'message' => 'No Data Found'];
             }
@@ -2438,4 +2512,5 @@ class AdminAPIController extends Controller
         
 
     }
+
 }   
