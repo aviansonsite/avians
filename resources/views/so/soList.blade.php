@@ -131,7 +131,7 @@
                                             <tr>
                                                 <th scope="col" style="width: 20px;">Sr.No</th>
                                                 <th scope="col" style="white-space: normal;">OA Number</th>
-                                                @if($roles==1)
+                                                @if($roles==1 || $roles==0)
                                                     <th scope="col">Action</th>
                                                 @endif
                                                 <th scope="col" style="width: 100px">Status</th>
@@ -392,8 +392,14 @@
                             content +="<td>"+row.so_number+"</td>";
                             if(data.roles == 1){
                                 content +="<td>";
-                                content +="<a class='btn btn-outline-secondary btn-sm editU' rel='tooltip' data-bs-placement='top' title='Edit OA' data-id='"+row.id+"' data-so_number='"+row.so_number+"' data-client_name='"+row.client_name+"' data-project_name='"+row.project_name+"' data-address='"+row.address+"' data-cp_name='"+row.cp_name+"' data-cp_ph_no='"+row.cp_ph_no+"' data-lead_technician='"+row.lead_technician+"' data-labour='"+row.labour+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete OA' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>";
-                                
+                                content +="<a class='btn btn-outline-secondary btn-sm editU' rel='tooltip' data-bs-placement='top' title='Edit OA' data-id='"+row.id+"' data-so_number='"+row.so_number+"' data-client_name='"+row.client_name+"' data-project_name='"+row.project_name+"' data-address='"+row.address+"' data-cp_name='"+row.cp_name+"' data-cp_ph_no='"+row.cp_ph_no+"' data-lead_technician='"+row.lead_technician+"' data-labour='"+row.labour+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>";
+                            }
+                            if(data.roles == 0){
+                                content +="<td>";
+                                content +=" <button class='btn btn-outline-secondary btn-sm delI' rel='tooltip' data-bs-placement='top' title='Delete OA' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>";
+                                content += "</td>";
+                            }
+                            if(data.roles == 1){  
                                 if(row.oth_status == 1){
                                     content += " <a class='btn btn-outline-secondary btn-sm removeTL'  rel='tooltip' data-bs-placement='top' title='Remove TL' data-oth_so_id='"+row.id+"' data-oth_id='"+row.oth_id+"' data-oth_status='"+row.oth_status+"' data-bs-toggle='modal'><i class='fas fa-ban'></i></a>";
                                 }

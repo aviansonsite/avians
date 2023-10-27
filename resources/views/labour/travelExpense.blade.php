@@ -19,13 +19,13 @@
         height: calc(2.8rem + 30px) !important;
     }
     .select2
-     {
-            width: 100% !important;
-     }
-     .amsify-suggestags-list{
-        z-index: 1 !important;
+    {
         width: 100% !important;
-     }
+    }
+    .amsify-suggestags-list{
+    z-index: 1 !important;
+    width: 100% !important;
+    }
      textarea,
     .textarea {
       min-height: inherit;

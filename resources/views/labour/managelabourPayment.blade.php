@@ -216,7 +216,7 @@
                                                 @endif
                                                 <th scope="col" style="width: 100px">Technician Name</th>
                                                 <th scope="col" style="width: 100px">OA Number</th>
-                                                <th scope="col" style="width: 100px">Project Name</th>
+                                                <th scope="col" style="width: 100px;white-space:wrap;">Project Name</th>
                                                 <th scope="col" style="width: 100px">Expense Type</th>
                                                 <th scope="col" style="width: 100px">Description</th>
                                                 <th scope="col" style="width: 100px">Client Name</th>
