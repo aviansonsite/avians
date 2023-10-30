@@ -1207,7 +1207,6 @@ class LabourAPIController extends Controller
 
         }else{
 
-            $a_id=Session::get('USER_ID');
 
             $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$a_id])->orderby('created_at','DESC')->get();
             $l_obj = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u_obj[0]->id])->orderby('updated_at','DESC')->get();
