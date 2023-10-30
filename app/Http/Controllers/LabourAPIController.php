@@ -455,6 +455,8 @@ class LabourAPIController extends Controller
             file_put_contents($destinationPath.$filename, $data);
             
         }
+        
+        return ['status' => true, 'filename' => $filename];
 
         if($exp_edit_id!=null)
     	{
