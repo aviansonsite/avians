@@ -1344,7 +1344,7 @@ class AdminAPIController extends Controller
 
             if($role == 3)      // for technician
             {
-                $data = TravelExpenseModel::where(['delete'=>0,'a_id'=>$a_id])->where('created_at', '>=', $date)->orderby('created_at','ASC')->get();
+                $data = TravelExpenseModel::where(['delete'=>0,'a_id'=>$a_id])->where('created_at', '>=', $date)->orderby('created_at','DESC')->get();
                 foreach($data as $d)
                 {
                     $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
@@ -1386,7 +1386,7 @@ class AdminAPIController extends Controller
                         ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id','u.emp_number','u.a_id as u_a_id','te.id','te.oth_id','te.ad_id','te.sa_id','te.mode_travel','te.from_location','te.to_location','te.total_km','te.travel_date','te.travel_desc','te.ad_remark','te.sa_remark','te.attachment','te.no_of_person','te.travel_amount','te.aprvd_amount','te.status','te.a_id','te.delete','te.created_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.a_id as so_aid')
                         ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
                         ->where('te.created_at', '>=', $date)
-                        ->orderby('te.created_at','ASC')
+                        ->orderby('te.created_at','DESC')
                         ->get();
 
                     foreach($data as $d)
@@ -1417,7 +1417,7 @@ class AdminAPIController extends Controller
                         ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.a_id as u_a_id','u.emp_number','te.id','te.oth_id','te.ad_id','te.sa_id','te.mode_travel','te.from_location','te.to_location','te.total_km','te.travel_date','te.travel_desc','te.ad_remark','te.sa_remark','te.attachment','te.no_of_person','te.travel_amount','te.aprvd_amount','te.status','te.a_id','te.delete','te.created_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.a_id as so_aid')
                         ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'so.a_id'=>$a_id])
                         ->where('te.created_at', '>=', $date)
-                        ->orderby('te.created_at','ASC')
+                        ->orderby('te.created_at','DESC')
                         ->get();
 
                         foreach($data as $d)
@@ -1450,7 +1450,7 @@ class AdminAPIController extends Controller
 
             if($role == 3)
             {
-                $data = TravelExpenseModel::where(['delete'=>0,'a_id'=>$a_id])->whereDate('travel_date', '>=' ,$from_date)->whereDate('travel_date', '<=' ,$to_date)->orderby('created_at','ASC')->get();
+                $data = TravelExpenseModel::where(['delete'=>0,'a_id'=>$a_id])->whereDate('travel_date', '>=' ,$from_date)->whereDate('travel_date', '<=' ,$to_date)->orderby('created_at','DESC')->get();
                 foreach($data as $d){
                     $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0,'id'=>$d->a_id])->orderby('created_at','DESC')->get();
                     foreach($u_obj as $u){
@@ -1474,7 +1474,7 @@ class AdminAPIController extends Controller
                 ->leftjoin('sales_orders as so','so.id','oth.so_id')
                 ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
                 ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
-                ->orderby('oth.created_at','ASC')
+                ->orderby('oth.updated_at','DESC')
                 ->get();
 
             }else{
@@ -1489,7 +1489,7 @@ class AdminAPIController extends Controller
                         ->whereDate('travel_date', '>=' ,$from_date)
                         ->whereDate('travel_date', '<=' ,$to_date)
                         ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'te.a_id'=>$labours])
-                        ->orderby('te.created_at','ASC')
+                        ->orderby('te.created_at','DESC')
                         ->get();
 
                     foreach($data as $d)
@@ -1506,7 +1506,7 @@ class AdminAPIController extends Controller
                     ->leftjoin('sales_orders as so','so.id','oth.so_id')
                     ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
                     ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
-                    ->orderby('oth.created_at','ASC')
+                    ->orderby('oth.updated_at','DESC')
                     ->get();
 
                 }
@@ -1520,7 +1520,7 @@ class AdminAPIController extends Controller
                         ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'te.a_id'=>$labours])
                         ->whereDate('travel_date', '>=' ,$from_date)
                         ->whereDate('travel_date', '<=' ,$to_date)
-                        ->orderby('te.created_at','ASC')
+                        ->orderby('te.created_at','DESC')
                         ->get();
 
                     foreach($data as $d)
@@ -1536,7 +1536,7 @@ class AdminAPIController extends Controller
                     ->leftjoin('sales_orders as so','so.id','oth.so_id')
                     ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active','u.a_id')
                     ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
-                    ->orderby('oth.created_at','ASC')
+                    ->orderby('oth.updated_at','DESC')
                     ->get();
                 }
             }
