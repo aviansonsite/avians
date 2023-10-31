@@ -1164,7 +1164,7 @@ class AdminAPIController extends Controller
                 ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
                 ->where('te.created_at', '>=', $date)
                 ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'so.delete'=>0])
-                ->orderby('u.created_at','ASC')
+                ->orderby('te.created_at','ASC')
                 ->get();
 
                 foreach($data as $d){
@@ -1183,7 +1183,7 @@ class AdminAPIController extends Controller
                 ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
                 ->where('te.created_at', '>=', $date)
                 ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'so.delete'=>0,'so.a_id'=>$a_id])
-                ->orderby('u.created_at','ASC')
+                ->orderby('te.created_at','ASC')
                 ->get();
 
                 foreach($data as $d){
@@ -1210,7 +1210,7 @@ class AdminAPIController extends Controller
                 ->whereDate('te.exp_date', '>=' ,$from_date)
                 ->whereDate('te.exp_date', '<=' ,$to_date)
                 ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'so.delete'=>0,'te.a_id'=>$labours])
-                ->orderby('u.created_at','ASC')
+                ->orderby('te.created_at','ASC')
                 ->get();
 
             foreach($data as $d){
