@@ -232,6 +232,9 @@ class LabourAPIController extends Controller
     	$pout_longitude=isset($_POST['pout_longitude']) ? $_POST['pout_longitude'] : "NA";
         $photo_path_ext=isset($_POST['ext']) ? $_POST['ext'] : null;
         $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
+
+        $work_ext=isset($_POST['work_ext']) ? $_POST['work_ext'] : null;
+        $work_attachment = $req->input('work_attachment') ?$req->input('work_attachment'): '';
         // $photo_path = $req->hasfile('attachment');
 
         $u_id = strval($a_id); 
@@ -243,6 +246,23 @@ class LabourAPIController extends Controller
         // $pout_labour=implode(',',$pout_labour);
 
         // return ['status' => true,'pout_so' => $pout_so,'pout_labour' => $pout_labour,'pout_remark' => $pout_remark,'pout_work_desc' => $pout_work_desc,'pout_date'=>$pout_date,'pout_latitude' => $pout_latitude,'pout_longitude' => $pout_longitude,'u_id'=>$a_id,'ext'=>$ext,'attachment'=>$photo_path]; 
+
+        $workfilename=null;
+
+        if($work_attachment!="")
+        {
+            $destinationPath = 'files/attendance/workAttachments/';
+                            
+            $img = str_replace('data:image/jpg;base64,', '', $work_attachment);
+            $img = str_replace(' ', '+', $img);
+            $data = base64_decode($img);
+            // $image_id= uniqid();
+            $workfilename= $work_ext."_".md5($work_attachment. microtime()).'.'.$work_ext;
+
+            file_put_contents($destinationPath.$workfilename, $data);
+
+        }
+
 
         if ($pout_latitude !='' && $pout_longitude !='') 
         {
@@ -267,6 +287,8 @@ class LabourAPIController extends Controller
                             $filename= $photo_path_ext."_".md5($photo_path. microtime()).'.'.$photo_path_ext;
 
                             file_put_contents($destinationPath.$filename, $data);
+
+
             
                         $u_obj->update([
                             'pout_u_id' => $pout_labour[$j],
@@ -278,7 +300,8 @@ class LabourAPIController extends Controller
                             'pout_longitude' => $pout_longitude,
                             'delete' => 0, 
                             'a_id' => $a_id,
-                            'pout_img' => $filename
+                            'pout_img' => $filename,
+                            'work_attachment' => $workfilename,
                         ]);
 
                     }else{
