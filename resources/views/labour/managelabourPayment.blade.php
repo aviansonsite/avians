@@ -206,11 +206,13 @@
          
                             <div class="tab-pane" id="cllpayment" role="tabpanel">
                                 {!! Form::open(['class'=>"form-horizontal user_form",'enctype'=>'multipart/form-data','files' => 'true' ,'method'=>"post",'url'=>'aprvd_check_exp','id'=>'postCheckExpForm']) !!}
+                                    @if($roles == 0)
                                     <div class="d-sm-flex flex-wrap">
                                         <div class="ms-auto">
                                             <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2" id="add_expense">Approved Checked Expenses</button>
                                         </div>
                                     </div>
+                                    @endif
                                     <div class="table-responsive">
                                         
                                         <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="clearedDatatable"> 
@@ -255,11 +257,13 @@
                                         </table>
 
                                     </div>
-                                    <div class="d-sm-flex flex-wrap mt-3">
-                                        <div class="ms-auto">
-                                            <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2" id="add_expenses">Approved Checked Expenses</button>
+                                    @if($roles == 0)
+                                        <div class="d-sm-flex flex-wrap mt-3">
+                                            <div class="ms-auto">
+                                                <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2" id="add_expenses">Approved Checked Expenses</button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif    
                                 {!! Form::close() !!}
                             </div>
 
