@@ -8,6 +8,7 @@ use App\Models\SOModel;
 use App\Models\TechnicianExpenseModel;
 use App\Models\TravelExpenseModel;
 use App\Models\LabourPaymentModel;
+use App\Models\PunchInOutModel;
 use Session;
 use Hash;
 use DB;
@@ -241,6 +242,8 @@ class ReportController extends Controller
                 foreach($u_obj as $u){
                     $d->super_admin = $u->name;
                 }
+
+                $d->no_of_person = null;
             }
 
             foreach($data as $d){
@@ -251,7 +254,7 @@ class ReportController extends Controller
             ->leftjoin('users as u','u.id','te.a_id')
             ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
             ->leftjoin('sales_orders as so','so.id','oth.so_id')
-            ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.oth_id','te.travel_date as exp_date','te.travel_desc as exp_desc','te.mode_travel as exp_type','te.a_id','te.delete','te.attachment','te.ad_id','te.ad_remark','te.status','te.sa_remark','te.sa_id','te.travel_amount as amount','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+            ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.oth_id','te.travel_date as exp_date','te.travel_desc as exp_desc','te.mode_travel as exp_type','te.a_id','te.delete','te.attachment','te.ad_id','te.no_of_person','te.ad_remark','te.status','te.sa_remark','te.sa_id','te.travel_amount as amount','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
             ->where(['te.delete'=>0,'u.delete'=>0,'so.delete'=>0,'te.a_id'=>$labours,'te.oth_id'=>$oth_id,'te.status'=>"Approved",'te.travel_date'=>$ed->exp_date])
             ->orderby('u.created_at','DESC')
             ->get();
@@ -274,7 +277,29 @@ class ReportController extends Controller
   
         }
 
+        $so_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id','oth.so_id','so.delete','so.labour','so.so_number','so.lead_technician')
+                ->where(['so.delete'=>0,'oth.id'=>$oth_id])
+                ->get();
+        $technicians= array(); //create empty array
 
+        foreach($so_obj as $s){
+            $technician = array_map('intval', explode(',', $s->labour));      // create array all sub technician
+            foreach($technician as $t)
+            {   
+                array_push($technicians,$t);        // push sub technician in technicians 
+            }
+            
+            $lead_tech = array_map('intval', explode(',', $s->lead_technician));    // lead technician
+            foreach($lead_tech as $l)
+            {   
+                array_push($technicians,$l);        // push lead technician in all technicians
+            }
+        }
+
+        $all_technician = array_unique($technicians);           //remove duplicate technician id
+        $no_of_people = count($technicians);                    // count people in oa
 
         // return view('report.siteExpensePdf');
 
@@ -295,7 +320,7 @@ class ReportController extends Controller
 
         // dd($tech_exp);
         // return view('report.siteExpensePdf',compact('tech_exp','u_obj1'));
-        $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.siteExpensePdf',compact('tech_exp','u_obj1'))->setPaper('a4', 'landscape');
+        $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.siteExpensePdf',compact('tech_exp','u_obj1','no_of_people'))->setPaper('a4', 'landscape');
         
         $pdf1->getDomPDF()->setHttpContext(
                 stream_context_create([
@@ -666,5 +691,129 @@ class ReportController extends Controller
         return $pdf1->download();
     }
 
+    public function workReport()
+    {
+        // get lead technicians
+        $u_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('users as u','u.id','oth.lead_technician')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.delete','so.labour','so.so_number','u.id','u.name','u.delete as u_delete','u.is_active','u.created_at')
+                ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+                ->orderby('u.created_at','ASC')
+                ->get();
+
+    	// $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+        $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+    	return view('report.workReport',compact('u_obj','s_obj'));
+
+    }
+
+    public function getWorkRecord(Request $req)
+    {
+        $a_id=Session::get('USER_ID');
+        $from_date = $req->get('from_date');
+        $to_date = $req->get('to_date');
+        $labours = $req->get('labours');
+        $so = $req->get('so');
+        $oth_id = $req->get('oth_id');
+
+        $u_obj1=UserModel::where(['delete'=>0,'id'=>$labours])->where('role','!=','0')->orderby('created_at','DESC')->get();
+
+        foreach($u_obj1 as $u)
+        {
+            $u->from_date = date('d-m-Y', strtotime($from_date));
+            $u->to_date = date('d-m-Y', strtotime($to_date));
+            // $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u->id])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->sum('payment_amnt');
+            // $u->adv_amnt = $accountant_payment;
+            
+        }
+
+        //Technician Expense
+        $pout_date = PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->get();
+        foreach($pout_date as $p)
+        {
+            $count = PunchInOutModel::where(['delete'=>0,'a_id'=>$labours,'pout_date'=>$p->pout_date])->count();
+            $p->people_count= $count;
+
+            $s_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.delete','so.labour','so.so_number','so.project_name')
+                ->where(['oth.id'=>$p->pin_oth_id])
+                ->get();
+
+                foreach($s_obj as $s)
+                {
+                    $p->so_number= $s->so_number;
+                    $p->project_name= $s->project_name;
+                }
+
+        } 
+
+
+        
+        // dd($pout_date);
+        if(count($pout_date)>0){
+            return json_encode(array('status' => true ,'data' => $pout_date,'u_obj1'=>$u_obj1,'message' => 'Data Found'));
+        }else{
+            return ['status' => false, 'message' => 'No Data Found'];
+        }
+    }
+
+    public function generateWorkPdf(Request $req)
+    {
+        $a_id=Session::get('USER_ID');
+        $from_date = $req->get('pdf_from_date');
+        $to_date = $req->get('pdf_to_date');
+        $labours = $req->get('pdf_labours');
+        $so = $req->get('so');
+        $oth_id = $req->get('pdf_oth_id');
     
-}
+
+        $u_obj1=UserModel::where(['delete'=>0,'id'=>$labours])->where('role','!=','0')->orderby('created_at','DESC')->get();
+
+        foreach($u_obj1 as $u)
+        {
+            $u->from_date = date('d-m-Y', strtotime($from_date));
+            $u->to_date = date('d-m-Y', strtotime($to_date));
+            // $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u->id])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->sum('payment_amnt');
+            // $u->adv_amnt = $accountant_payment;
+            
+        }
+
+        // dd($u_obj1);
+        //Technician Expense
+        $pout_date = PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->get();
+        foreach($pout_date as $p)
+        {
+            $count = PunchInOutModel::where(['delete'=>0,'a_id'=>$labours,'pout_date'=>$p->pout_date])->count();
+            $p->people_count= $count;
+
+            $s_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.delete','so.labour','so.so_number','so.project_name')
+                ->where(['oth.id'=>$p->pin_oth_id])
+                ->get();
+
+                foreach($s_obj as $s)
+                {
+                    $p->so_number= $s->so_number;
+                    $p->project_name= $s->project_name;
+                }
+
+        } 
+
+        $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.WorkReportPdf',compact('u_obj1','pout_date'))->setPaper('a4', 'potrait');
+        
+        $pdf1->getDomPDF()->setHttpContext(
+                stream_context_create([
+                    'ssl' => [
+                        'allow_self_signed'=> TRUE,
+                        'verify_peer' => FALSE,
+                        'verify_peer_name' => FALSE,
+                    ]
+                ])
+            );
+        
+        return $pdf1->download();
+    }
+} 

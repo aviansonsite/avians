@@ -115,6 +115,10 @@ $count=count($role);
                                     <a href="{{route('site_exp_report.page')}}" class="dropdown-item">
                                     <span key="t-customers">Site Expenses</span>
                                     </a>
+
+                                    <a href="{{route('work_report.page')}}" class="dropdown-item">
+                                    <span key="t-customers">Work Report</span>
+                                    </a>
                                 </div>
                             </li>
                         @endif

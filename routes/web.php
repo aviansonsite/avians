@@ -110,7 +110,7 @@ Route::group(['middleware' => 'login'], function ()
         Route::get('/attendance', [AttendanceController::class, 'attendanceList'])->name('attendance.page');
         Route::get('/get_pio_records', [AttendanceController::class, 'getPIORecords']);
         Route::post('/punch_in', [AttendanceController::class, 'punchIn']);
-        Route::post('/punch_out', [AttendanceController::class, 'punchOut']);
+        Route::any('/punch_out', [AttendanceController::class, 'punchOut']);
         Route::post('webcam', [AttendanceController::class, 'store'])->name('webcam.capture');
         Route::get('/get-pouth-labour', [AttendanceController::class, 'getPoutHLabour']);
         Route::get('/get-pinh-labour', [AttendanceController::class, 'getPinHLabour']);
@@ -142,6 +142,8 @@ Route::group(['middleware' => 'login'], function ()
         
     // ****** End Labour **********
 
-       
-
+    //work Report 
+    Route::get('/work_report', [ReportController::class, 'workReport'])->name('work_report.page');
+    Route::get('/get_work_record', [ReportController::class, 'getWorkRecord']);
+    Route::post('/generate-work-pdf', [ReportController::class, 'generateWorkPdf']);
 });    

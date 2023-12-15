@@ -166,7 +166,6 @@ class AttendanceController extends Controller
 
     }
 
-
     public function punchOut(Request $req)
     {
 
@@ -179,7 +178,6 @@ class AttendanceController extends Controller
     	$pout_date=isset($_POST['pout_date']) ? $_POST['pout_date'] : "NA";
         $pout_latitude=isset($_POST['pout_latitude']) ? $_POST['pout_latitude'] : "NA";
     	$pout_longitude=isset($_POST['pout_longitude']) ? $_POST['pout_longitude'] : "NA";
-
         $u_id = strval($a_id); 
         array_push($pout_labour, $u_id);    //Push user id for attendance
         $pout_labour = array_unique($pout_labour);
@@ -189,7 +187,23 @@ class AttendanceController extends Controller
         // $pout_so=implode(',',$pout_so);
         // $pout_labour=implode(',',$pout_labour);
 
-        
+        $of1=null;
+
+        if($req->hasfile('work_attachment'))
+        {
+            // dd($req->hasfile('work_attachment'));
+            
+            $work_attachment = $req->file('work_attachment');
+            // $of1 = rand(1,999).'.'.$work_attachment->getClientOriginalExtension(); 
+            $fileExtension = $work_attachment->getClientOriginalExtension();
+            $of1 = $fileExtension.'_'.md5($work_attachment. microtime()).'.'.$fileExtension; 
+
+            // dd($of1);
+            $work_attachment->move(public_path('files/attendance/workAttachments/'), $of1);
+            // $u_obj->work_attachment=$of1;
+            // $u_obj->update(['work_attachment' => $of1]);
+
+        }
         if ($pout_latitude !='' && $pout_longitude !='') 
         {
             $j=0;
@@ -209,7 +223,7 @@ class AttendanceController extends Controller
                         $image_type = $image_type_aux[1];
                         
                         $image_base64 = base64_decode($image_parts[1]);
-                        $fileName= '.png'."_".md5($img. microtime()).'.png';
+                        $fileName= 'png'."_".md5($img. microtime()).'.png';
                         // $fileName = uniqid() . '.png';
                         $file = $folderPath . $fileName;
                         file_put_contents($file, $image_base64);        //move to specific folder
@@ -225,7 +239,13 @@ class AttendanceController extends Controller
                             'delete' => 0, 
                             'a_id' => $a_id,
                             'pout_img' => $fileName,
+                            'work_attachment' => $of1,
                         ]);
+
+
+                        
+		
+                        
 
                     }else{
                         Session::put('ERROR_MESSAGE', 'Something went wrong. Please try again.');
@@ -254,7 +274,7 @@ class AttendanceController extends Controller
                             
                             $image_base64 = base64_decode($image_parts[1]);
 
-                            $fileName= '.png'."_".md5($img. microtime()).'.png';
+                            $fileName= 'png'."_".md5($img. microtime()).'.png';
 
                             // $fileName = uniqid() . '.png';
                             $file = $folderPath . $fileName;

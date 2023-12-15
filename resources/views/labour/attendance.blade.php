@@ -413,6 +413,14 @@
 
                         </div>
                     </div>
+                    <div class="col-md-6 col-sm-12 col-lg-6">
+                        <div class="form-floating mb-3">
+                            <input type="file" class="form-control" id="work_attachment" placeholder="Work Attachment" name="work_attachment">
+                            <label for="work_attachment">Work Attachment</label>
+                            
+                        </div>
+                    </div>
+
                     <?php $tdate=date("Y-m-d");?>
                     <div class="col-md-6 col-sm-12 col-lg-6">
                         <div class="form-floating mb-3">

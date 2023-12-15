@@ -51,7 +51,7 @@
             <td style="width:30px;"> Adv Total Amount.: <br/> <b> {{$uo->adv_amnt}} </b></td>
             <td style="width:30px;"> From Date.: <br/> <b> {{$uo->from_date}} </b></td>
             <td style="width:30px;"> To Date.: <br/> <b> {{$uo->to_date}} </b></td>
-            <td style="width:30px;">  <br/> <b>  </b></td>
+            <td style="width:30px;"> Total Peoples in OA.: <br/> <b>{{$no_of_people}}</b></td>
         </tr>
         @endforeach
         <tr>       
@@ -67,6 +67,7 @@
             <th  style="width:60px;white-space:wrap;text-align:center;">Approver SuperAdmin</th>
             <th  style="width:60px;text-align:center;"> OA NO.</th>
             <th  style="width:30px;text-align:center;"> Bills</th>
+            <th  style="width:30px;text-align:center;"> No of Persons</th>
             <th  style="width:50px;white-space:wrap;text-align:center;">Travel Exp</th>
             <th  style="width:40px;text-align:center;">Hotel</th>
             <th  style="width:40px;white-space:wrap;text-align:center;">DA</th>
@@ -100,6 +101,14 @@
                 @else
                     <td  style="text-align:center;"><strong> Y </strong></td>
                 @endif 
+
+
+                @if($te->no_of_person == null)
+                    <td style="text-align:center;"> - </td>
+                @else
+                    <td style="text-align:center;">{{$te->no_of_person}}</td>
+                @endif 
+
 
                 @if(($te->exp_type == 'Bus') || ($te->exp_type == 'Train') || ($te->exp_type == 'Bike') || ($te->exp_type == 'Shared_Auto') || ($te->exp_type == 'Private_Auto') || ($te->exp_type == 'Own Car') )
                     <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
