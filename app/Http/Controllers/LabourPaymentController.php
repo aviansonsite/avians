@@ -1756,9 +1756,9 @@ class LabourPaymentController extends Controller
             $res=$u_obj->update();
         }  
         if($res){
-            Session::put('SUCCESS_MESSAGE', "Technician Expenses Approved Successfully.");
+            Session::put('SUCCESS_MESSAGE', "Travel Expenses Approved Successfully.");
         }else{
-            Session::put('ERROR_MESSAGE',"Technician Expenses Approved Unsuccessfully...!");
+            Session::put('ERROR_MESSAGE',"Travel Expenses Approved Unsuccessfully...!");
         }
         return redirect()->back();
     }

@@ -231,6 +231,14 @@
                             </div>
          
                             <div class="tab-pane" id="cllpayment" role="tabpanel">
+                            {!! Form::open(['class'=>"form-horizontal user_form",'enctype'=>'multipart/form-data','files' => 'true' ,'method'=>"post",'url'=>'aprvd_check_travelexp','id'=>'postCheckExpForm']) !!}
+                                    @if($roles == 0)
+                                    <div class="d-sm-flex flex-wrap">
+                                        <div class="ms-auto">
+                                            <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2" >Approved Checked Expenses</button>
+                                        </div>
+                                    </div>
+                                    @endif
                                 <div class="table-responsive">
                                     <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="clearedDatatable"> 
                                         <thead>
@@ -239,6 +247,12 @@
                                                 <th scope="col" style="white-space: normal;">Travel Date</th>
                                                 @if($roles == 0)
                                                     <th scope="col" style="width: 100px">Action</th>
+                                                    <th scope="col"><div class="form-check">
+                                                        <label class="form-check-label" for="check_all_exp">All</label>
+                                                            <input type="checkbox" class="form-check-input permi" id="check_all_exp" name="check_exp" value="All"/>
+                                                            
+                                                        </div>
+                                                    </th>
                                                 @endif
                                                 @if($roles != 3)
                                                     <th scope="col" style="width: 100px">OA Number</th>
@@ -271,6 +285,14 @@
                                         </tfoot> -->
                                     </table>
                                 </div>
+                                @if($roles == 0)
+                                        <div class="d-sm-flex flex-wrap mt-3">
+                                            <div class="ms-auto">
+                                                <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2" >Approved Checked Expenses</button>
+                                            </div>
+                                        </div>
+                                    @endif    
+                                {!! Form::close() !!}
                             </div>
 
                             <div class="tab-pane" id="apprvdpayment" role="tabpanel">
@@ -843,6 +865,8 @@
  
             reader.readAsDataURL(file);
         }
+
+        
     }
 </script>
 
@@ -866,6 +890,10 @@
 
         $("#attachment2").hide();
         $("#pdf,#img").hide();
+
+        $("#check_all_exp").click(function () {
+            $('input:checkbox').prop('checked', true);
+        });
     });
 
     // mode of travel on change fields
@@ -1127,6 +1155,8 @@
                                         content1 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
                                         content1 +="</td>";
 
+                                        content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input permi' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>"
+
                                     }
 
                                     if(data.role != 3){
@@ -1325,7 +1355,10 @@
                         $('#expDatatable').dataTable();
 
                         $("#cll_records").html(content1); //For append Cleared datatable html data 
-                        $('#clearedDatatable').dataTable();
+
+                        if(data.role != 0){
+                            $('#clearedDatatable').dataTable();
+                        }
 
                         $("#cal_records").html(content2); //For append Disapproved datatable html data
                         $('#cancelDatatable').dataTable();
@@ -1509,6 +1542,8 @@
                                 content1 +="<td>";
                                 content1 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
                                 content1 +="</td>";
+
+                                content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input permi' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>"
 
                             }
 
@@ -1709,7 +1744,9 @@
                 $('#expDatatable').dataTable();
 
                 $("#cll_records").html(content1); //For append Cleared datatable html data 
-                $('#clearedDatatable').dataTable();
+                if(data.role != 0){
+                    $('#clearedDatatable').dataTable();
+                }
 
                 $("#cal_records").html(content2); //For append Disapproved datatable html data
                 $('#cancelDatatable').dataTable();
