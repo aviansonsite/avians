@@ -205,44 +205,62 @@
                             </div>
          
                             <div class="tab-pane" id="cllpayment" role="tabpanel">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="clearedDatatable"> 
-                                        <thead>
-                                            <tr>
-                                                <th scope="col" style="width: 20px;">Sr.No</th>
-                                                <th scope="col" style="white-space: normal;">Expense Date</th>
-                                                @if($roles == 0)
-                                                    <th scope="col">Action</th>
-                                                @endif
-                                                <th scope="col" style="width: 100px">Technician Name</th>
-                                                <th scope="col" style="width: 100px">OA Number</th>
-                                                <th scope="col" style="width: 100px;white-space:wrap;">Project Name</th>
-                                                <th scope="col" style="width: 100px">Expense Type</th>
-                                                <th scope="col" style="width: 100px">Description</th>
-                                                <th scope="col" style="width: 100px">Client Name</th>
-                                                <th scope="col" style="width: 100px">Project Admin</th>
-                                                <th scope="col" style="width: 100px">Admin Remark</th>
-                                                <th scope="col" style="width: 100px">Status</th>
-                                                <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
-
-                                                
-                                            </tr>
-                                        </thead>
-                                        <tbody id="cll_records">
+                                {!! Form::open(['class'=>"form-horizontal user_form",'enctype'=>'multipart/form-data','files' => 'true' ,'method'=>"post",'url'=>'aprvd_check_exp','id'=>'postCheckExpForm']) !!}
+                                    <div class="d-sm-flex flex-wrap">
+                                        <div class="ms-auto">
+                                            <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2" id="add_expense">Approved Checked Expenses</button>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
                                         
-                                        </tbody>
-                                        <tfoot id="tclldata">
-                                            <tr>
-                                                @if($roles == 0)
-                                                    <th colspan="12" class="text-center"><strong>Total</strong></th>
-                                                @else
-                                                    <th colspan="11" class="text-center"><strong>Total</strong></th>
-                                                @endif      
-                                                    <th id="t_cllamount"></th>                                       
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
+                                        <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="clearedDatatable"> 
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" style="width: 20px;">Sr.No</th>
+                                                    <th scope="col" style="white-space: normal;">Expense Date</th>
+                                                    @if($roles == 0)
+                                                        <th scope="col">Action</th>
+                                                        <th scope="col"><div class="form-check">
+                                                            <label class="form-check-label" for="check_all_exp">All</label>
+                                                                <input type="checkbox" class="form-check-input permi" id="check_all_exp" name="check_exp" value="All"/>
+                                                                
+                                                            </div>
+                                                        </th>
+                                                    @endif
+                                                    <th scope="col" style="width: 100px">Technician Name</th>
+                                                    <th scope="col" style="width: 100px">OA Number</th>
+                                                    <th scope="col" style="width: 100px;white-space:wrap;">Project Name</th>
+                                                    <th scope="col" style="width: 100px">Expense Type</th>
+                                                    <th scope="col" style="width: 100px">Description</th>
+                                                    <th scope="col" style="width: 100px">Client Name</th>
+                                                    <th scope="col" style="width: 100px">Project Admin</th>
+                                                    <th scope="col" style="width: 100px">Admin Remark</th>
+                                                    <th scope="col" style="width: 100px">Status</th>
+                                                    <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="cll_records">
+                                            
+                                            </tbody>
+                                            <tfoot id="tclldata">
+                                                <tr>
+                                                    @if($roles == 0)
+                                                        <th colspan="13" class="text-center"><strong>Total</strong></th>
+                                                    @else
+                                                        <th colspan="11" class="text-center"><strong>Total</strong></th>
+                                                    @endif      
+                                                        <th id="t_cllamount"></th>                                       
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+
+                                    </div>
+                                    <div class="d-sm-flex flex-wrap mt-3">
+                                        <div class="ms-auto">
+                                            <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2" id="add_expenses">Approved Checked Expenses</button>
+                                        </div>
+                                    </div>
+                                {!! Form::close() !!}
                             </div>
 
                             <div class="tab-pane" id="apprvdpayment" role="tabpanel">
@@ -487,6 +505,11 @@
         $("#tclldata").hide();
         $("#tcaldata").hide();
         $("#taprdata").hide();
+
+        $("#check_all_exp").click(function () {
+            $('input:checkbox').prop('checked', true);
+        });
+
     });
     var $body = $("body");
 
@@ -924,7 +947,11 @@
                                 content1 +="<td>"+ ++j +"</td>";
                                 content1 +="<td>"+exp_date+"</td>";
                                 if(data.role == 0){
-                                    content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                    content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> </td>";
+
+                                    content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input permi' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>"
+
+                                    
                                 }
                                 content1 +="<td style='white-space:wrap;'>"+row.labour_name+"</td>";
                                 content1 +="<td>"+row.so_number+"</td>";
@@ -1056,8 +1083,9 @@
                     $('#expDatatable').dataTable();
 
                     $("#cll_records").html(content1); //For append html data
-                    $('#clearedDatatable').dataTable();
-
+                    if(data.role != 0){
+                        $('#clearedDatatable').dataTable();
+                    }
                     $("#cal_records").html(content2); //For append html data
                     $('#cancelDatatable').dataTable();   
                     

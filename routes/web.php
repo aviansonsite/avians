@@ -91,7 +91,7 @@ Route::group(['middleware' => 'login'], function ()
     Route::get('/manage_labour_payment', [LabourPaymentController::class, 'managelabourPayment'])->name('manage_labour_payment.page');
     Route::get('/get_all_expenses', [LabourPaymentController::class, 'getAllExpense']);
     Route::get('/post_expense', [LabourPaymentController::class, 'postExpense']);
-
+    Route::post('/aprvd_check_exp', [LabourPaymentController::class, 'aprvdCheckExp']);
 
     // SO Payment History
     Route::get('/SO_payment_history', [SOController::class, 'SOPaymentHistory'])->name('SO_payment_history.page');

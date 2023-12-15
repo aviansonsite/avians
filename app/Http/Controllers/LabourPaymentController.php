@@ -1719,6 +1719,26 @@ class LabourPaymentController extends Controller
         
 
     }
+    public function aprvdCheckExp(Request $req)
+    {
+        $role=Session::get('ROLES');
+        $a_id=Session::get('USER_ID');
+        $check_exp = $req->get('check_exp');
+        // dd($check_exp);
+        $j=0;
+        for ($i=1; $i <= count($check_exp); $i++)
+        {  
+            $u_obj=TechnicianExpenseModel::find($check_exp[$j]);
+            $u_obj->sa_id=$a_id;
+            $u_obj->status="Approved";
+            $res=$u_obj->update();
+        }  
+        if($res){
+            Session::put('SUCCESS_MESSAGE', "Technician Expenses Approved Successfully.");
+        }else{
+            Session::put('ERROR_MESSAGE',"Technician Expenses Approved Unsuccessfully...!");
+        }
+        return redirect()->back();
+    }
 
-    
 }
