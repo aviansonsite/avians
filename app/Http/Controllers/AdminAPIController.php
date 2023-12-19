@@ -2199,7 +2199,7 @@ class AdminAPIController extends Controller
 
         // dd($tech_exp);
         // return view('report.siteExpensePdf',compact('tech_exp','u_obj1'));
-        $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.siteExpensePdf',compact('tech_exp','u_obj1'))->setPaper('a4', 'landscape');
+        $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.siteExpensePdf',compact('tech_exp','u_obj1','no_of_people'))->setPaper('a4', 'landscape');
         
         $pdf1->getDomPDF()->setHttpContext(
                 stream_context_create([
@@ -2527,15 +2527,15 @@ class AdminAPIController extends Controller
                 ->orderby('u.created_at','ASC')
                 ->get();
 
-    	// $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
-        $s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
-    	return view('report.workReport',compact('u_obj','s_obj'));
+        return json_encode(array('status' => true ,'u_obj' => $u_obj, 'message' => 'Data Found'));
+    	
 
     }
 
     public function getWorkRecord(Request $req)
     {
-        $a_id=Session::get('USER_ID');
+                                     
+        $a_id = $req->get('u_id');
         $from_date = $req->get('from_date');
         $to_date = $req->get('to_date');
         $labours = $req->get('labours');
@@ -2645,7 +2645,7 @@ class AdminAPIController extends Controller
             $file_name="WORK_REPORT_".$u_obj1[0]->id.".pdf";
             $delOldPDF = "files/workTemp/$file_name";
             file_put_contents("files/workTemp/$file_name", $pdf1->download());
-            if(count($tech_exp)>0){
+            if(count($pout_date)>0){
                 return json_encode(array('status' => true ,'data' => $file_name,'message' => 'Generate PDF Successfully'));
             }else{
                 return ['status' => false, 'message' => 'Generate PDF UnSuccessfull'];

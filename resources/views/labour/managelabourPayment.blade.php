@@ -514,6 +514,11 @@
             $('input:checkbox').prop('checked', true);
         });
 
+        // function toggleCheckbox() {
+        // var checkbox = document.getElementById("myCheckbox");
+        // checkbox.checked = !checkbox.checked;
+        // }
+
     });
     var $body = $("body");
 
@@ -671,7 +676,7 @@
                                 if(data.role == 0){
                                     content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
 
-                                    content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input permi' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>";
+                                    content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input permi' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"' onchange='"+toggleCheckbox()+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>";
                                 }
                                 content1 +="<td>"+row.labour_name+"</td>";
                                 content1 +="<td>"+row.so_number+"</td>";
@@ -957,7 +962,7 @@
                                 if(data.role == 0){
                                     content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> </td>";
 
-                                    content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input permi' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>";
+                                    content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input permi' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"' onchange='"+toggleCheckbox()+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>";
 
                                     
                                 }

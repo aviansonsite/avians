@@ -68,9 +68,9 @@ Route::post('/get_exp_record', [AdminAPIController::class, 'getExpRecord']);;
 Route::post('/generate_pdf', [AdminAPIController::class, 'generatePdf']);
 
 //work Report 
-Route::post('/work_report', [ReportController::class, 'workReport']);
-Route::post('/get_work_record', [ReportController::class, 'getWorkRecord']);
-Route::post('/generate-work-pdf', [ReportController::class, 'generateWorkPdf']);
+Route::post('/work_report', [AdminAPIController::class, 'workReport']);
+Route::post('/get_work_record', [AdminAPIController::class, 'getWorkRecord']);
+Route::post('/generate-work-pdf', [AdminAPIController::class, 'generateWorkPdf']);
 
 
 //Technician Attendance Regularise
