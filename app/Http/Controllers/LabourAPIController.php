@@ -463,7 +463,7 @@ class LabourAPIController extends Controller
     	$exp_type=isset($_POST['exp_type']) ? $_POST['exp_type'] : "NA";
         $photo_path_ext=isset($_POST['photo_path_ext']) ? $_POST['photo_path_ext'] : null;
         $photo_path = $req->input('attachment') ?$req->input('attachment'): '';
-
+        $no_of_person=isset($_POST['no_of_person']) ? $_POST['no_of_person'] : null;
 
         // For File Decoder 
         $destinationPath = 'files/user/expense/';
@@ -492,6 +492,7 @@ class LabourAPIController extends Controller
                 $u_obj->exp_desc=$exp_desc;
                 $u_obj->exp_date=$exp_date;
                 $u_obj->amount=$expense_amnt;
+                $u_obj->no_of_person=$no_of_person;
                 if($photo_path!="" && str_contains($photo_path, '+'))
                 {
                     $u_obj->attachment=$filename;
@@ -519,6 +520,7 @@ class LabourAPIController extends Controller
                 $u_obj->exp_desc=$exp_desc;
                 $u_obj->exp_date=$exp_date;
                 $u_obj->amount=$expense_amnt;
+                $u_obj->no_of_person=$no_of_person;
                 if($photo_path!="" && str_contains($photo_path, '+'))
                 {
                     $u_obj->attachment=$filename;

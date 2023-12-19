@@ -861,7 +861,7 @@ class LabourPaymentController extends Controller
    		$expense_amnt = $req->get('expense_amnt');
         $exp_type = $req->get('exp_type');
         $attachment = $req->get('attachment');
-        
+        $no_of_person = $req->get('no_of_person');
         $oth_id = $req->get('exp_so');
         // $so=implode(',',$sos);
 
@@ -912,6 +912,7 @@ class LabourPaymentController extends Controller
                 $u_obj->exp_desc=$exp_desc;
                 $u_obj->exp_date=$exp_date;
                 $u_obj->amount=$expense_amnt;
+                $u_obj->no_of_person=$no_of_person;
                 if($attachment!='') 
                 {
                     $u_obj->attachment=$filename;
@@ -939,6 +940,7 @@ class LabourPaymentController extends Controller
                 $u_obj->exp_desc=$exp_desc;
                 $u_obj->exp_date=$exp_date;
                 $u_obj->amount=$expense_amnt;
+                $u_obj->no_of_person=$no_of_person;
                 if($attachment!='') 
                 {
                     $u_obj->attachment=$filename;
@@ -1115,7 +1117,7 @@ class LabourPaymentController extends Controller
                 ->leftjoin('users as u','u.id','te.a_id')
                 ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
                 ->leftjoin('sales_orders as so','so.id','oth.so_id')
-                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.no_of_person','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
                 ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'so.delete'=>0])
                 ->orderby('u.created_at','DESC')
                 ->get();
@@ -1140,7 +1142,7 @@ class LabourPaymentController extends Controller
                 ->leftjoin('users as u','u.id','te.a_id')
                 ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
                 ->leftjoin('sales_orders as so','so.id','oth.so_id')
-                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.no_of_person','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
                 ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'so.delete'=>0,'so.a_id'=>$a_id])
                 ->orderby('u.created_at','DESC')
                 ->get();
@@ -1165,7 +1167,7 @@ class LabourPaymentController extends Controller
                 ->leftjoin('users as u','u.id','te.a_id')
                 ->leftjoin('oa_tl_history as oth','oth.id','te.oth_id')
                 ->leftjoin('sales_orders as so','so.id','oth.so_id')
-                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
+                ->select('u.id as u_id','u.name as labour_name','u.delete as u_delete','u.is_active','u.emp_number','u.a_id as u_a_id','te.id','te.exp_type','te.exp_date','te.exp_desc','te.no_of_person','te.amount','te.a_id','te.delete','te.attachment','te.acc_id','te.oth_id','te.acc_remark','te.status','te.sa_remark','te.sa_id','te.aprvd_amount','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','so.cp_name','so.cp_ph_no','so.a_id as so_aid')
                 ->whereDate('te.exp_date', '>=' ,$from_date)
                 ->whereDate('te.exp_date', '<=' ,$to_date)
                 ->where(['te.delete'=>0,'u.delete'=>0,'u.is_active'=>0,'so.delete'=>0,'te.a_id'=>$labours])

@@ -217,29 +217,46 @@
                                         
                                         <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="clearedDatatable"> 
                                             <thead>
+                                                @if($roles == 0)
                                                 <tr>
+                                                    <th scope="col">
+                                                        <div class="form-check">
+                                                            <label class="form-check-label" for="check_all_exp">All</label>
+                                                            <input type="checkbox" class="form-check-input" id="check_all_exp" name="check_exp" value="All"/>
+                                                            
+                                                        </div>
+                                                     </th>
                                                     <th scope="col" style="width: 20px;">Sr.No</th>
                                                     <th scope="col" style="white-space: normal;">Expense Date</th>
-                                                    @if($roles == 0)
-                                                        <th scope="col">Action</th>
-                                                        <th scope="col"><div class="form-check">
-                                                            <label class="form-check-label" for="check_all_exp">All</label>
-                                                                <input type="checkbox" class="form-check-input permi" id="check_all_exp" name="check_exp" value="All"/>
-                                                                
-                                                            </div>
-                                                        </th>
-                                                    @endif
                                                     <th scope="col" style="width: 100px">Technician Name</th>
+                                                    <th scope="col" style="width: 100px">Project Admin</th>
                                                     <th scope="col" style="width: 100px">OA Number</th>
                                                     <th scope="col" style="width: 100px;white-space:wrap;">Project Name</th>
                                                     <th scope="col" style="width: 100px">Expense Type</th>
                                                     <th scope="col" style="width: 100px">Description</th>
-                                                    <th scope="col" style="width: 100px">Client Name</th>
-                                                    <th scope="col" style="width: 100px">Project Admin</th>
-                                                    <th scope="col" style="width: 100px">Admin Remark</th>
-                                                    <th scope="col" style="width: 100px">Status</th>
                                                     <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
+                                                    <th scope="col" style="width: 100px">Status</th>
+                                                    <th scope="col">Action</th>
+                                                    
+                                                    
+                                                    
                                                 </tr>
+                                                @else
+                                                    <tr>
+                                                        <th scope="col" style="width: 20px;">Sr.No</th>
+                                                        <th scope="col" style="white-space: normal;">Expense Date</th>
+                                                        <th scope="col" style="width: 100px">Technician Name</th>
+                                                        <th scope="col" style="width: 100px">OA Number</th>
+                                                        <th scope="col" style="width: 100px;white-space:wrap;">Project Name</th>
+                                                        <th scope="col" style="width: 100px">Expense Type</th>
+                                                        <th scope="col" style="width: 100px">Description</th>
+                                                        <th scope="col" style="width: 100px">Client Name</th>
+                                                        <th scope="col" style="width: 100px">Project Admin</th>
+                                                        <th scope="col" style="width: 100px">Admin Remark</th>
+                                                        <th scope="col" style="width: 100px">Status</th>
+                                                        <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
+                                                    </tr>
+                                                @endif
                                             </thead>
                                             <tbody id="cll_records">
                                             
@@ -247,11 +264,14 @@
                                             <tfoot id="tclldata">
                                                 <tr>
                                                     @if($roles == 0)
-                                                        <th colspan="13" class="text-center"><strong>Total</strong></th>
+                                                        <th colspan="9" class="text-center"><strong>Total</strong></th>
+                                                        <th id="t_cllamount"></th> 
+                                                        <th colspan="2" class="text-center"></th>
                                                     @else
                                                         <th colspan="11" class="text-center"><strong>Total</strong></th>
+                                                        <th id="t_cllamount"></th> 
                                                     @endif      
-                                                        <th id="t_cllamount"></th>                                       
+                                                                                              
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -407,17 +427,24 @@
                         </div>
                     </div>
                     <?php $tdate=date("Y-m-d");?>
-                    <div class="col-md-6 col-sm-12 col-lg-6">
+                    <div class="col-md-4 col-sm-12 col-lg-4">
                         <div class="form-floating mb-3">
                             <input type="date" class="form-control" id="exp_date" placeholder="Expense Date" name="exp_date" required max="{{$tdate}}" value="{{$tdate}}" disabled>
                             <label for="exp_date">Expense Date<sup class="text-danger">*</sup></label>
                             <span class="text-danger error" id="edaerror"></span>
                         </div>
                     </div>
-                    <div class="col-md-6 col-sm-12 col-lg-6">
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="no_of_person" placeholder="To Location" name="no_of_person" maxlength="4" disabled>
+                                <label for="no_of_person">No of Person</label>
+                                <span class="text-danger error" id="nperror"></span>
+                            </div>
+                        </div>
+                    <div class="col-md-4 col-sm-12 col-lg-4">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="expense_amnt" placeholder="Expense Amount" name="expense_amnt" maxlength="10" required disabled>
-                            <label for="expense_amnt">Requested Amount (In Rs.)<sup class="text-danger">*</sup></label>
+                            <label for="expense_amnt">Request Amount <sup class="text-danger">*</sup></label>
                             <span class="text-danger error" id="eaerror"></span>
                         </div>
                     </div>
@@ -478,7 +505,26 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
    
-
+<!-- Image Modal -->
+<div id="imageModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <form  class="form-horizontal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Expense Attachment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" id="image_div">
+                    </div>
+                </div>
+                <div class="modal-footer"> 
+                    <button type="button" class="btn btn-secondary waves-effect btn-sm" data-bs-dismiss="modal" id="image_close">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @include('common.delete_modal')    
 @stop
 @push('datatable_js')
@@ -510,14 +556,21 @@
         $("#tcaldata").hide();
         $("#taprdata").hide();
 
-        $("#check_all_exp").click(function () {
-            $('input:checkbox').prop('checked', true);
+        // $("#check_all_exp").click(function () {
+        //     $('input:checkbox').prop('checked', true);
+        // });
+
+        $("#check_all_exp").change(function() {
+            $(".checkbox").prop("checked", $(this).prop("checked"));
         });
 
-        // function toggleCheckbox() {
-        // var checkbox = document.getElementById("myCheckbox");
-        // checkbox.checked = !checkbox.checked;
-        // }
+        $(".checkbox").change(function() {
+            if ($(".checkbox:checked").length === $(".checkbox").length) {
+                $("#check_all_exp").prop("checked", true);
+            } else {
+                $("#check_all_exp").prop("checked", false);
+            }
+        });
 
     });
     var $body = $("body");
@@ -622,7 +675,7 @@
                                 content +="<td>"+ ++i +"</td>";
                                 content +="<td>"+exp_date+"</td>";
                                 if(data.role == 1){
-                                    content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                    content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-no_of_person='"+row.no_of_person+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
                                 }
                                 content +="<td>"+row.labour_name+"</td>";
                                 content +="<td>"+row.so_number+"</td>";
@@ -670,14 +723,37 @@
 
                             var d = new Date();
                             var current_date = d.getDate();
+                            if(data.role == 0){
+                                content1 +="<tr>";
+                                content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input checkbox' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>";
+
+                                content1 +="<td>"+ ++j +"</td>";
+                                content1 +="<td>"+exp_date+"</td>";
+                                content1 +="<td>"+row.labour_name+"</td>";
+                                content1 +="<td>"+row.project_admin+"</td>";
+                                content1 +="<td>"+row.so_number+"</td>";
+                                content1 +="<td>"+row.project_name+"</td>";
+                                if(row.exp_type == "Material_Purchase"){
+                                    content1 +="<td> Material Purchase </td>";
+                                }else if(row.exp_type == "Labour_Hired"){
+                                    content1 +="<td> Labour Hired </td>";
+                                }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
+                                    content1 +="<td>"+row.exp_type+"</td>";
+                                }
+                                content1 +="<td>"+row.exp_desc+"</td>";
+                                if(row.attachment != null){
+                                    content1 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                }else{
+                                    content1 +="<td>"+row.aprvd_amount+"</td>";
+                                } 
+                                content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                                content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-no_of_person='"+row.no_of_person+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                
+                                content1 += "</tr>";
+                            }else{
                                 content1 +="<tr>";
                                 content1 +="<td>"+ ++j +"</td>";
                                 content1 +="<td>"+exp_date+"</td>";
-                                if(data.role == 0){
-                                    content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
-
-                                    content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input permi' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"' onchange='"+toggleCheckbox()+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>";
-                                }
                                 content1 +="<td>"+row.labour_name+"</td>";
                                 content1 +="<td>"+row.so_number+"</td>";
                                 content1 +="<td>"+row.project_name+"</td>";
@@ -699,9 +775,14 @@
                                     content1 +="<td class='text-center'> - </td>";
                                 }
                                 content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                                content1 +="<td>"+row.aprvd_amount+"</td>";
+                                if(row.attachment != null){
+                                    content1 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                }else{
+                                    content1 +="<td>"+row.aprvd_amount+"</td>";
+                                } 
                                 
                                 content1 += "</tr>";
+                            }
                         }
 
                         if(row.status == 'Approved'){
@@ -751,7 +832,11 @@
                                     content3 +="<td class='text-center'> - </td>";
                                 }
                                 content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                                content3 +="<td>"+row.aprvd_amount+"</td>";
+                                if(row.attachment != null){
+                                    content3 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                }else{
+                                    content3 +="<td>"+row.aprvd_amount+"</td>";
+                                } 
                                 content3 += "</tr>";
 
 
@@ -802,7 +887,11 @@
                                     content2 +="<td class='text-center'> - </td>";
                                 }
                                 content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                                content2 +="<td>"+row.amount+"</td>";
+                                if(row.attachment != null){
+                                    content2 +="<td>"+row.amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                }else{
+                                    content2 +="<td>"+row.amount+"</td>";
+                                } 
                                
                                 content2 += "</tr>";
 
@@ -908,7 +997,7 @@
                                 content +="<td>"+ ++i +"</td>";
                                 content +="<td>"+exp_date+"</td>";
                                 if(data.role == 1){
-                                    content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                    content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-no_of_person='"+row.no_of_person+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
                                 }
                                 content +="<td style='white-space:wrap;'>"+row.labour_name+"</td>";
                                 content +="<td>"+row.so_number+"</td>";
@@ -956,28 +1045,53 @@
 
                             var d = new Date();
                             var current_date = d.getDate();
+                            if(data.role == 0){
+                                content1 +="<tr>";
+                                
+
+                                content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input checkbox' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>";
+
+                                content1 +="<td>"+ ++j +"</td>";
+                                content1 +="<td>"+exp_date+"</td>";
+                                content1 +="<td>"+row.labour_name+"</td>";
+                                content1 +="<td>"+row.project_admin+"</td>";
+                                content1 +="<td>"+row.so_number+"</td>";
+                                content1 +="<td>"+row.project_name+"</td>";
+                                if(row.exp_type == "Material_Purchase"){
+                                    content1 +="<td> Material Purchase </td>";
+                                }else if(row.exp_type == "Labour_Hired"){
+                                    content1 +="<td> Labour Hired </td>";
+                                }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
+                                    content1 +="<td>"+row.exp_type+"</td>";
+                                }
+                                content1 +="<td>"+row.exp_desc+"</td>";
+                                if(row.attachment != null){
+                                    content1 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                }else{
+                                    content1 +="<td>"+row.aprvd_amount+"</td>";
+                                } 
+                                content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+
+                                content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-no_of_person='"+row.no_of_person+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>";
+                                content1 += "</tr>";
+                                
+                            }else{
                                 content1 +="<tr>";
                                 content1 +="<td>"+ ++j +"</td>";
                                 content1 +="<td>"+exp_date+"</td>";
-                                if(data.role == 0){
-                                    content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-status='"+row.status+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-acc_remark='"+row.acc_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> </td>";
-
-                                    content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input permi' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"' onchange='"+toggleCheckbox()+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>";
-
-                                    
-                                }
-                                content1 +="<td style='white-space:wrap;'>"+row.labour_name+"</td>";
+                                content1 +="<td>"+row.labour_name+"</td>";
                                 content1 +="<td>"+row.so_number+"</td>";
-                                content1 +="<td style='white-space:wrap;'>"+row.project_name+"</td>";
+                                content1 +="<td>"+row.project_name+"</td>";
                                 if(row.exp_type == "Material_Purchase"){
-                                    content1 +="<td style='white-space:wrap;'> Material Purchase </td>";
+                                    content1 +="<td> Material Purchase </td>";
                                 }else if(row.exp_type == "Labour_Hired"){
-                                    content1 +="<td style='white-space:wrap;'> Labour Hired </td>";
+                                    content1 +="<td> Labour Hired </td>";
                                 }else if(row.exp_type != "Material_Purchase" && row.exp_type != "Labour_Hired"){
-                                    content1 +="<td style='white-space:wrap;'>"+row.exp_type+"</td>";
+                                    content1 +="<td>"+row.exp_type+"</td>";
                                 }
                                 content1 +="<td>"+row.exp_desc+"</td>";
                                 content1 +="<td>"+row.client_name+"</td>";
+
                                 content1 +="<td>"+row.project_admin+"</td>";
                                 
                                 if(row.acc_remark != null){
@@ -986,9 +1100,14 @@
                                     content1 +="<td class='text-center'> - </td>";
                                 }
                                 content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                                content1 +="<td>"+row.aprvd_amount+"</td>";
+                                if(row.attachment != null){
+                                    content1 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                }else{
+                                    content1 +="<td>"+row.aprvd_amount+"</td>";
+                                } 
                                 
                                 content1 += "</tr>";
+                            }
                         }
 
                         if(row.status == 'Approved'){
@@ -1035,7 +1154,11 @@
                                     content3 +="<td class='text-center'> - </td>";
                                 }
                                 content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                                content3 +="<td>"+row.aprvd_amount+"</td>";
+                                if(row.attachment != null){
+                                    content3 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                }else{
+                                    content3 +="<td>"+row.aprvd_amount+"</td>";
+                                } 
                                 content3 += "</tr>";
 
 
@@ -1083,8 +1206,11 @@
                                     content2 +="<td class='text-center'> - </td>";
                                 }
                                 content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
-                                content2 +="<td>"+row.amount+"</td>";
-                                
+                                if(row.attachment != null){
+                                    content2 +="<td>"+row.amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                }else{
+                                    content2 +="<td>"+row.amount+"</td>";
+                                } 
                                 content2 += "</tr>";
 
                         }
@@ -1132,6 +1258,29 @@
         getLabourExpenses();
     });
    
+    //For image show Modal  
+    $(document).on("click", ".view_attachment", function ()
+    {   
+        // $src = $(this).data('attachment');
+        var src = $(this).data('attachment');
+        var ext = src.split('.').pop();
+        if(ext == "pdf"){
+            $("#image_div").html('<iframe src="files/user/expense/'+src+'" id="imagepreview" style="width: 500px; height: 500px;"></iframe>');
+        }else{
+            $("#image_div").html('<img src="files/user/expense/'+src+'" id="imagepreview" style="width: 500px; height: 500px;">');
+        }
+         
+        // here asign the image to the modal when the user click the enlarge link
+        $("#imageModal").modal("show");
+    });
+
+    //For image hide Modal  
+    $(document).on("click", "#image_close", function ()
+    {
+        $('#image_div').empty(); 
+    });
+
+
     //For admin Edit Expenses Operation
     $(document).on("click",'.exp_editU',function()
     {
@@ -1157,6 +1306,7 @@
             var exp_desc = $(this).data('exp_desc');
             var exp_date = $(this).data('exp_date');
             var amount = $(this).data('amount');
+            var no_of_person = $(this).data('no_of_person');
             var aprvd_amount = $(this).data('aprvd_amount');
             var attachment = $(this).data('attachment');
 
@@ -1168,6 +1318,7 @@
             $('#attachment1').attr("href",attachment); 
             $('#t_name').html(t_name);   
             $('#e_num').html(e_num);
+            $('#no_of_person').val(no_of_person);
 
             if(aprvd_amount != null){
                 $('#updated_amnt').val(aprvd_amount); 
@@ -1211,6 +1362,7 @@
             var exp_desc = $(this).data('exp_desc');
             var exp_date = $(this).data('exp_date');
             var acc_remark = $(this).data('acc_remark');
+            var no_of_person = $(this).data('no_of_person');
             var amount = $(this).data('amount');
             var aprvd_amount = $(this).data('aprvd_amount');
             var sa_remark = $(this).data('sa_remark');
@@ -1222,6 +1374,7 @@
             $('#exp_date').val(exp_date); 
             $('#expense_amnt').val(amount); 
             $('#acc_remark').val(acc_remark);
+            $('#no_of_person').val(no_of_person);
             $('#attachment1').attr("href",attachment);
            
             $('#t_name').html(t_name);   

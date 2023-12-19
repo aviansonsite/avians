@@ -306,7 +306,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-group mb-3">
                                                 <label for="exp_type" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Expense Type<sup class="text-danger">*</sup></label>
                                                 <select class="form-control select2" id="exp_type" required name="exp_type">
@@ -331,7 +331,13 @@
                                                 <span class="text-danger error" id="edaerror"></span>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="no_of_person" placeholder="To Location" name="no_of_person" maxlength="4">
+                                                <label for="no_of_person">No of Person</label>
+                                                <span class="text-danger error" id="nperror"></span>
+                                            </div>
+                                        </div>
                                         <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
                                                 <input type="file" class="form-control" id="attachment" placeholder="Enter photo File" name="attachment" onchange="previewFile(this);">
@@ -346,7 +352,7 @@
                                             </div>
                                         </div>
                                         
-                                        <div class="col-md-3 col-sm-12 col-lg-3">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" id="expense_amnt" placeholder="Expense Amount" name="expense_amnt" maxlength="10" required>
                                                 <label for="expense_amnt">Amount (In Rs.)<sup class="text-danger">*</sup></label>
@@ -981,7 +987,7 @@
                             content +="<td>"+exp_date+"</td>";
                             content +="<td>";
                                 if(row.diffHours <= 24){    //after 24 hrs button hide
-                                    content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-oth_id='"+row.oth_id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-exp_type='"+row.exp_type+"' data-attachment='"+row.attachment+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delI' rel='tooltip' data-bs-placement='top' title='Delete Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+                                    content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Expense' data-id='"+row.id+"' data-oth_id='"+row.oth_id+"' data-exp_date='"+row.exp_date+"' data-exp_desc='"+row.exp_desc+"' data-amount='"+row.amount+"' data-exp_type='"+row.exp_type+"' data-no_of_person='"+row.no_of_person+"' data-attachment='"+row.attachment+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delI' rel='tooltip' data-bs-placement='top' title='Delete Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
                                 }
                             content +="</td>";
                                 if(row.exp_type == "Material_Purchase"){
@@ -1310,6 +1316,7 @@
             var exp_type = $(this).data('exp_type');
             var exp_desc = $(this).data('exp_desc');
             var exp_date = $(this).data('exp_date');
+            var no_of_person = $(this).data('no_of_person');
             var amount = $(this).data('amount');
             var attachment = $(this).data('attachment');
             var oth_id= $(this).data('oth_id');
@@ -1326,6 +1333,7 @@
             $('#exp_edit_id').val(id);   
             $('#exp_desc').val(exp_desc); 
             $('#exp_date').val(exp_date); 
+            $('#no_of_person').val(no_of_person); 
             $('#expense_amnt').val(amount); 
             $('#attachment1').attr("href",attachment);
            
@@ -1460,8 +1468,9 @@
             form_data.append("exp_desc", $("#exp_desc").val());
             form_data.append("exp_date", $("#exp_date").val());
             form_data.append("expense_amnt", $("#expense_amnt").val());
+            form_data.append("no_of_person", $("#no_of_person").val());
 
-       
+            
             // For File Encode
             var attachment1=$('#payment_encodedfile').val();
             var extension1=$('#payment_extension').val();
@@ -1489,7 +1498,7 @@
                         $("#exp_date").val('');
                         $("#expense_amnt").val('');          
                         $("#exp_so").empty();            
-
+                        $("#no_of_person").val(''); 
                         getLabourExpenses();
 
                         // ACTIVE PANE AND LINK
