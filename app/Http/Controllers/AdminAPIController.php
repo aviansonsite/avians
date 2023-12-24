@@ -2628,7 +2628,7 @@ class AdminAPIController extends Controller
 
         } 
 
-        $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.WorkReportPdf',compact('u_obj1','pout_date'))->setPaper('a4', 'potrait');
+        $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.workReportPdf',compact('u_obj1','pout_date'))->setPaper('a4', 'potrait');
         
         $pdf1->getDomPDF()->setHttpContext(
                 stream_context_create([
@@ -2648,6 +2648,101 @@ class AdminAPIController extends Controller
             }else{
                 return ['status' => false, 'message' => 'Generate PDF UnSuccessfull'];
             }
+    }
+
+    public function aprvdCheckExp(Request $req)
+    {
+        $role=Session::get('ROLES');
+        $a_id = $req->get('u_id');
+        $check_exp = $req->get('check_exp');
+        // dd($check_exp);
+        $j=0;
+        for ($i=1; $i <= count($check_exp); $i++)
+        {  
+            $u_obj=TechnicianExpenseModel::find($check_exp[$j]);
+            $u_obj->sa_id=$a_id;
+            $u_obj->status="Approved";
+            $res=$u_obj->update();
+        }  
+
+        if($res){
+            return ['status' => true, 'message' => 'Technician Expenses Approved Successfully.'];
+        }else{
+            return ['status' => false, 'message' => 'Technician Expenses Approved Unsuccessfully...!'];
+        }
+    }
+
+    public function adminClearedExp(Request $req)
+    {
+        $role=Session::get('ROLES');
+        $a_id = $req->get('u_id');
+        $check_exp = $req->get('check_exp');
+        // dd($check_exp);
+
+        $j=0;
+        for ($i=1; $i <= count($check_exp); $i++)
+        {  
+            $u_obj=TechnicianExpenseModel::find($check_exp[$j]);
+            $u_obj->acc_id=$a_id;
+            $u_obj->status="Cleared";
+            $u_obj->aprvd_amount=$u_obj->amount;
+            $res=$u_obj->update();
+        }  
+
+        if($res){
+            return ['status' => true, 'message' => 'Technician Expenses Cleared Successfully.'];
+        }else{
+            return ['status' => false, 'message' => 'Technician Expenses Cleared Unsuccessfully...!'];
+        }
+
+    }
+    
+    public function aprvdCheckTravelExp(Request $req)
+    {
+        $role=Session::get('ROLES');
+        $a_id = $req->get('u_id');
+        $check_exp = $req->get('check_exp');
+        // dd($check_exp);
+
+        $j=0;
+        for ($i=1; $i <= count($check_exp); $i++)
+        {  
+            $u_obj=TravelExpenseModel::find($check_exp[$j]);
+            $u_obj->sa_id=$a_id;
+            $u_obj->status="Approved";
+            $res=$u_obj->update();
+        }  
+
+        if($res){
+            return ['status' => true, 'message' => 'Travel Expenses Approved Successfully.'];
+        }else{
+            return ['status' => false, 'message' => 'Travel Expenses Approved Unsuccessfully...!'];
+        }
+    }
+
+    public function adminClearedTravelexp(Request $req)
+    {
+        $role=Session::get('ROLES');
+        $a_id = $req->get('u_id');
+        $check_exp = $req->get('check_exp');
+        // dd($check_exp);
+
+        $j=0;
+        for ($i=1; $i <= count($check_exp); $i++)
+        {  
+            $u_obj=TravelExpenseModel::find($check_exp[$j]);
+            $u_obj->ad_id=$a_id;
+            $u_obj->status="Cleared";
+            $u_obj->aprvd_amount=$u_obj->travel_amount;
+            $res=$u_obj->update();
+        } 
+        
+        if($res){
+            return ['status' => true, 'message' => 'Travel Expenses Cleared Successfully.'];
+        }else{
+            return ['status' => false, 'message' => 'Travel Expenses Cleared Unsuccessfully...!'];
+        }
+
     }
 
 }   

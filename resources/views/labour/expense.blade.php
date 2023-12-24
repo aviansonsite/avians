@@ -1257,6 +1257,7 @@
         $("#exp_type").val("").trigger("change"); 
         $('#exp_edit_id').val('');         
         $("#exp_so").empty();
+        $('#aerror').html('');
         // $("#exp_type option:selected").removeAttr("selected").change();
         // ("#exp_type option:selected").prop("selected", false);
         // $('#exp_type option:selected').removeAttr('selected','selected').change();

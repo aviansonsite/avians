@@ -1742,6 +1742,29 @@ class LabourPaymentController extends Controller
         }
         return redirect()->back();
     }
+
+    public function adminClearedExp(Request $req)
+    {
+        $role=Session::get('ROLES');
+        $a_id=Session::get('USER_ID');
+        $check_exp = $req->get('check_exp');
+        // dd($check_exp);
+        $j=0;
+        for ($i=1; $i <= count($check_exp); $i++)
+        {  
+            $u_obj=TechnicianExpenseModel::find($check_exp[$j]);
+            $u_obj->sa_id=$a_id;
+            $u_obj->status="Cleared";
+            $u_obj->aprvd_amount=$u_obj->amount;
+            $res=$u_obj->update();
+        }  
+        if($res){
+            Session::put('SUCCESS_MESSAGE', "Technician Expenses Cleared Successfully.");
+        }else{
+            Session::put('ERROR_MESSAGE',"Technician Expenses Cleared Unsuccessfully...!");
+        }
+        return redirect()->back();
+    }
     
     public function aprvdCheckTravelExp(Request $req)
     {
@@ -1765,5 +1788,26 @@ class LabourPaymentController extends Controller
         return redirect()->back();
     }
 
-
+    public function adminClearedTravelexp(Request $req)
+    {
+        $role=Session::get('ROLES');
+        $a_id=Session::get('USER_ID');
+        $check_exp = $req->get('check_exp');
+        // dd($check_exp);
+        $j=0;
+        for ($i=1; $i <= count($check_exp); $i++)
+        {  
+            $u_obj=TravelExpenseModel::find($check_exp[$j]);
+            $u_obj->ad_id=$a_id;
+            $u_obj->status="Cleared";
+            $u_obj->aprvd_amount=$u_obj->travel_amount;
+            $res=$u_obj->update();
+        }  
+        if($res){
+            Session::put('SUCCESS_MESSAGE', "Travel Expenses Cleared Successfully.");
+        }else{
+            Session::put('ERROR_MESSAGE',"Travel Expenses Cleared Unsuccessfully...!");
+        }
+        return redirect()->back();
+    }
 }

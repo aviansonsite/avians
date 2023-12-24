@@ -46,11 +46,16 @@ Route::post('/delete_so', [AdminAPIController::class, 'soDelete']);
 Route::post('/manage_exp_tech', [AdminAPIController::class, 'manageExpTechnicians']);       
 Route::post('/get_all_expenses', [AdminAPIController::class, 'getAllExpense']);
 Route::post('/post_expense', [AdminAPIController::class, 'postExpense']);
+Route::post('/aprvd_check_exp', [AdminAPIController::class, 'aprvdCheckExp']);
+Route::post('/admin_cleared_exp', [AdminAPIController::class, 'adminClearedExp']);
+
 
 //Travel Expense
 Route::post('/travel_exp_tech', [AdminAPIController::class, 'travelExpTechnicians']);       
 Route::post('/get_travel_expenses', [AdminAPIController::class, 'getTravelExpense']);
 Route::post('/update_travel_expense', [AdminAPIController::class, 'updateTravelExpenses']);
+Route::post('/admin_cleared_travelexp', [AdminAPIController::class, 'adminClearedTravelexp']);
+Route::post('/aprvd_check_travelexp', [AdminAPIController::class, 'aprvdCheckTravelExp']);
 
 //Technician Payment
 Route::post('/tech_paymets', [AdminAPIController::class, 'techniciansPayments']);

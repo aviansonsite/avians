@@ -801,7 +801,7 @@ class ReportController extends Controller
 
         } 
 
-        $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.WorkReportPdf',compact('u_obj1','pout_date'))->setPaper('a4', 'potrait');
+        $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.workReportPdf',compact('u_obj1','pout_date'))->setPaper('a4', 'potrait');
         
         $pdf1->getDomPDF()->setHttpContext(
                 stream_context_create([

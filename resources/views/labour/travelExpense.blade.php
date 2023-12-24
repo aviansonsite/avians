@@ -188,46 +188,100 @@
                         </ul>
                         <div class="tab-content p-3 text-muted">
                             <div class="tab-pane active" id="ucpayment_list" role="tabpanel">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="expDatatable"> 
-                                        <thead>
-                                            <tr>
-                                                <th scope="col" style="width: 20px;">Sr.No</th>
-                                                <th scope="col" style="white-space: normal;">Travel Date</th>
 
-                                                @if($roles != 0)
-                                                    <th scope="col" style="width: 100px">Action</th>
-                                                @endif
-                                                @if($roles != 3)
-                                                    <th scope="col" style="width: 100px">OA Number</th>
-                                                    <th scope="col" style="width: 100px">Client Name</th>
-                                                    <th scope="col" style="width: 100px">Project Name</th>
-                                                    <th scope="col" style="width: 100px">Technician Name</th>
-                                                    <th scope="col" style="width: 100px">Project Admin</th>
-                                                @endif
-                                                <th scope="col" style="width: 100px">Travel Mode</th>
-                                                <th scope="col" style="width: 100px">From Location</th>
-                                                <th scope="col" style="width: 100px">To Location</th>
-                                                <th scope="col" style="width: 100px">Total KM</th>
-                                                <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
-                                                <th scope="col" style="width: 100px">Status</th>
-                                                <th scope="col" style="width: 100px">Description</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="exp_pay_records">
-                                           
-                                        </tbody>
-                                        <!-- <tfoot id="tucledata">
-                                            <tr>
-                                                <th colspan="2" class="text-center"><strong>Total</strong></th>
-                                                <th id="t_ucleamount"></th>
+                                {!! Form::open(['class'=>"form-horizontal user_form",'enctype'=>'multipart/form-data','files' => 'true' ,'method'=>"post",'url'=>'admin_cleared_travelexp','id'=>'postCheckExpForm']) !!}
+                                    @if($roles == 1)
+                                        <div class="d-sm-flex flex-wrap">
+                                            <div class="ms-auto">
+                                                <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2" >Approved Checked Expenses</button>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="expDatatable"> 
+                                            <thead>
                                                 @if($roles == 1)
-                                                    <th></th>
-                                                @endif   
-                                            </tr>
-                                        </tfoot> -->
-                                    </table>
-                                </div>
+                                                    <tr>
+                                                        <th scope="col"><div class="form-check">
+                                                            <label class="form-check-label" for="check_all_exp">All</label>
+                                                                <input type="checkbox" class="form-check-input" id="check_all_exp" name="check_exp" value="All"/>
+                                                                
+                                                            </div>
+                                                        </th>
+                                                        <th scope="col" style="width: 20px;">Sr.No</th>
+                                                        <th scope="col" style="width: 100px">Travel Date</th>
+                                                        <th scope="col" style="width: 100px">Technician Name</th>
+                                                        <th scope="col" style="width: 100px">Project Admin</th>
+                                                        <th scope="col" style="width: 100px">OA Number</th>
+                                                        <th scope="col" style="width: 100px">Project Name</th>
+                                                        <th scope="col" style="white-space: normal;">Travel Mode</th>
+                                                        <th scope="col" style="width: 100px">Description</th>
+                                                        <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
+                                                        <th scope="col" style="width: 100px">Status</th>
+                                                        <th scope="col" style="width: 100px">Action</th>
+                                                    </tr>
+
+                                                @elseif($roles == 0)
+                                                    <tr>
+                                                        <th scope="col" style="width: 20px;">Sr.No</th>
+                                                        <th scope="col" style="width: 100px">Travel Date</th>
+                                                        <th scope="col" style="width: 100px">Technician Name</th>
+                                                        <th scope="col" style="width: 100px">Project Admin</th>
+                                                        <th scope="col" style="width: 100px">OA Number</th>
+                                                        <th scope="col" style="width: 100px">Project Name</th>
+                                                        <th scope="col" style="white-space: normal;">Travel Mode</th>
+                                                        <th scope="col" style="width: 100px">Description</th>
+                                                        <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
+                                                        <th scope="col" style="width: 100px">Status</th>
+                                                        
+                                                    </tr>
+                                                @else
+                                                    <tr>
+                                                        <th scope="col" style="width: 20px;">Sr.No</th>
+                                                        <th scope="col" style="white-space: normal;">Travel Date</th>
+
+                                                        @if($roles != 0)
+                                                            <th scope="col" style="width: 100px">Action</th>
+                                                        @endif
+                                                        @if($roles != 3)
+                                                            <th scope="col" style="width: 100px">OA Number</th>
+                                                            <th scope="col" style="width: 100px">Client Name</th>
+                                                            <th scope="col" style="width: 100px">Project Name</th>
+                                                            <th scope="col" style="width: 100px">Technician Name</th>
+                                                            <th scope="col" style="width: 100px">Project Admin</th>
+                                                        @endif
+                                                        <th scope="col" style="width: 100px">Travel Mode</th>
+                                                        <th scope="col" style="width: 100px">From Location</th>
+                                                        <th scope="col" style="width: 100px">To Location</th>
+                                                        <th scope="col" style="width: 100px">Total KM</th>
+                                                        <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
+                                                        <th scope="col" style="width: 100px">Status</th>
+                                                        <th scope="col" style="width: 100px">Description</th>
+                                                    </tr>
+                                                @endif
+                                            </thead>
+                                            <tbody id="exp_pay_records">
+                                            
+                                            </tbody>
+                                            <!-- <tfoot id="tucledata">
+                                                <tr>
+                                                    <th colspan="2" class="text-center"><strong>Total</strong></th>
+                                                    <th id="t_ucleamount"></th>
+                                                    @if($roles == 1)
+                                                        <th></th>
+                                                    @endif   
+                                                </tr>
+                                            </tfoot> -->
+                                        </table>
+                                    </div>
+                                    @if($roles == 1)
+                                        <div class="d-sm-flex flex-wrap mt-3">
+                                            <div class="ms-auto">
+                                                <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2" >Approved Checked Expenses</button>
+                                            </div>
+                                        </div>
+                                    @endif    
+                                {!! Form::close() !!}
                             </div>
          
                             <div class="tab-pane" id="cllpayment" role="tabpanel">
@@ -263,6 +317,20 @@
                                                     <th scope="col" style="width: 100px">Action</th>
                                                 </tr>
 
+                                            @elseif($roles == 1)
+                                                <tr>
+                                                    <th scope="col" style="width: 20px;">Sr.No</th>
+                                                    <th scope="col" style="width: 100px">Travel Date</th>
+                                                    <th scope="col" style="width: 100px">Technician Name</th>
+                                                    <th scope="col" style="width: 100px">Project Admin</th>
+                                                    <th scope="col" style="width: 100px">OA Number</th>
+                                                    <th scope="col" style="width: 100px">Project Name</th>
+                                                    <th scope="col" style="white-space: normal;">Travel Mode</th>
+                                                    <th scope="col" style="width: 100px">Description</th>
+                                                    <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
+                                                    <th scope="col" style="width: 100px">Status</th>
+                                                </tr>
+
                                             @else
                                                 <tr>
                                                     <th scope="col" style="width: 20px;">Sr.No</th>
@@ -283,6 +351,7 @@
                                                     <th scope="col" style="width: 100px">Admin Remark</th>
                                                     <th scope="col" style="width: 100px">Description</th>
                                                 </tr>
+
                                             @endif
                                         </thead>
                                         <tbody id="cll_records">
@@ -313,27 +382,58 @@
                                 <div class="table-responsive">
                                     <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="apprvdDatatable"> 
                                         <thead>
-                                            <tr>
-                                                <th scope="col" style="width: 20px;">Sr.No</th>
-                                                <th scope="col" style="white-space: normal;">Travel Date</th>
-                                                @if($roles != 3)
-                                                    <th scope="col" style="width: 100px">OA Number</th>
-                                                    <th scope="col" style="width: 100px">Client Name</th>
-                                                    <th scope="col" style="width: 100px">Project Name</th>
+                                            @if($roles == 0)
+                                                <tr>
+                                                    
+                                                    <th scope="col" style="width: 20px;">Sr.No</th>
+                                                    <th scope="col" style="width: 100px">Travel Date</th>
                                                     <th scope="col" style="width: 100px">Technician Name</th>
                                                     <th scope="col" style="width: 100px">Project Admin</th>
-                                                @endif
-                                                <th scope="col" style="white-space: normal;">Travel Mode</th>
-                                                <th scope="col" style="white-space: normal;">From Location</th>
-                                                <th scope="col" style="white-space: normal;">To Location</th>
-                                                <th scope="col" style="width: 100px">Total KM</th>
-                                                <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
-                                                <th scope="col" style="width: 100px">Status</th>
-                                                <th scope="col" style="width: 100px">Admin Remark</th>
-                                                <th scope="col" style="width: 100px">SA Remark</th>
-                                                <th scope="col" style="width: 100px">Description</th>
-                                            </tr>
-                                        </thead>
+                                                    <th scope="col" style="width: 100px">OA Number</th>
+                                                    <th scope="col" style="width: 100px">Project Name</th>
+                                                    <th scope="col" style="white-space: normal;">Travel Mode</th>
+                                                    <th scope="col" style="width: 100px">Description</th>
+                                                    <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
+                                                    <th scope="col" style="width: 100px">Status</th>
+                                                    
+                                                </tr>
+
+                                            @elseif($roles == 1)
+                                                <tr>
+                                                    <th scope="col" style="width: 20px;">Sr.No</th>
+                                                    <th scope="col" style="width: 100px">Travel Date</th>
+                                                    <th scope="col" style="width: 100px">Technician Name</th>
+                                                    <th scope="col" style="width: 100px">Project Admin</th>
+                                                    <th scope="col" style="width: 100px">OA Number</th>
+                                                    <th scope="col" style="width: 100px">Project Name</th>
+                                                    <th scope="col" style="white-space: normal;">Travel Mode</th>
+                                                    <th scope="col" style="width: 100px">Description</th>
+                                                    <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
+                                                    <th scope="col" style="width: 100px">Status</th>
+                                                </tr>
+                                            @else
+                                                <tr>
+                                                    <th scope="col" style="width: 20px;">Sr.No</th>
+                                                    <th scope="col" style="white-space: normal;">Travel Date</th>
+                                                    @if($roles != 3)
+                                                        <th scope="col" style="width: 100px">OA Number</th>
+                                                        <th scope="col" style="width: 100px">Client Name</th>
+                                                        <th scope="col" style="width: 100px">Project Name</th>
+                                                        <th scope="col" style="width: 100px">Technician Name</th>
+                                                        <th scope="col" style="width: 100px">Project Admin</th>
+                                                    @endif
+                                                    <th scope="col" style="white-space: normal;">Travel Mode</th>
+                                                    <th scope="col" style="white-space: normal;">From Location</th>
+                                                    <th scope="col" style="white-space: normal;">To Location</th>
+                                                    <th scope="col" style="width: 100px">Total KM</th>
+                                                    <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
+                                                    <th scope="col" style="width: 100px">Status</th>
+                                                    <th scope="col" style="width: 100px">Admin Remark</th>
+                                                    <th scope="col" style="width: 100px">SA Remark</th>
+                                                    <th scope="col" style="width: 100px">Description</th>
+                                                </tr>
+                                            @endif
+                                        </thead>    
                                         <tbody id="apprvd_records">
                                         
                                         </tbody>
@@ -348,46 +448,100 @@
                             </div>
 
                             <div class="tab-pane" id="calpayment" role="tabpanel">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="cancelDatatable"> 
-                                        <thead>
-                                            <tr>
-                                                <th scope="col" style="width: 20px;">Sr.No</th>
-                                                <th scope="col" style="white-space: normal;">Travel Date</th>
+                                {!! Form::open(['class'=>"form-horizontal user_form",'enctype'=>'multipart/form-data','files' => 'true' ,'method'=>"post",'url'=>'aprvd_check_travelexp','id'=>'postCheckExpForm']) !!}
+                                    @if($roles == 0)
+                                    <div class="d-sm-flex flex-wrap">
+                                        <div class="ms-auto">
+                                            <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2" >Approved Checked Expenses</button>
+                                        </div>
+                                    </div>
+                                    @endif
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered dt-responsive nowrap w-100 table table-striped" id="cancelDatatable"> 
+                                            <thead>
                                                 @if($roles == 0)
-                                                    <th scope="col">Action</th>
-                                                @endif
-                                                @if($roles != 3)
-                                                    <th scope="col" style="width: 100px">OA Number</th>
-                                                    <th scope="col" style="width: 100px">Client Name</th>
-                                                    <th scope="col" style="width: 100px">Project Name</th>
-                                                    <th scope="col" style="width: 100px">Technician Name</th>
-                                                    <th scope="col" style="width: 100px">Project Admin</th>
-                                                @endif
-                                                <th scope="col" style="width: 100px">Travel Mode</th>
-                                                <th scope="col" style="width: 100px">From Location</th>
-                                                <th scope="col" style="width: 100px">To Location</th>
-                                                <th scope="col" style="width: 100px">Total KM</th>
-                                                <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
-                                                <th scope="col" style="width: 100px">Status</th>
-                                                <th scope="col" style="width: 100px">Description</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="cal_records">
-                                        
-                                        </tbody>
-                                        <!-- <tfoot id="tcaldata">
-                                            <tr>
-                                                <th colspan="7" class="text-center"><strong>Total</strong></th>
-                                                <th id="t_calamount"></th>
-                                            
-                                            </tr>
-                                        </tfoot> -->
-                                    </table>
-                                   
-                                </div>
-                            </div>
+                                                    <tr>
+                                                        <th scope="col"><div class="form-check">
+                                                            <label class="form-check-label" for="check_all_exp">All</label>
+                                                                <input type="checkbox" class="form-check-input" id="check_all_exp" name="check_exp" value="All"/>
+                                                                
+                                                            </div>
+                                                        </th>
+                                                        <th scope="col" style="width: 20px;">Sr.No</th>
+                                                        <th scope="col" style="width: 100px">Travel Date</th>
+                                                        <th scope="col" style="width: 100px">Technician Name</th>
+                                                        <th scope="col" style="width: 100px">Project Admin</th>
+                                                        <th scope="col" style="width: 100px">OA Number</th>
+                                                        <th scope="col" style="width: 100px">Project Name</th>
+                                                        <th scope="col" style="white-space: normal;">Travel Mode</th>
+                                                        <th scope="col" style="width: 100px">Description</th>
+                                                        <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
+                                                        <th scope="col" style="width: 100px">Status</th>
+                                                        <th scope="col" style="width: 100px">Action</th>
+                                                    </tr>
 
+                                                @elseif($roles == 1)
+                                                    <tr>
+                                                        <th scope="col" style="width: 20px;">Sr.No</th>
+                                                        <th scope="col" style="width: 100px">Travel Date</th>
+                                                        <th scope="col" style="width: 100px">Technician Name</th>
+                                                        <th scope="col" style="width: 100px">Project Admin</th>
+                                                        <th scope="col" style="width: 100px">OA Number</th>
+                                                        <th scope="col" style="width: 100px">Project Name</th>
+                                                        <th scope="col" style="white-space: normal;">Travel Mode</th>
+                                                        <th scope="col" style="width: 100px">Description</th>
+                                                        <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
+                                                        <th scope="col" style="width: 100px">Status</th>
+                                                    </tr>
+
+                                                @else
+
+                                                    <tr>
+                                                        <th scope="col" style="width: 20px;">Sr.No</th>
+                                                        <th scope="col" style="white-space: normal;">Travel Date</th>
+                                                        @if($roles == 0)
+                                                            <th scope="col">Action</th>
+                                                        @endif
+                                                        @if($roles != 3)
+                                                            <th scope="col" style="width: 100px">OA Number</th>
+                                                            <th scope="col" style="width: 100px">Client Name</th>
+                                                            <th scope="col" style="width: 100px">Project Name</th>
+                                                            <th scope="col" style="width: 100px">Technician Name</th>
+                                                            <th scope="col" style="width: 100px">Project Admin</th>
+                                                        @endif
+                                                        <th scope="col" style="width: 100px">Travel Mode</th>
+                                                        <th scope="col" style="width: 100px">From Location</th>
+                                                        <th scope="col" style="width: 100px">To Location</th>
+                                                        <th scope="col" style="width: 100px">Total KM</th>
+                                                        <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
+                                                        <th scope="col" style="width: 100px">Status</th>
+                                                        <th scope="col" style="width: 100px">Description</th>
+                                                    </tr>
+                                                @endif
+                                            </thead>
+                                            <tbody id="cal_records">
+                                            
+                                            </tbody>
+                                            <!-- <tfoot id="tcaldata">
+                                                <tr>
+                                                    <th colspan="7" class="text-center"><strong>Total</strong></th>
+                                                    <th id="t_calamount"></th>
+                                                
+                                                </tr>
+                                            </tfoot> -->
+                                        </table>
+                                    
+                                    </div>
+                                    @if($roles == 0)
+                                        <div class="d-sm-flex flex-wrap mt-3">
+                                            <div class="ms-auto">
+                                                <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2" >Approved Checked Expenses</button>
+                                            </div>
+                                        </div>
+                                    @endif    
+                                {!! Form::close() !!}
+                            </div>
+ 
                             <div class="tab-pane" id="update_epayment" role="tabpanel">
                                 {!! Form::open(['class'=>"form-horizontal epayment_form",'enctype'=>'multipart/form-data','files' => 'true' ,'id'=>'postexpPaymentform']) !!}
                                     <input type="hidden" name="exp_edit_id" id="exp_edit_id" value="">
@@ -1095,14 +1249,82 @@
                                 t_ucleamount+=Number(row.travel_amount);           //total of amount
                                 var d = new Date();
                                 var current_date = d.getDate();
+
+                                if(data.role == 0){
+                                    content +="<tr>";
+                                    content +="<td>"+ ++i +"</td>";
+                                    content +="<td>"+travel_date+"</td>";
+                                    content +="<td>"+row.labour_name+"</td>";
+                                    content +="<td>"+row.project_admin+"</td>";
+                                    content +="<td>"+row.so_number+"</td>";
+                                    content +="<td>"+row.project_name+"</td>";
+                                    if(row.mode_travel == "Shared_Auto"){
+                                        content +="<td> Shared Auto </td>";
+                                    }else if(row.mode_travel == "Private_Auto"){
+                                        content +="<td> Private Auto </td>";
+                                    }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                        content +="<td>"+row.mode_travel+"</td>";
+                                    }
+                                    if(row.travel_desc != null){
+                                        content +="<td>"+row.travel_desc+"</td>";
+                                    }else{
+                                        content +="<td class='text-center'> - </td>";
+                                    }
+
+                                    if(row.attachment != null){
+                                        content +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                    }else{
+                                        content +="<td>"+row.travel_amount+"</td>";
+                                    } 
+                                    content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                                    content += "</tr>";
+
+                                }else if(data.role == 1)
+                                {
+                                    content +="<tr>";
+                                    content += "<td><div class='form-check'><input type='checkbox' class='form-check-input checkbox' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>";
+                                    content +="<td>"+ ++i +"</td>";
+                                    content +="<td>"+travel_date+"</td>";
+                                    content +="<td>"+row.labour_name+"</td>";
+                                    content +="<td>"+row.project_admin+"</td>";
+                                    content +="<td>"+row.so_number+"</td>";
+                                    content +="<td>"+row.project_name+"</td>";
+                                    if(row.mode_travel == "Shared_Auto"){
+                                        content +="<td> Shared Auto </td>";
+                                    }else if(row.mode_travel == "Private_Auto"){
+                                        content +="<td> Private Auto </td>";
+                                    }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                        content +="<td>"+row.mode_travel+"</td>";
+                                    }
+                                    if(row.travel_desc != null){
+                                        content +="<td>"+row.travel_desc+"</td>";
+                                    }else{
+                                        content +="<td class='text-center'> - </td>";
+                                    }
+
+                                    if(row.attachment != null){
+                                        content +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                    }else{
+                                        content +="<td>"+row.travel_amount+"</td>";
+                                    } 
+                                        
+                                    content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+
+                                    content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"' data-ad_remark='"+row.ad_remark+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>"
+
+                                    content += "</tr>";
+
+                                }else{
+
                                     content +="<tr>";
                                     content +="<td>"+ ++i +"</td>";
                                     content +="<td>"+travel_date+"</td>";
 
-                                    if(data.role != 0){
+                                    if(data.role != 0)
+                                    {
                                         content +="<td>";
                                             if((row.diffHours <= 24) && (data.role == 3)){
-                                                content +="<a class='btn btn-outline-secondary btn-sm exp_editT' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delT' rel='tooltip' data-bs-placement='top' title='Delete Travel Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
+                                                content +="<a class='btn btn-outline-secondary btn-sm exp_editT' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-no_of_person='"+row.no_of_person+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a> <button class='btn btn-outline-secondary btn-sm exp_delT' rel='tooltip' data-bs-placement='top' title='Delete Travel Expense' data-bs-toggle='modal' data-id='"+row.id+"'><i class='fas fa-trash-alt'></i></button>"
                                             }
                                             if((data.role == 1)){
                                                 content +="<a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"' data-ad_remark='"+row.ad_remark+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
@@ -1151,6 +1373,7 @@
                                         content +="<td class='text-center'> - </td>";
                                     }
                                     content += "</tr>";
+                                }
                             }      
 
                             if(row.status == 'Cleared')
@@ -1174,7 +1397,7 @@
                                 var current_date = d.getDate();
                                 if(data.role == 0){
                                     content1 +="<tr>";
-                                    content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input checkbox' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>"
+                                    content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input checkbox' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>";
                                     content1 +="<td>"+ ++j +"</td>";
                                     content1 +="<td>"+travel_date+"</td>";
                                     content1 +="<td>"+row.labour_name+"</td>";
@@ -1206,6 +1429,36 @@
 
                                     content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>"
                                 
+                                    content1 += "</tr>";
+
+                                }else if(data.role == 1){
+                                    content1 +="<tr>";
+                                    content1 +="<td>"+ ++j +"</td>";
+                                    content1 +="<td>"+travel_date+"</td>";
+                                    content1 +="<td>"+row.labour_name+"</td>";
+                                    content1 +="<td>"+row.project_admin+"</td>";
+                                    content1 +="<td>"+row.so_number+"</td>";
+                                    content1 +="<td>"+row.project_name+"</td>";
+                                    if(row.mode_travel == "Shared_Auto"){
+                                        content1 +="<td> Shared Auto </td>";
+                                    }else if(row.mode_travel == "Private_Auto"){
+                                        content1 +="<td> Private Auto </td>";
+                                    }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                        content1 +="<td>"+row.mode_travel+"</td>";
+                                    }
+                                    if(row.travel_desc != null){
+                                        content1 +="<td>"+row.travel_desc+"</td>";
+                                    }else{
+                                        content1 +="<td class='text-center'> - </td>";
+                                    }
+                                    if(row.attachment != null){
+                                        content1 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                    }else{
+                                        content1 +="<td>"+row.aprvd_amount+"</td>";
+                                    } 
+
+                                    content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+
                                     content1 += "</tr>";
 
                                 }else{
@@ -1280,6 +1533,73 @@
 
                                 var d = new Date();
                                 var current_date = d.getDate();
+                                if(data.role == 0){
+                                    content3 +="<tr>";
+                                    content3 +="<td>"+ ++k +"</td>";
+                                    content3 +="<td>"+travel_date+"</td>";
+                                    content3 +="<td>"+row.labour_name+"</td>";
+                                    content3 +="<td>"+row.project_admin+"</td>";
+                                    content3 +="<td>"+row.so_number+"</td>";
+                                    content3 +="<td>"+row.project_name+"</td>";
+                                    if(row.mode_travel == "Shared_Auto"){
+                                        content3 +="<td> Shared Auto </td>";
+                                    }else if(row.mode_travel == "Private_Auto"){
+                                        content3 +="<td> Private Auto </td>";
+                                    }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                        content3 +="<td>"+row.mode_travel+"</td>";
+                                    }
+
+                                    if(row.travel_desc != null){
+                                        content3 +="<td>"+row.travel_desc+"</td>";
+                                    }else{
+                                        content3 +="<td class='text-center'> - </td>";
+                                    }
+
+                                    if(row.attachment != null){
+                                        content3 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                    }else{
+                                        content3 +="<td>"+row.aprvd_amount+"</td>";
+                                    } 
+                                    content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+
+                                    content3 += "</tr>";
+
+
+                                }else if(data.role == 1){
+
+                                    content3 +="<tr>";
+                                    content3 +="<td>"+ ++k +"</td>";
+                                    content3 +="<td>"+travel_date+"</td>";
+                                    content3 +="<td>"+row.labour_name+"</td>";
+                                    content3 +="<td>"+row.project_admin+"</td>";
+                                    content3 +="<td>"+row.so_number+"</td>";
+                                    content3 +="<td>"+row.project_name+"</td>";
+                                    if(row.mode_travel == "Shared_Auto"){
+                                        content3 +="<td> Shared Auto </td>";
+                                    }else if(row.mode_travel == "Private_Auto"){
+                                        content3 +="<td> Private Auto </td>";
+                                    }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                        content3 +="<td>"+row.mode_travel+"</td>";
+                                    }
+
+                                    if(row.travel_desc != null){
+                                        content3 +="<td>"+row.travel_desc+"</td>";
+                                    }else{
+                                        content3 +="<td class='text-center'> - </td>";
+                                    }
+
+                                    if(row.attachment != null){
+                                        content3 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                    }else{
+                                        content3 +="<td>"+row.aprvd_amount+"</td>";
+                                    } 
+                                    content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+
+                                    content3 += "</tr>";
+
+
+                                }else{
+
                                     content3 +="<tr>";
                                     content3 +="<td>"+ ++k +"</td>";
                                     content3 +="<td>"+travel_date+"</td>";
@@ -1333,7 +1653,7 @@
                                         content3 +="<td class='text-center'> - </td>";
                                     }
                                     content3 += "</tr>";
-
+                                }
 
                             }
 
@@ -1356,13 +1676,84 @@
 
                                 var d = new Date();
                                 var current_date = d.getDate();
+
+                                if(data.role == 0){
+
+                                    content2 +="<tr>";
+                                    content2 += "<td><div class='form-check'><input type='checkbox' class='form-check-input checkbox' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>";
+                                    content2 +="<td>"+ ++l +"</td>";
+                                    content2 +="<td>"+travel_date+"</td>";
+                                    content2 +="<td>"+row.labour_name+"</td>";
+                                    content2 +="<td>"+row.project_admin+"</td>";
+                                    content2 +="<td>"+row.so_number+"</td>";
+                                    content2 +="<td>"+row.project_name+"</td>";
+                                    if(row.mode_travel == "Shared_Auto"){
+                                        content2 +="<td> Shared Auto </td>";
+                                    }else if(row.mode_travel == "Private_Auto"){
+                                        content2 +="<td> Private Auto </td>";
+                                    }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                        content2 +="<td>"+row.mode_travel+"</td>";
+                                    }
+                                    if(row.travel_desc != null){
+                                        content2 +="<td>"+row.travel_desc+"</td>";
+                                    }else{
+                                        content2 +="<td class='text-center'> - </td>";
+                                    }
+                                    if(row.attachment != null){
+                                        content2 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                    }else{
+                                        content2 +="<td>"+row.travel_amount+"</td>";
+                                    } 
+                                    content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+
+                                    content2 +="<td>";
+                                        content2 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-ad_remark='"+row.ad_remark+"' data-sa_remark='"+row.sa_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
+                                    content2 +="</td>";
+
+                                    content2 += "</tr>";
+
+                                }else if(data.role == 1){
+
+                                    content2 +="<tr>";
+                                    content2 +="<td>"+ ++l +"</td>";
+                                    content2 +="<td>"+travel_date+"</td>";
+                                    content2 +="<td>"+row.labour_name+"</td>";
+                                    content2 +="<td>"+row.project_admin+"</td>";
+                                    content2 +="<td>"+row.so_number+"</td>";
+                                    content2 +="<td>"+row.project_name+"</td>";
+
+                                    if(row.mode_travel == "Shared_Auto"){
+                                        content2 +="<td> Shared Auto </td>";
+                                    }else if(row.mode_travel == "Private_Auto"){
+                                        content2 +="<td> Private Auto </td>";
+                                    }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                        content2 +="<td>"+row.mode_travel+"</td>";
+                                    }
+
+                                    if(row.travel_desc != null){
+                                        content2 +="<td>"+row.travel_desc+"</td>";
+                                    }else{
+                                        content2 +="<td class='text-center'> - </td>";
+                                    }
+
+                                    if(row.attachment != null){
+                                        content2 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                                    }else{
+                                        content2 +="<td>"+row.travel_amount+"</td>";
+                                    } 
+
+                                    content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                                    content2 += "</tr>";
+
+                                }else{
+
                                     content2 +="<tr>";
                                     content2 +="<td>"+ ++l +"</td>";
                                     content2 +="<td>"+travel_date+"</td>";
 
                                     if(data.role == 0){
                                         content2 +="<td>";
-                                        content2 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
+                                        content2 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-ad_remark='"+row.ad_remark+"' data-sa_remark='"+row.sa_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
                                         content2 +="</td>";
 
                                     }
@@ -1402,22 +1793,26 @@
                                         content2 +="<td class='text-center'> - </td>";
                                     }
                                     content2 += "</tr>";
+
+                                }
                             }
 
                         });
 
                         $("#exp_pay_records").html(content); //For append html data
-                        $('#expDatatable').dataTable();
+                        if(data.role != 1){
+                            $('#expDatatable').dataTable();
+                        }
 
                         $("#cll_records").html(content1); //For append Cleared datatable html data 
-
                         if(data.role != 0){
                             $('#clearedDatatable').dataTable();
                         }
 
                         $("#cal_records").html(content2); //For append Disapproved datatable html data
-                        $('#cancelDatatable').dataTable();
-
+                        if(data.role != 0){
+                            $('#cancelDatatable').dataTable();
+                        }
                         $("#apprvd_records").html(content3); //For append html data
                         $('#apprvdDatatable').dataTable();    
 
@@ -1512,6 +1907,72 @@
                         t_ucleamount+=Number(row.travel_amount);           //total of amount
                         var d = new Date();
                         var current_date = d.getDate();
+
+                        if(data.role == 0){
+                            content +="<tr>";
+                            content +="<td>"+ ++i +"</td>";
+                            content +="<td>"+travel_date+"</td>";
+                            content +="<td>"+row.labour_name+"</td>";
+                            content +="<td>"+row.project_admin+"</td>";
+                            content +="<td>"+row.so_number+"</td>";
+                            content +="<td>"+row.project_name+"</td>";
+                            if(row.mode_travel == "Shared_Auto"){
+                                content +="<td> Shared Auto </td>";
+                            }else if(row.mode_travel == "Private_Auto"){
+                                content +="<td> Private Auto </td>";
+                            }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                content +="<td>"+row.mode_travel+"</td>";
+                            }
+                            if(row.travel_desc != null){
+                                content +="<td>"+row.travel_desc+"</td>";
+                            }else{
+                                content +="<td class='text-center'> - </td>";
+                            }
+
+                            if(row.attachment != null){
+                                content +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                            }else{
+                                content +="<td>"+row.travel_amount+"</td>";
+                            } 
+                            content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                            content += "</tr>";
+
+                        }else if(data.role == 1){
+                            content +="<tr>";
+                            content += "<td><div class='form-check'><input type='checkbox' class='form-check-input checkbox' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>";
+                            content +="<td>"+ ++i +"</td>";
+                            content +="<td>"+travel_date+"</td>";
+                            content +="<td>"+row.labour_name+"</td>";
+                            content +="<td>"+row.project_admin+"</td>";
+                            content +="<td>"+row.so_number+"</td>";
+                            content +="<td>"+row.project_name+"</td>";
+                            if(row.mode_travel == "Shared_Auto"){
+                                content +="<td> Shared Auto </td>";
+                            }else if(row.mode_travel == "Private_Auto"){
+                                content +="<td> Private Auto </td>";
+                            }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                content +="<td>"+row.mode_travel+"</td>";
+                            }
+                            if(row.travel_desc != null){
+                                content +="<td>"+row.travel_desc+"</td>";
+                            }else{
+                                content +="<td class='text-center'> - </td>";
+                            }
+
+                            if(row.attachment != null){
+                                content +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                            }else{
+                                content +="<td>"+row.travel_amount+"</td>";
+                            } 
+                                
+                            content +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+
+                            content +="<td><a class='btn btn-outline-secondary btn-sm exp_editU' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"' data-ad_remark='"+row.ad_remark+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>"
+
+                            content += "</tr>";
+
+                        }else{
+
                             content +="<tr>";
                             content +="<td>"+ ++i +"</td>";
                             content +="<td>"+travel_date+"</td>";
@@ -1568,6 +2029,7 @@
                                 content +="<td class='text-center'> - </td>";
                             }
                             content += "</tr>";
+                        }
                     }      
 
                     if(row.status == 'Cleared')
@@ -1591,7 +2053,7 @@
                         var current_date = d.getDate();
                         if(data.role == 0){
                             content1 +="<tr>";
-                            content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input checkbox' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>"
+                            content1 += "<td><div class='form-check'><input type='checkbox' class='form-check-input checkbox' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>";
                             content1 +="<td>"+ ++j +"</td>";
                             content1 +="<td>"+travel_date+"</td>";
                             content1 +="<td>"+row.labour_name+"</td>";
@@ -1623,6 +2085,36 @@
 
                             content1 +="<td><a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a></td>"
                            
+                            content1 += "</tr>";
+
+                        }else if(data.role == 1){
+                            content1 +="<tr>";
+                            content1 +="<td>"+ ++j +"</td>";
+                            content1 +="<td>"+travel_date+"</td>";
+                            content1 +="<td>"+row.labour_name+"</td>";
+                            content1 +="<td>"+row.project_admin+"</td>";
+                            content1 +="<td>"+row.so_number+"</td>";
+                            content1 +="<td>"+row.project_name+"</td>";
+                            if(row.mode_travel == "Shared_Auto"){
+                                content1 +="<td> Shared Auto </td>";
+                            }else if(row.mode_travel == "Private_Auto"){
+                                content1 +="<td> Private Auto </td>";
+                            }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                content1 +="<td>"+row.mode_travel+"</td>";
+                            }
+                            if(row.travel_desc != null){
+                                content1 +="<td>"+row.travel_desc+"</td>";
+                            }else{
+                                content1 +="<td class='text-center'> - </td>";
+                            }
+                            if(row.attachment != null){
+                                content1 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                            }else{
+                                content1 +="<td>"+row.aprvd_amount+"</td>";
+                            } 
+
+                            content1 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+
                             content1 += "</tr>";
 
                         }else{
@@ -1697,6 +2189,73 @@
 
                         var d = new Date();
                         var current_date = d.getDate();
+                        if(data.role == 0){
+                            content3 +="<tr>";
+                            content3 +="<td>"+ ++k +"</td>";
+                            content3 +="<td>"+travel_date+"</td>";
+                            content3 +="<td>"+row.labour_name+"</td>";
+                            content3 +="<td>"+row.project_admin+"</td>";
+                            content3 +="<td>"+row.so_number+"</td>";
+                            content3 +="<td>"+row.project_name+"</td>";
+                            if(row.mode_travel == "Shared_Auto"){
+                                content3 +="<td> Shared Auto </td>";
+                            }else if(row.mode_travel == "Private_Auto"){
+                                content3 +="<td> Private Auto </td>";
+                            }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                content3 +="<td>"+row.mode_travel+"</td>";
+                            }
+
+                            if(row.travel_desc != null){
+                                content3 +="<td>"+row.travel_desc+"</td>";
+                            }else{
+                                content3 +="<td class='text-center'> - </td>";
+                            }
+
+                            if(row.attachment != null){
+                                content3 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                            }else{
+                                content3 +="<td>"+row.aprvd_amount+"</td>";
+                            } 
+                            content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+
+                            content3 += "</tr>";
+
+
+                        }else if(data.role == 1){
+
+                            content3 +="<tr>";
+                            content3 +="<td>"+ ++k +"</td>";
+                            content3 +="<td>"+travel_date+"</td>";
+                            content3 +="<td>"+row.labour_name+"</td>";
+                            content3 +="<td>"+row.project_admin+"</td>";
+                            content3 +="<td>"+row.so_number+"</td>";
+                            content3 +="<td>"+row.project_name+"</td>";
+                            if(row.mode_travel == "Shared_Auto"){
+                                content3 +="<td> Shared Auto </td>";
+                            }else if(row.mode_travel == "Private_Auto"){
+                                content3 +="<td> Private Auto </td>";
+                            }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                content3 +="<td>"+row.mode_travel+"</td>";
+                            }
+
+                            if(row.travel_desc != null){
+                                content3 +="<td>"+row.travel_desc+"</td>";
+                            }else{
+                                content3 +="<td class='text-center'> - </td>";
+                            }
+
+                            if(row.attachment != null){
+                                content3 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                            }else{
+                                content3 +="<td>"+row.aprvd_amount+"</td>";
+                            } 
+                            content3 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+
+                            content3 += "</tr>";
+
+
+                        }else{
+
                             content3 +="<tr>";
                             content3 +="<td>"+ ++k +"</td>";
                             content3 +="<td>"+travel_date+"</td>";
@@ -1750,7 +2309,7 @@
                                 content3 +="<td class='text-center'> - </td>";
                             }
                             content3 += "</tr>";
-
+                        }
 
                     }
 
@@ -1773,6 +2332,77 @@
 
                         var d = new Date();
                         var current_date = d.getDate();
+
+                        if(data.role == 0){
+
+                            content2 +="<tr>";
+                            content2 += "<td><div class='form-check'><input type='checkbox' class='form-check-input checkbox' id='check_exp_"+row.id+"' name='check_exp[]' value='"+row.id+"'/><label class='form-check-label' for='check_exp_"+row.id+"'></label></div></td>";
+                            content2 +="<td>"+ ++l +"</td>";
+                            content2 +="<td>"+travel_date+"</td>";
+                            content2 +="<td>"+row.labour_name+"</td>";
+                            content2 +="<td>"+row.project_admin+"</td>";
+                            content2 +="<td>"+row.so_number+"</td>";
+                            content2 +="<td>"+row.project_name+"</td>";
+                            if(row.mode_travel == "Shared_Auto"){
+                                content2 +="<td> Shared Auto </td>";
+                            }else if(row.mode_travel == "Private_Auto"){
+                                content2 +="<td> Private Auto </td>";
+                            }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                content2 +="<td>"+row.mode_travel+"</td>";
+                            }
+                            if(row.travel_desc != null){
+                                content2 +="<td>"+row.travel_desc+"</td>";
+                            }else{
+                                content2 +="<td class='text-center'> - </td>";
+                            }
+                            if(row.attachment != null){
+                                content2 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                            }else{
+                                content2 +="<td>"+row.travel_amount+"</td>";
+                            } 
+                            content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+
+                            content2 +="<td>";
+                                content2 +="<a class='btn btn-outline-secondary btn-sm exp_editSA' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit Travel Expense' data-id='"+row.id+"' data-travel_date='"+row.travel_date+"' data-mode_travel='"+row.mode_travel+"' data-from_location='"+row.from_location+"' data-to_location='"+row.to_location+"' data-total_km='"+row.total_km+"' data-travel_amount='"+row.travel_amount+"' data-aprvd_amount='"+row.aprvd_amount+"' data-attachment='"+row.attachment+"' data-travel_desc='"+row.travel_desc+"'  data-emp_number='"+row.emp_number+"' data-labour_name='"+row.labour_name+"'  data-ad_remark='"+row.ad_remark+"' data-sa_remark='"+row.sa_remark+"' data-bs-toggle='modal'><i class='far fa-edit'></i></a>"
+                            content2 +="</td>";
+
+                            content2 += "</tr>";
+
+                        }else if(data.role == 1){
+
+                            content2 +="<tr>";
+                            content2 +="<td>"+ ++l +"</td>";
+                             content2 +="<td>"+travel_date+"</td>";
+                            content2 +="<td>"+row.labour_name+"</td>";
+                            content2 +="<td>"+row.project_admin+"</td>";
+                            content2 +="<td>"+row.so_number+"</td>";
+                            content2 +="<td>"+row.project_name+"</td>";
+
+                            if(row.mode_travel == "Shared_Auto"){
+                                content2 +="<td> Shared Auto </td>";
+                            }else if(row.mode_travel == "Private_Auto"){
+                                content2 +="<td> Private Auto </td>";
+                            }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
+                                content2 +="<td>"+row.mode_travel+"</td>";
+                            }
+
+                            if(row.travel_desc != null){
+                                content2 +="<td>"+row.travel_desc+"</td>";
+                            }else{
+                                content2 +="<td class='text-center'> - </td>";
+                            }
+
+                            if(row.attachment != null){
+                                content2 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
+                            }else{
+                                content2 +="<td>"+row.travel_amount+"</td>";
+                            } 
+
+                            content2 +="<td><span class='badge badge-soft-primary'>"+row.status+"</span></td>";
+                            content2 += "</tr>";
+
+                        }else{
+
                             content2 +="<tr>";
                             content2 +="<td>"+ ++l +"</td>";
                             content2 +="<td>"+travel_date+"</td>";
@@ -1819,13 +2449,17 @@
                                 content2 +="<td class='text-center'> - </td>";
                             }
                             content2 += "</tr>";
+
+                        }
                     }
 
                 });
                 
 
                 $("#exp_pay_records").html(content); //For append html data
-                $('#expDatatable').dataTable();
+                if(data.role != 1){
+                    $('#expDatatable').dataTable();
+                }
 
                 $("#cll_records").html(content1); //For append Cleared datatable html data 
                 if(data.role != 0){
@@ -1833,8 +2467,9 @@
                 }
 
                 $("#cal_records").html(content2); //For append Disapproved datatable html data
-                $('#cancelDatatable').dataTable();
-
+                if(data.role != 0){
+                    $('#cancelDatatable').dataTable();
+                }
                 $("#apprvd_records").html(content3); //For append html data
                 $('#apprvdDatatable').dataTable();    
                 
