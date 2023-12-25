@@ -2691,6 +2691,8 @@ class AdminAPIController extends Controller
             $u_obj->sa_id=$a_id;
             $u_obj->status="Approved";
             $res=$u_obj->update();
+
+            $j++;
         }  
 
         if($res){
@@ -2719,6 +2721,8 @@ class AdminAPIController extends Controller
             $u_obj->status="Cleared";
             $u_obj->aprvd_amount=$u_obj->amount;
             $res=$u_obj->update();
+
+            $j++;
         }  
 
         if($res){
@@ -2745,6 +2749,8 @@ class AdminAPIController extends Controller
             $u_obj->sa_id=$a_id;
             $u_obj->status="Approved";
             $res=$u_obj->update();
+
+            $j++;
         }  
 
         if($res){
@@ -2771,6 +2777,8 @@ class AdminAPIController extends Controller
             $u_obj->status="Cleared";
             $u_obj->aprvd_amount=$u_obj->travel_amount;
             $res=$u_obj->update();
+
+            $j++;
         } 
         
         if($res){
