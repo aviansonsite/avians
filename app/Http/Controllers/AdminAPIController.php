@@ -2680,10 +2680,14 @@ class AdminAPIController extends Controller
         $a_id = $req->get('u_id');
         $check_exp = $req->get('check_exp');
         // dd($check_exp);
+        $new_array = array_map(function($value) {
+            return (string) $value;
+        }, $check_exp);
+
         $j=0;
-        for ($i=1; $i <= count($check_exp); $i++)
+        for ($i=1; $i <= count($new_array); $i++)
         {  
-            $u_obj=TechnicianExpenseModel::find($check_exp[$j]);
+            $u_obj=TechnicianExpenseModel::find($new_array[$j]);
             $u_obj->sa_id=$a_id;
             $u_obj->status="Approved";
             $res=$u_obj->update();
@@ -2702,11 +2706,15 @@ class AdminAPIController extends Controller
         $a_id = $req->get('u_id');
         $check_exp = $req->get('check_exp');
         // dd($check_exp);
+        // Create a new array with sequential numeric keys
+        $new_array = array_map(function($value) {
+            return (string) $value;
+        }, $check_exp);
 
         $j=0;
-        for ($i=1; $i <= count($check_exp); $i++)
+        for ($i=1; $i <= count($new_array); $i++)
         {  
-            $u_obj=TechnicianExpenseModel::find($check_exp[$j]);
+            $u_obj=TechnicianExpenseModel::find($new_array[$j]);
             $u_obj->acc_id=$a_id;
             $u_obj->status="Cleared";
             $u_obj->aprvd_amount=$u_obj->amount;
@@ -2727,11 +2735,13 @@ class AdminAPIController extends Controller
         $a_id = $req->get('u_id');
         $check_exp = $req->get('check_exp');
         // dd($check_exp);
-
+        $new_array = array_map(function($value) {
+            return (string) $value;
+        }, $check_exp);
         $j=0;
-        for ($i=1; $i <= count($check_exp); $i++)
+        for ($i=1; $i <= count($new_array); $i++)
         {  
-            $u_obj=TravelExpenseModel::find($check_exp[$j]);
+            $u_obj=TravelExpenseModel::find($new_array[$j]);
             $u_obj->sa_id=$a_id;
             $u_obj->status="Approved";
             $res=$u_obj->update();
@@ -2750,11 +2760,13 @@ class AdminAPIController extends Controller
         $a_id = $req->get('u_id');
         $check_exp = $req->get('check_exp');
         // dd($check_exp);
-
+        $new_array = array_map(function($value) {
+            return (string) $value;
+        }, $check_exp);
         $j=0;
-        for ($i=1; $i <= count($check_exp); $i++)
+        for ($i=1; $i <= count($new_array); $i++)
         {  
-            $u_obj=TravelExpenseModel::find($check_exp[$j]);
+            $u_obj=TravelExpenseModel::find($new_array[$j]);
             $u_obj->ad_id=$a_id;
             $u_obj->status="Cleared";
             $u_obj->aprvd_amount=$u_obj->travel_amount;
