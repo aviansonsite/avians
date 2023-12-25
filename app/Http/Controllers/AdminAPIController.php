@@ -2195,6 +2195,31 @@ class AdminAPIController extends Controller
   
         }
 
+        $so_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id','oth.so_id','so.delete','so.labour','so.so_number','so.lead_technician')
+                ->where(['so.delete'=>0,'oth.id'=>$oth_id])
+                ->get();
+        $technicians= array(); //create empty array
+
+        foreach($so_obj as $s){
+            $technician = array_map('intval', explode(',', $s->labour));      // create array all sub technician
+            foreach($technician as $t)
+            {   
+                array_push($technicians,$t);        // push sub technician in technicians 
+            }
+            
+            $lead_tech = array_map('intval', explode(',', $s->lead_technician));    // lead technician
+            foreach($lead_tech as $l)
+            {   
+                array_push($technicians,$l);        // push lead technician in all technicians
+            }
+        }
+
+        $all_technician = array_unique($technicians);           //remove duplicate technician id
+        $no_of_people = count($technicians);                    // count people in oa
+        
+
         // dd($tech_exp);
         // return view('report.siteExpensePdf',compact('tech_exp','u_obj1'));
         $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.siteExpensePdf',compact('tech_exp','u_obj1','no_of_people'))->setPaper('a4', 'landscape');
@@ -2512,7 +2537,6 @@ class AdminAPIController extends Controller
         
 
     }
-
 
     public function workReport()
     {
