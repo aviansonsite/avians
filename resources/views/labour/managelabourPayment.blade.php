@@ -167,8 +167,19 @@
                             <div class="tab-pane active" id="ucpayment_list" role="tabpanel">
                                 {!! Form::open(['class'=>"form-horizontal user_form",'enctype'=>'multipart/form-data','files' => 'true' ,'method'=>"post",'url'=>'admin_cleared_exp']) !!}
                                         @if($roles == 1)
-                                        <div class="d-sm-flex flex-wrap">
-                                            <div class="ms-auto">
+                                        <div class="row">
+                                            <div class="col-md-2 col-sm-12 col-lg-2">
+                                                <div class="form-group mb-3">
+                                                    <label for="exp_status_change" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Expense Status<sup class="text-danger">*</sup></label>
+                                                    <select class="form-control select2" id="exp_status_change" required name="exp_status_change">
+                                                        <option value="Cleared">Cleared</option>  
+                                                        <option value="Disapproved">Disapproved</option>
+                                                    </select>
+                                                    <span class="text-danger error" id="eserrors"></span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-3 col-sm-12 col-lg-3 mt-3">
                                                 <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2" >Approved Checked Expenses</button>
                                             </div>
                                         </div>
@@ -235,8 +246,19 @@
                             <div class="tab-pane" id="cllpayment" role="tabpanel">
                                 {!! Form::open(['class'=>"form-horizontal user_form",'enctype'=>'multipart/form-data','files' => 'true' ,'method'=>"post",'url'=>'aprvd_check_exp']) !!}
                                     @if($roles == 0)
-                                    <div class="d-sm-flex flex-wrap">
-                                        <div class="ms-auto">
+                                    <div class="row">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
+                                            <div class="form-group mb-3">
+                                                <label for="exp_status_change" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Expense Status<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="exp_status_change" required name="exp_status_change">
+                                                    <option value="Approved" selected>Approved</option>   
+                                                    <option value="Disapproved">Disapproved</option>
+                                                </select>
+                                                <span class="text-danger error" id="eserrors"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-3 col-sm-12 col-lg-3 mt-3">
                                             <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2" >Approved Checked Expenses</button>
                                         </div>
                                     </div>
@@ -354,8 +376,18 @@
                             <div class="tab-pane" id="calpayment" role="tabpanel">
                                 {!! Form::open(['class'=>"form-horizontal user_form",'enctype'=>'multipart/form-data','files' => 'true' ,'method'=>"post",'url'=>'aprvd_check_exp']) !!}
                                     @if($roles == 0)
-                                    <div class="d-sm-flex flex-wrap">
-                                        <div class="ms-auto">
+                                    <div class="row">
+                                        <div class="col-md-2 col-sm-12 col-lg-2">
+                                            <div class="form-group mb-3">
+                                                <label for="exp_status_change" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Expense Status<sup class="text-danger">*</sup></label>
+                                                <select class="form-control select2" id="exp_status_change" required name="exp_status_change">
+                                                    <option value="Approved" selected>Approved</option>   
+                                                </select>
+                                                <span class="text-danger error" id="eserrors"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-3 col-sm-12 col-lg-3 mt-3">
                                             <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light mb-2" >Approved Checked Expenses</button>
                                         </div>
                                     </div>
@@ -618,7 +650,7 @@
 <script>
     $(document).ready(function(){
         var $body = $("body");
-        $('#labours').select2();
+        $('#labours,#exp_status_change').select2();
         $('#exp_type,#status_change').select2({ dropdownParent: $('#editPaymentModal') });
 
         $("#tucledata").hide();

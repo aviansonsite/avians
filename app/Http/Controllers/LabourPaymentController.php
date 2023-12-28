@@ -1726,21 +1726,27 @@ class LabourPaymentController extends Controller
         $role=Session::get('ROLES');
         $a_id=Session::get('USER_ID');
         $check_exp = $req->get('check_exp');
+        $exp_status_change = $req->get('exp_status_change');
         // dd($check_exp);
-        $j=0;
-        for ($i=1; $i <= count($check_exp); $i++)
-        {  
-            $u_obj=TechnicianExpenseModel::find($check_exp[$j]);
-            $u_obj->sa_id=$a_id;
-            $u_obj->status="Approved";
-            $res=$u_obj->update();
+        if($exp_status_change !='' && count($check_exp)>0) 
+        {
+            $j=0;
+            for ($i=1; $i <= count($check_exp); $i++)
+            {  
+                $u_obj=TechnicianExpenseModel::find($check_exp[$j]);
+                $u_obj->sa_id=$a_id;
+                $u_obj->status=$exp_status_change;
+                $res=$u_obj->update();
 
-            $j++;
-        }  
-        if($res){
-            Session::put('SUCCESS_MESSAGE', "Technician Expenses Approved Successfully.");
+                $j++;
+            }  
+            if($res){
+                Session::put('SUCCESS_MESSAGE', "Technician Expenses Approved Successfully.");
+            }else{
+                Session::put('ERROR_MESSAGE',"Technician Expenses Approved Unsuccessfully...!");
+            }
         }else{
-            Session::put('ERROR_MESSAGE',"Technician Expenses Approved Unsuccessfully...!");
+            Session::put('ERROR_MESSAGE',"Please Select Expense Status...!");
         }
         return redirect()->back();
     }
@@ -1750,22 +1756,28 @@ class LabourPaymentController extends Controller
         $role=Session::get('ROLES');
         $a_id=Session::get('USER_ID');
         $check_exp = $req->get('check_exp');
+        $exp_status_change = $req->get('exp_status_change');
         // dd($check_exp);
-        $j=0;
-        for ($i=1; $i <= count($check_exp); $i++)
-        {  
-            $u_obj=TechnicianExpenseModel::find($check_exp[$j]);
-            $u_obj->sa_id=$a_id;
-            $u_obj->status="Cleared";
-            $u_obj->aprvd_amount=$u_obj->amount;
-            $res=$u_obj->update();
+        if ($exp_status_change !='' && count($check_exp)>0) 
+        {
+            $j=0;
+            for ($i=1; $i <= count($check_exp); $i++)
+            {  
+                $u_obj=TechnicianExpenseModel::find($check_exp[$j]);
+                $u_obj->sa_id=$a_id;
+                $u_obj->status=$exp_status_change;
+                $u_obj->aprvd_amount=$u_obj->amount;
+                $res=$u_obj->update();
 
-            $j++;
-        }  
-        if($res){
-            Session::put('SUCCESS_MESSAGE', "Technician Expenses Cleared Successfully.");
+                $j++;
+            }  
+            if($res){
+                Session::put('SUCCESS_MESSAGE', "Technician Expenses Cleared Successfully.");
+            }else{
+                Session::put('ERROR_MESSAGE',"Technician Expenses Cleared Unsuccessfully...!");
+            }
         }else{
-            Session::put('ERROR_MESSAGE',"Technician Expenses Cleared Unsuccessfully...!");
+            Session::put('ERROR_MESSAGE',"Please Select Expense Status...!");
         }
         return redirect()->back();
     }
@@ -1775,21 +1787,27 @@ class LabourPaymentController extends Controller
         $role=Session::get('ROLES');
         $a_id=Session::get('USER_ID');
         $check_exp = $req->get('check_exp');
+        $exp_status_change = $req->get('exp_status_change');
         // dd($check_exp);
-        $j=0;
-        for ($i=1; $i <= count($check_exp); $i++)
-        {  
-            $u_obj=TravelExpenseModel::find($check_exp[$j]);
-            $u_obj->sa_id=$a_id;
-            $u_obj->status="Approved";
-            $res=$u_obj->update();
+        if ($exp_status_change !='' && count($check_exp)>0) 
+        {
+            $j=0;
+            for ($i=1; $i <= count($check_exp); $i++)
+            {  
+                $u_obj=TravelExpenseModel::find($check_exp[$j]);
+                $u_obj->sa_id=$a_id;
+                $u_obj->status=$exp_status_change;
+                $res=$u_obj->update();
 
-            $j++;
-        }  
-        if($res){
-            Session::put('SUCCESS_MESSAGE', "Travel Expenses Approved Successfully.");
+                $j++;
+            }  
+            if($res){
+                Session::put('SUCCESS_MESSAGE', "Travel Expenses Approved Successfully.");
+            }else{
+                Session::put('ERROR_MESSAGE',"Travel Expenses Approved Unsuccessfully...!");
+            }
         }else{
-            Session::put('ERROR_MESSAGE',"Travel Expenses Approved Unsuccessfully...!");
+            Session::put('ERROR_MESSAGE',"Please Select Expense Status...!");
         }
         return redirect()->back();
     }
@@ -1799,22 +1817,28 @@ class LabourPaymentController extends Controller
         $role=Session::get('ROLES');
         $a_id=Session::get('USER_ID');
         $check_exp = $req->get('check_exp');
+        $exp_status_change = $req->get('exp_status_change');
         // dd($check_exp);
-        $j=0;
-        for ($i=1; $i <= count($check_exp); $i++)
-        {  
-            $u_obj=TravelExpenseModel::find($check_exp[$j]);
-            $u_obj->ad_id=$a_id;
-            $u_obj->status="Cleared";
-            $u_obj->aprvd_amount=$u_obj->travel_amount;
-            $res=$u_obj->update();
+        if ($exp_status_change !='' && count($check_exp)>0) 
+        {
+            $j=0;
+            for ($i=1; $i <= count($check_exp); $i++)
+            {  
+                $u_obj=TravelExpenseModel::find($check_exp[$j]);
+                $u_obj->ad_id=$a_id;
+                $u_obj->status=$exp_status_change;
+                $u_obj->aprvd_amount=$u_obj->travel_amount;
+                $res=$u_obj->update();
 
-            $j++;
-        }  
-        if($res){
-            Session::put('SUCCESS_MESSAGE', "Travel Expenses Cleared Successfully.");
+                $j++;
+            }  
+            if($res){
+                Session::put('SUCCESS_MESSAGE', "Travel Expenses Cleared Successfully.");
+            }else{
+                Session::put('ERROR_MESSAGE',"Travel Expenses Cleared Unsuccessfully...!");
+            }
         }else{
-            Session::put('ERROR_MESSAGE',"Travel Expenses Cleared Unsuccessfully...!");
+            Session::put('ERROR_MESSAGE',"Please Select Expense Status...!");
         }
         return redirect()->back();
     }

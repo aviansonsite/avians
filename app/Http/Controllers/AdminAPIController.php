@@ -2576,7 +2576,7 @@ class AdminAPIController extends Controller
         }
 
         //Technician Expense
-        $pout_date = PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->get();
+        $pout_date = PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->orderby('created_at','DESC')->get();
         foreach($pout_date as $p)
         {
             $count = PunchInOutModel::where(['delete'=>0,'a_id'=>$labours,'pout_date'=>$p->pout_date])->count();
@@ -2632,7 +2632,7 @@ class AdminAPIController extends Controller
 
         // dd($u_obj1);
         //Technician Expense
-        $pout_date = PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->get();
+        $pout_date = PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->orderby('created_at','DESC')->get();
         foreach($pout_date as $p)
         {
             $count = PunchInOutModel::where(['delete'=>0,'a_id'=>$labours,'pout_date'=>$p->pout_date])->count();
@@ -2683,22 +2683,28 @@ class AdminAPIController extends Controller
         $new_array = array_map(function($value) {
             return (string) $value;
         }, $check_exp);
+        $exp_status_change = $req->get('exp_status_change');
 
-        $j=0;
-        for ($i=1; $i <= count($new_array); $i++)
-        {  
-            $u_obj=TechnicianExpenseModel::find($new_array[$j]);
-            $u_obj->sa_id=$a_id;
-            $u_obj->status="Approved";
-            $res=$u_obj->update();
+        if($exp_status_change !='' && count($new_array)>0) 
+        {
+            $j=0;
+            for ($i=1; $i <= count($new_array); $i++)
+            {  
+                $u_obj=TechnicianExpenseModel::find($new_array[$j]);
+                $u_obj->sa_id=$a_id;
+                $u_obj->status=$exp_status_change;
+                $res=$u_obj->update();
 
-            $j++;
-        }  
+                $j++;
+            }  
 
-        if($res){
-            return ['status' => true, 'message' => 'Technician Expenses Approved Successfully.'];
+            if($res){
+                return ['status' => true, 'message' => 'Technician Expenses Approved Successfully.'];
+            }else{
+                return ['status' => false, 'message' => 'Technician Expenses Approved Unsuccessfully...!'];
+            }
         }else{
-            return ['status' => false, 'message' => 'Technician Expenses Approved Unsuccessfully...!'];
+            return ['status' => false, 'message' => 'Something went wrong. Please try again...!'];
         }
     }
 
@@ -2713,24 +2719,30 @@ class AdminAPIController extends Controller
             return (string) $value;
         }, $check_exp);
 
-        $j=0;
-        for ($i=1; $i <= count($new_array); $i++)
-        {  
-            $u_obj=TechnicianExpenseModel::find($new_array[$j]);
-            $u_obj->acc_id=$a_id;
-            $u_obj->status="Cleared";
-            $u_obj->aprvd_amount=$u_obj->amount;
-            $res=$u_obj->update();
+        $exp_status_change = $req->get('exp_status_change');
 
-            $j++;
-        }  
+        if($exp_status_change !='' && count($new_array)>0) 
+        {
+            $j=0;
+            for ($i=1; $i <= count($new_array); $i++)
+            {  
+                $u_obj=TechnicianExpenseModel::find($new_array[$j]);
+                $u_obj->acc_id=$a_id;
+                $u_obj->status=$exp_status_change;
+                $u_obj->aprvd_amount=$u_obj->amount;
+                $res=$u_obj->update();
 
-        if($res){
-            return ['status' => true, 'message' => 'Technician Expenses Cleared Successfully.'];
+                $j++;
+            }  
+
+            if($res){
+                return ['status' => true, 'message' => 'Technician Expenses Cleared Successfully.'];
+            }else{
+                return ['status' => false, 'message' => 'Technician Expenses Cleared Unsuccessfully...!'];
+            }
         }else{
-            return ['status' => false, 'message' => 'Technician Expenses Cleared Unsuccessfully...!'];
+            return ['status' => false, 'message' => 'Something went wrong. Please try again...!'];
         }
-
     }
     
     public function aprvdCheckTravelExp(Request $req)
@@ -2742,21 +2754,29 @@ class AdminAPIController extends Controller
         $new_array = array_map(function($value) {
             return (string) $value;
         }, $check_exp);
-        $j=0;
-        for ($i=1; $i <= count($new_array); $i++)
-        {  
-            $u_obj=TravelExpenseModel::find($new_array[$j]);
-            $u_obj->sa_id=$a_id;
-            $u_obj->status="Approved";
-            $res=$u_obj->update();
+        $exp_status_change = $req->get('exp_status_change');
 
-            $j++;
-        }  
+        if($exp_status_change !='' && count($new_array)>0) 
+        {
 
-        if($res){
-            return ['status' => true, 'message' => 'Travel Expenses Approved Successfully.'];
+            $j=0;
+            for ($i=1; $i <= count($new_array); $i++)
+            {  
+                $u_obj=TravelExpenseModel::find($new_array[$j]);
+                $u_obj->sa_id=$a_id;
+                $u_obj->status=$exp_status_change;
+                $res=$u_obj->update();
+
+                $j++;
+            }  
+
+            if($res){
+                return ['status' => true, 'message' => 'Travel Expenses Approved Successfully.'];
+            }else{
+                return ['status' => false, 'message' => 'Travel Expenses Approved Unsuccessfully...!'];
+            }
         }else{
-            return ['status' => false, 'message' => 'Travel Expenses Approved Unsuccessfully...!'];
+            return ['status' => false, 'message' => 'Something went wrong. Please try again...!'];
         }
     }
 
@@ -2769,24 +2789,33 @@ class AdminAPIController extends Controller
         $new_array = array_map(function($value) {
             return (string) $value;
         }, $check_exp);
-        $j=0;
-        for ($i=1; $i <= count($new_array); $i++)
-        {  
-            $u_obj=TravelExpenseModel::find($new_array[$j]);
-            $u_obj->ad_id=$a_id;
-            $u_obj->status="Cleared";
-            $u_obj->aprvd_amount=$u_obj->travel_amount;
-            $res=$u_obj->update();
 
-            $j++;
-        } 
-        
-        if($res){
-            return ['status' => true, 'message' => 'Travel Expenses Cleared Successfully.'];
+        $exp_status_change = $req->get('exp_status_change');
+
+        if($exp_status_change !='' && count($new_array)>0) 
+        {
+
+            $j=0;
+            for ($i=1; $i <= count($new_array); $i++)
+            {  
+                $u_obj=TravelExpenseModel::find($new_array[$j]);
+                $u_obj->ad_id=$a_id;
+                $u_obj->status=$exp_status_change;
+                $u_obj->aprvd_amount=$u_obj->travel_amount;
+                $res=$u_obj->update();
+
+                $j++;
+            } 
+            
+            if($res){
+                return ['status' => true, 'message' => 'Travel Expenses Cleared Successfully.'];
+            }else{
+                return ['status' => false, 'message' => 'Travel Expenses Cleared Unsuccessfully...!'];
+            }
+
         }else{
-            return ['status' => false, 'message' => 'Travel Expenses Cleared Unsuccessfully...!'];
+            return ['status' => false, 'message' => 'Something went wrong. Please try again...!'];
         }
-
     }
 
 }   

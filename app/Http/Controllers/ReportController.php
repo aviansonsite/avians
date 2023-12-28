@@ -728,7 +728,7 @@ class ReportController extends Controller
         }
 
         //Technician Expense
-        $pout_date = PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->get();
+        $pout_date = PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->orderby('created_at','DESC')->get();
         foreach($pout_date as $p)
         {
             $count = PunchInOutModel::where(['delete'=>0,'a_id'=>$labours,'pout_date'=>$p->pout_date])->count();
@@ -781,7 +781,7 @@ class ReportController extends Controller
 
         // dd($u_obj1);
         //Technician Expense
-        $pout_date = PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->get();
+        $pout_date = PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->orderby('created_at','DESC')->get();
         foreach($pout_date as $p)
         {
             $count = PunchInOutModel::where(['delete'=>0,'a_id'=>$labours,'pout_date'=>$p->pout_date])->count();
