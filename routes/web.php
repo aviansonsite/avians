@@ -104,7 +104,7 @@ Route::group(['middleware' => 'login'], function ()
     // Route::get('/get_all_expenses', [LabourPaymentController::class, 'getAllExpense']);
     // Route::get('/post_expense', [LabourPaymentController::class, 'postExpense']);
 
-
+    
     // ****** End Accountant **********
 
 
@@ -151,4 +151,10 @@ Route::group(['middleware' => 'login'], function ()
     Route::get('/work_report', [ReportController::class, 'workReport'])->name('work_report.page');
     Route::get('/get_work_record', [ReportController::class, 'getWorkRecord']);
     Route::post('/generate-work-pdf', [ReportController::class, 'generateWorkPdf']);
+
+    //attendance Report
+    Route::get('/tech_attendance_report', [ReportController::class, 'techAttendanceReport'])->name('tech_attendance_report.page');
+    Route::get('/tech_daily_att_record', [ReportController::class, 'techDailyAttRecord']);
+    Route::post('/generate-attendance-pdf', [ReportController::class, 'generateAttendancePdf']);
+
 });    

@@ -2667,6 +2667,7 @@ class AdminAPIController extends Controller
             $file_name="WORK_REPORT_".$u_obj1[0]->id.".pdf";
             $delOldPDF = "files/workTemp/$file_name";
             file_put_contents("files/workTemp/$file_name", $pdf1->download());
+            
             if(count($pout_date)>0){
                 return json_encode(array('status' => true ,'data' => $file_name,'message' => 'Generate PDF Successfully'));
             }else{
@@ -2816,6 +2817,251 @@ class AdminAPIController extends Controller
         }else{
             return ['status' => false, 'message' => 'Something went wrong. Please try again...!'];
         }
+    }
+
+
+    public function techAttendanceReport()
+    {
+        // get lead technicians
+        // $u_obj=DB::table('oa_tl_history as oth')
+        //         ->leftjoin('users as u','u.id','oth.lead_technician')
+        //         ->leftjoin('sales_orders as so','so.id','oth.so_id')
+        //         ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.delete','so.labour','so.so_number','u.id','u.name','u.delete as u_delete','u.is_active','u.created_at')
+        //         ->where(['oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+        //         ->orderby('u.created_at','ASC')
+        //         ->get();
+
+    	$u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
+
+        return json_encode(array('status' => true ,'u_obj' => $u_obj, 'message' => 'Data Found'));
+
+    }
+
+    //get punch in out records
+    public function techDailyAttRecord(Request $req)
+    {
+        
+        $from_date = $req->get('from_date');
+        $to_date = $req->get('to_date');
+        // $so_id = $req->get('so_id'); 
+        $labours = $req->get('labours');
+        
+     
+        $p_obj=PunchInOutModel::where(['delete'=>0,'pin_u_id'=>$labours])->whereDate('pin_date', '>=' ,$from_date)->whereDate('pin_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+
+        if(count($p_obj) > 0){
+
+            foreach($p_obj as $p){
+                $startTime=$p->created_at;
+                $finishTime=$p->updated_at;
+    
+                // $totalDuration = $finishTime->diffInMinutes($startTime);
+                $totalDuration = $startTime->diff($finishTime)->format('%H:%I:%S');
+                $p->totalDuration=$totalDuration;
+                $p->pin_time=$p->created_at->format('H:i:s');          
+                $p->pout_time=$p->updated_at->format('H:i:s');  
+    
+                $u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$labours])->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $p->technician_name = $u->name;
+                }
+                
+                $tl_u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$p->a_id])->orderby('created_at','DESC')->get();
+    
+                foreach($tl_u_obj as $tl){
+                    $p->tl_name = $tl->name;
+                }
+    
+                $s_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.delete','so.project_name','so.so_number')
+                ->where(['oth.id'=>$p->pin_oth_id])
+                ->get();
+                $p->s_obj = $s_obj;
+                foreach($s_obj as $s){
+                    $p->project_name = $s->project_name;
+                }
+            }
+
+        }else{
+
+            //punch in records
+            $p_obj=PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+
+            foreach($p_obj as $p){
+                $startTime=$p->created_at;
+                $finishTime=$p->updated_at;
+    
+                // $totalDuration = $finishTime->diffInMinutes($startTime);
+                $totalDuration = $startTime->diff($finishTime)->format('%H:%I:%S');
+                $p->totalDuration=$totalDuration;
+                $p->pin_time=$p->created_at->format('H:i:s');          
+                $p->pout_time=$p->updated_at->format('H:i:s');  
+    
+                $u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$labours])->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $p->technician_name = $u->name;
+                }
+                
+                $tl_u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$p->a_id])->orderby('created_at','DESC')->get();
+    
+                foreach($tl_u_obj as $tl){
+                    $p->tl_name = $tl->name;
+                }
+        
+                $s_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.delete','so.project_name','so.so_number')
+                ->where(['oth.id'=>$p->pout_oth_id])
+                ->get();
+                $p->s_obj = $s_obj;
+                foreach($s_obj as $s){
+                    $p->project_name = $s->project_name;
+                }
+            }
+        }
+        
+        if(count($p_obj)>0){
+            return json_encode(array('status' => true ,'data' => $p_obj,'fdate' =>$from_date ,'labours' =>$labours,'message' => 'Data Found'));
+        }else{
+            return ['status' => false, 'message' => 'No Data Found'];
+        }
+
+    }
+
+    public function generateAttendancePdf(Request $req)
+    {
+        $delOldPDF = "files/attendanceTemp/";
+        File::cleanDirectory($delOldPDF);
+
+        $from_date = $req->get('pdf_from_date');
+        $to_date = $req->get('pdf_to_date');
+        $labours = $req->get('pdf_labours');
+        
+        $u_obj=UserModel::where(['delete'=>0,'id'=>$labours])->where('role','!=','0')->orderby('created_at','DESC')->get();
+
+        foreach($u_obj as $u)
+        {
+            $u->from_date = date('d-m-Y', strtotime($from_date));
+            $u->to_date = date('d-m-Y', strtotime($to_date));
+        }
+ 
+        $p_obj=PunchInOutModel::where(['delete'=>0,'pin_u_id'=>$labours])->whereDate('pin_date', '>=' ,$from_date)->whereDate('pin_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+
+        // Initialize a Carbon object with the first time value
+
+        $timeValues = ["00:00:00"];
+        
+        $result = Carbon::createFromFormat('H:i:s', $timeValues[0]);
+
+        if(count($p_obj) > 0){
+
+            foreach($p_obj as $p){
+                $startTime=$p->created_at;
+                $finishTime=$p->updated_at;
+    
+                // $totalDuration = $finishTime->diffInMinutes($startTime);
+                $totalDuration = $startTime->diff($finishTime)->format('%H:%I:%S');
+                $p->totalDuration=$totalDuration;
+                $p->pin_time=$p->created_at->format('H:i:s');          
+                $p->pout_time=$p->updated_at->format('H:i:s');  
+    
+                $result->add(Carbon::createFromFormat('H:i:s', $totalDuration)->diff(new Carbon('00:00:00')));
+
+                $u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$labours])->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $p->technician_name = $u->name;
+                }
+                
+                $tl_u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$p->a_id])->orderby('created_at','DESC')->get();
+    
+                foreach($tl_u_obj as $tl){
+                    $p->tl_name = $tl->name;
+                }
+    
+                $s_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.delete','so.project_name','so.so_number')
+                ->where(['oth.id'=>$p->pin_oth_id])
+                ->get();
+                $p->s_obj = $s_obj;
+                foreach($s_obj as $s){
+                    $p->so_number = $s->so_number;
+                    $p->project_name = $s->project_name;
+                }
+            }
+
+        }else{
+
+            //punch in records
+            $p_obj=PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+
+            foreach($p_obj as $p){
+                $startTime=$p->created_at;
+                $finishTime=$p->updated_at;
+    
+                // $totalDuration = $finishTime->diffInMinutes($startTime);
+                $totalDuration = $startTime->diff($finishTime)->format('%H:%I:%S');
+                $p->totalDuration=$totalDuration;
+                $p->pin_time=$p->created_at->format('H:i:s');          
+                $p->pout_time=$p->updated_at->format('H:i:s');  
+
+                $result->add(Carbon::createFromFormat('H:i:s', $totalDuration)->diff(new Carbon('00:00:00')));
+                $u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$labours])->orderby('created_at','DESC')->get();
+                foreach($u_obj as $u){
+                    $p->technician_name = $u->name;
+                }
+                
+                $tl_u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$p->a_id])->orderby('created_at','DESC')->get();
+    
+                foreach($tl_u_obj as $tl){
+                    $p->tl_name = $tl->name;
+                }
+    
+                $so_id = explode(",",$p->pout_so_id);
+    
+                $s_obj=DB::table('oa_tl_history as oth')
+                ->leftjoin('sales_orders as so','so.id','oth.so_id')
+                ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','so.delete','so.project_name','so.so_number')
+                ->where(['oth.id'=>$p->pout_oth_id])
+                ->get();
+                $p->s_obj = $s_obj;
+                foreach($s_obj as $s){
+                    $p->so_number = $s->so_number;
+                    $p->project_name = $s->project_name;
+                }
+            }
+        }
+
+        // Format and display the final result
+        $totalHours = $result->format('H:i:s');
+        $totalDays = count($p_obj);
+        $from_date = date('d-m-Y', strtotime($from_date));
+        $to_date = date('d-m-Y', strtotime($to_date));
+        $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.attendanceReportPdf',compact('u_obj','p_obj','totalHours','totalDays','from_date','to_date'))->setPaper('a4', 'potrait');
+        
+        $pdf1->getDomPDF()->setHttpContext(
+                stream_context_create([
+                    'ssl' => [
+                        'allow_self_signed'=> TRUE,
+                        'verify_peer' => FALSE,
+                        'verify_peer_name' => FALSE,
+                    ]
+                ])
+            );
+        
+        // return $pdf1->download();
+
+        $file_name= "ATTENDANCE_REPORT_".$u_obj[0]->name.".pdf";
+        $delOldPDF = "files/attendanceTemp/$file_name";
+        file_put_contents("files/attendanceTemp/$file_name", $pdf1->download());
+            
+        if(count($p_obj)>0){
+            return json_encode(array('status' => true ,'data' => $file_name,'path' => $delOldPDF,'message' => 'Generate PDF Successfully'));
+        }else{
+            return ['status' => false, 'message' => 'Generate PDF UnSuccessfull'];
+        }
+
     }
 
 }   

@@ -645,9 +645,8 @@ class AttendanceController extends Controller
         if(count($p_obj)>0){
             return json_encode(array('status' => true ,'data' => $p_obj,'fdate' =>$from_date ,'labours' =>$labours,'message' => 'Data Found'));
         }else{
-        return ['status' => false, 'message' => 'No Data Found'];
+            return ['status' => false, 'message' => 'No Data Found'];
         }
-          
 
     }
 

@@ -119,6 +119,10 @@ $count=count($role);
                                     <a href="{{route('work_report.page')}}" class="dropdown-item">
                                     <span key="t-customers">Work Report</span>
                                     </a>
+
+                                    <a href="{{route('tech_attendance_report.page')}}" class="dropdown-item">
+                                    <span key="t-customers">Technician Attendance</span>
+                                    </a>
                                 </div>
                             </li>
                         @endif
