@@ -86,6 +86,12 @@ Route::post('/generate-attendance-pdf', [AdminAPIController::class, 'generateAtt
 Route::post('/technician_attendance', [AdminAPIController::class, 'technicianAttendance']);
 Route::post('/get_labour', [AdminAPIController::class, 'getLabour']);
 Route::post('/tech_att_record', [AdminAPIController::class, 'techAttRecord']);
+Route::post('/regularise-attendance', [AdminAPIController::class, 'regulariseAttendance']);
+Route::post('/update-tech-time', [AdminAPIController::class, 'updateTechTime']);
+Route::post('/get_regularise_history', [AdminAPIController::class, 'getRegulariseHistory']);
+
+
+
 
 // ---------------------------------------- LABOUR API -------------------------------- 
 //Attendance Management

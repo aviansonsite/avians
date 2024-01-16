@@ -125,16 +125,17 @@ $count=count($role);
                                     </a>
                                 </div>
                             </li>
+                            <!-- Admin -->
+                            @if($roles!=2)
+                                <li class="nav-item">
+                                    <a href="{{route('technician_attendance.page')}}" class="waves-effect nav-link">
+                                        <i class="bx bx-file"></i>
+                                        <span key="t-dashboards">Attendance Regularise</span>
+                                    </a>
+                                </li>
+                            @endif
                         @endif
-                        <!-- Admin -->
-                        @if($roles==1)
-                            <li class="nav-item">
-                                <a href="{{route('technician_attendance.page')}}" class="waves-effect nav-link">
-                                    <i class="bx bx-file"></i>
-                                    <span key="t-dashboards">Technician Attendance</span>
-                                </a>
-                            </li>
-                        @endif
+                        
                     </ul>
                 </div>
             </nav>

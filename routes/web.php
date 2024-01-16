@@ -85,7 +85,8 @@ Route::group(['middleware' => 'login'], function ()
     Route::get('/tech-att-record', [AttendanceController::class, 'techAttRecord']);
     Route::get('/get-labour', [AttendanceController::class, 'getLabour']);
     Route::get('/regularise-attendance', [AttendanceController::class, 'regulariseAttendance']);
-
+    Route::get('/update-tech-time', [AttendanceController::class, 'updateTechTime']);
+    Route::get('/get_regularise_history', [AttendanceController::class, 'getRegulariseHistory']);
 
     // Manage Labour Payment
     Route::get('/manage_labour_payment', [LabourPaymentController::class, 'managelabourPayment'])->name('manage_labour_payment.page');
@@ -95,8 +96,6 @@ Route::group(['middleware' => 'login'], function ()
     Route::post('/admin_cleared_exp', [LabourPaymentController::class, 'adminClearedExp']);
     Route::post('/admin_cleared_travelexp', [LabourPaymentController::class, 'adminClearedTravelexp']);
     Route::post('/aprvd_check_travelexp', [LabourPaymentController::class, 'aprvdCheckTravelExp']);
-
-
 
     // SO Payment History
     Route::get('/SO_payment_history', [SOController::class, 'SOPaymentHistory'])->name('SO_payment_history.page');

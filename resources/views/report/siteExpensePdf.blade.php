@@ -66,8 +66,9 @@
             <th  style="width:60px;white-space:wrap;text-align:center;">Approver Admin</th>
             <th  style="width:60px;white-space:wrap;text-align:center;">Approver SuperAdmin</th>
             <th  style="width:60px;text-align:center;"> OA NO.</th>
+            <th  style="width:90px;text-align:center;"> Project Name.</th>
             <th  style="width:30px;text-align:center;"> Bills</th>
-            <th  style="width:30px;text-align:center;"> No of Persons</th>
+            <th  style="width:30px;white-space:wrap;text-align:center;"> No of Persons</th>
             <th  style="width:50px;white-space:wrap;text-align:center;">Travel Exp</th>
             <th  style="width:40px;text-align:center;">Hotel</th>
             <th  style="width:40px;white-space:wrap;text-align:center;">DA</th>
@@ -95,7 +96,7 @@
                 <td style="width: ;text-align:center;">{{$te->project_admin}}</td>
                 <td style="width: ;text-align:center;">{{$te->super_admin}}</td>
                 <td style="width: ;text-align:center;">{{$te->so_number}}</td>
-
+                <td style="width: ;text-align:center;">{{$te->project_name}}</td>
                 @if($te->attachment == null)
                 <td  style="text-align:center;"><strong> N </strong></td>
                 @else
@@ -145,19 +146,19 @@
             </tr>
         @endforeach
         <tr style="border-bottom: none; border-top: none;">
-            <td colspan="12" style="text-align: right; font-style: normal;"><strong>Total claimed Amount (Technician)</strong></td>
+            <td colspan="13" style="text-align: right; font-style: normal;"><strong>Total claimed Amount (Technician)</strong></td>
             <td style="width: 100px;text-align:center;">{{$total_tech_exp_amount}}</td>
         </tr>
         <tr style="border-bottom: none; border-top: none;">
-            <td colspan="12" style="text-align: right; font-style: normal;"><strong>Total Approved Amount (super admin)</strong></td>
+            <td colspan="13" style="text-align: right; font-style: normal;"><strong>Total Approved Amount (super admin)</strong></td>
             <td style="width: 100px;text-align:center;">{{$sa_aprvd_amount}}</td>
         </tr>
         <tr style="border-bottom: none; border-top: none;">
-            <td colspan="12" style="text-align: right; font-style: normal;"><strong>Balance /refundable Amount to Company,if any</strong></td>
+            <td colspan="13" style="text-align: right; font-style: normal;"><strong>Balance /refundable Amount to Company,if any</strong></td>
             <td style="width: 100px;text-align:center;">{{$adv_amnt - $sa_aprvd_amount}}</td>
         </tr>   
         <tr style="border-bottom: none; border-top: none;">
-            <td colspan="10" style="text-align: right; font-style: normal;"></td>
+            <td colspan="11" style="text-align: right; font-style: normal;"></td>
             <td  colspan="3"style="text-align:right;">
                     <b style="vertical-align: text-top;">For  Avians Innovation Technology Pvt. Ltd </b>
                     <br/><br/><br/><br/><br/> 

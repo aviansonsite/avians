@@ -183,6 +183,7 @@
                                         <th scope="col" style="width: 100px">Approver Admin</th>
                                         <th scope="col" style="width: 100px">Approver SuperAdmin</th>
                                         <th scope="col" style="width: 100px">OA No</th>
+                                        <th scope="col" style="width: 100px">Project Name</th>
                                         <th scope="col" style="width: 100px">Bills</th>
                                         <th scope="col" style="width: 100px">Travel Exp</th>
                                         <th scope="col" style="width: 100px">Hotel</th>
@@ -429,7 +430,7 @@
                             content +="<td>"+row.project_admin+"</td>";
                             content +="<td>"+row.super_admin+"</td>";
                             content +="<td>"+row.so_number+"</td>";
-                            
+                            content +="<td>"+row.project_name+"</td>";
                             if(row.attachment == null){
                                 content +="<td> N </td>";
                             }else{
