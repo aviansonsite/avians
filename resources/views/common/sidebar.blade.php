@@ -130,7 +130,11 @@ $count=count($role);
                                 <li class="nav-item">
                                     <a href="{{route('technician_attendance.page')}}" class="waves-effect nav-link">
                                         <i class="bx bx-file"></i>
-                                        <span key="t-dashboards">Attendance Regularise</span>
+                                        @if($roles==0)
+                                            <span key="t-dashboards">Attend Reg. History</span>
+                                        @else
+                                            <span key="t-dashboards">Attendance Regularise</span>
+                                        @endif
                                     </a>
                                 </li>
                             @endif

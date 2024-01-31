@@ -135,10 +135,11 @@
                                                     <th scope="col" style="width: 100px">Technician Name</th>
                                                     <th scope="col" style="width: 100px">Punch In <br>(HH:MM:SS)</th>
                                                     <th scope="col" style="width: 100px">Punch Out <br>(HH:MM:SS)</th>
-                                                    <th scope="col" style="width: 100px">Total Time <br>(HH:MM:SS)</th>
-                                                    <th scope="col" style="width: 100px">Technician Leader(TL)</th>
                                                     <th scope="col" style="width: 100px">Admin Name</th>
                                                     <th scope="col" style="width: 100px">Remark</th>
+                                                    <th scope="col" style="width: 100px">Total Time <br>(HH:MM:SS)</th>
+                                                    <th scope="col" style="width: 100px">Technician Leader(TL)</th>
+                                                    
 
                                                 </tr>
                                             </thead>
@@ -915,7 +916,7 @@
                                 content +="<td class='pinhistry' data-pin_oth_id='"+row.pin_oth_id+"' data-pin_u_id='"+row.pin_u_id+"' data-pin_remark='"+row.pin_remark+"' data-pin_latitude='"+row.pin_latitude+"' data-pin_date='"+row.pin_date+"' data-pin_longitude='"+row.pin_longitude+"' data-pin_img='"+row.pin_img+"'>"+row.pin_time+"</td>";
 
                                 if(row.created_at == row.updated_at){ 
-                                    content +="<td><span class='badge badge-soft-danger regularise_modal' data-id='"+row.id+"' data-date='"+row.pout_date+"' data-tl_id='"+row.a_id+"' data-ptype='pout_record'>Regularise</span></td>";
+                                    content +="<td><span class='badge badge-soft-danger regularise_modal' data-id='"+row.id+"' data-date='"+row.pin_date+"' data-tl_id='"+row.a_id+"' data-ptype='pout_record'>Regularise</span></td>";
 
                                 }else{
                                     content +="<td class='pouthistry' data-pout_oth_id='"+row.pout_oth_id+"' data-pout_u_id='"+row.pout_u_id+"' data-pout_remark='"+row.pout_remark+"' data-pout_work_desc='"+row.pout_work_desc+"' data-pout_latitude='"+row.pout_latitude+"' data-pout_date='"+row.pout_date+"' data-pout_longitude='"+row.pout_longitude+"' data-pout_img='"+row.pout_img+"'>"+row.pout_time+"</td>";
@@ -961,7 +962,7 @@
                                 content +="<td>"+row.technician_name+"</td>";
 
                                 if(row.created_at == row.updated_at){ 
-                                    content +="<td><span class='badge badge-soft-danger regularise_modal' data-id='"+row.id+"' data-tl_id='"+row.a_id+"' data-date='"+row.pin_date+"' data-ptype='pin_record'>Regularise</span></td>";
+                                    content +="<td><span class='badge badge-soft-danger regularise_modal' data-id='"+row.id+"' data-tl_id='"+row.a_id+"' data-date='"+row.pout_date+"' data-ptype='pin_record'>Regularise</span></td>";
 
                                 }else{
 
@@ -1125,10 +1126,11 @@
                     content +="<td>"+row.technician_name+"</td>";
                     content +="<td>"+row.pin_time+"</td>";
                     content +="<td>"+row.pout_time+"</td>";
-                    content +="<td>"+row.totalDuration+"</td>";
-                    content +="<td>"+row.lead_tech_name+"</td>";
                     content +="<td>"+row.admin_name+"</td>";
                     content +="<td>"+row.regular_remark+"</td>";
+                    content +="<td>"+row.totalDuration+"</td>";
+                    content +="<td>"+row.lead_tech_name+"</td>";
+                    
                     content += "</tr>";
 
                         
