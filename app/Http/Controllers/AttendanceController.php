@@ -833,7 +833,8 @@ class AttendanceController extends Controller
                         'pout_img' => $r->pout_img,
                     ]);
                 }
-    
+                return json_encode(array('status' => true ,'reg_obj' => $reg_obj,'reg_id' =>$reg_id ,'so_id' =>$so_id,'reg_tech_date'=>$reg_tech_date,'message' => 'testing'));
+                
                 // $u_obj=PunchInOutModel::find($reg_id);
                 // $u_obj->reg_remark=$reg_remark;
                 // $u_obj->reg_status=$reg_status;
