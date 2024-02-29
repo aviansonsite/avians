@@ -175,13 +175,14 @@ class ReportController extends Controller
         $labours = $req->get('pdf_labours');
         $oth_id = $req->get('pdf_oth_id');
 
+
         $u_obj1=UserModel::where(['delete'=>0,'id'=>$labours])->where('role','!=','0')->orderby('created_at','DESC')->get();
         // dd($u_obj1);
         foreach($u_obj1 as $u)
         {
             $u->from_date = date('d-m-Y', strtotime($from_date));
             $u->to_date = date('d-m-Y', strtotime($to_date));
-            $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u->id,'so_id'=>$so])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->sum('payment_amnt');
+            $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u->id,'oth_id'=>$oth_id])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->sum('payment_amnt');
             $u->adv_amnt = $accountant_payment;
             
         }
