@@ -67,15 +67,15 @@
             <th  style="width:30px;text-align:center;">Attachment</th>
         </tr>
       <?php  $n=7?>
-      <?php $j = 0;?>
+      <?php $j=$k= 0;?>
         @foreach($pout_date as $pd)
             <?php   
                     
-                    $pout_date = date('d-m-Y', strtotime($pd->pout_date));
+                    $poutDate = date('d-m-Y', strtotime($pd->pout_date));
             ?>
             <tr style="border-bottom: none; border-top: none;">
             
-                <td style="width: ;text-align:center;">{{$pout_date}}</td>
+                <td style="width: ;text-align:center;">{{$poutDate}}</td>
                 <td style="width: ;text-align:center;">{{$pd->people_count}}</td>
                 <td style="width: ;text-align:center;">{{$pd->so_number}}</td>
                 <td style="width: ;text-align:center;">{{$pd->project_name}}</td>
@@ -89,6 +89,7 @@
                 @if($pd->work_attachment == null)
                 <td  style="text-align:center;"><strong> N </strong></td>
                 @else
+                <?php $k++; ?>
                     <td  style="text-align:center;"><strong> Y </strong></td>
                 @endif 
                 
@@ -107,6 +108,60 @@
     </table>
     <p style="text-align:center;font-size: 9px;">( This is computer generated Work Report Statement. )</p>
     <footer style="page-break-after: always;"></footer>
+
+    <!-- PAGE 3 -->
+    <h2 style="text-align:center;">Work Attachments</h2>
+    <?php $count = count((array) $pout_date);?>
+       
+        @if($k >= 2)
+            <table>
+
+                @foreach($pout_date as $pd) 
+                    <?php   
+                        $pdate = date('d-m-Y', strtotime($pd->pout_date));
+                    ?>
+                    @if($pd->work_attachment != null)
+                        <tr style="text-align:center;">
+                            <td>
+                                <h3>Date : {{$pdate}} </h3>
+                                <img style="height: 200px; width: 300px;" src='{{URL::asset("files/attendance/workAttachments/$pd->work_attachment")}}'/>
+                            </td>                           
+
+                        </tr>
+                    @endif    
+
+                @endforeach
+                
+            </table>
+        @else
+
+            <table>
+                <tr style="text-align:center;">
+                    @foreach($pout_date as $pd) 
+                        <?php   
+                            $pdate = date('d-m-Y', strtotime($pd->pout_date));
+                        ?>
+                        @if($pd->work_attachment != null)
+                            
+                                <td>
+                                    <h3>Date : {{$pdate}} </h3>
+                                    <img style="height: 500px; width: 500px;" src='{{URL::asset("files/attendance/workAttachments/$pd->work_attachment")}}'/>
+                                </td>
+                            
+                        @endif
+                    @endforeach
+
+                </tr>
+
+            </table>
+       
+        @endif
+
+       
+
+    <br/>
+    <p style="font-family: monospace;text-align:center;">The Work photographs provided above are only for reference.</p>
+        <!-- <footer style="page-break-after: always;"></footer> -->
   
 </body>
 </html>

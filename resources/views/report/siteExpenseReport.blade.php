@@ -1,6 +1,6 @@
 @extends('common.master')
 <?php $title=config('constants.PROJECT_NAME'); ?>
-@section('title',"Attendance Report | $title")
+@section('title',"Site Expense Report | $title")
 @push('page_css')
 {!! Html::style('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') !!}
 {!! Html::style('assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css') !!}

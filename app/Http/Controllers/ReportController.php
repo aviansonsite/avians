@@ -63,7 +63,7 @@ class ReportController extends Controller
         {
             $u->from_date = date('d-m-Y', strtotime($from_date));
             $u->to_date = date('d-m-Y', strtotime($to_date));
-            $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u->id])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->sum('payment_amnt');
+            $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u->id,'so_id'=>$so])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->sum('payment_amnt');
             $u->adv_amnt = $accountant_payment;
             
         }
@@ -181,7 +181,7 @@ class ReportController extends Controller
         {
             $u->from_date = date('d-m-Y', strtotime($from_date));
             $u->to_date = date('d-m-Y', strtotime($to_date));
-            $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u->id])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->sum('payment_amnt');
+            $accountant_payment = LabourPaymentModel::where(['delete'=>0,'u_id'=>$u->id,'so_id'=>$so])->whereDate('payment_date', '>=' ,$from_date)->whereDate('payment_date', '<=' ,$to_date)->sum('payment_amnt');
             $u->adv_amnt = $accountant_payment;
             
         }
@@ -803,6 +803,7 @@ class ReportController extends Controller
 
         } 
 
+        // dd($pout_date);
         $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.workReportPdf',compact('u_obj1','pout_date'))->setPaper('a4', 'potrait');
         
         $pdf1->getDomPDF()->setHttpContext(
@@ -955,11 +956,13 @@ class ReportController extends Controller
 
         // Initialize a Carbon object with the first time value
 
-        $timeValues = ["00:00:00"];
+        // $timeValues = ["00:00:00"];
         
-        $result = Carbon::createFromFormat('H:i:s', $timeValues[0]);
+        // $result = Carbon::createFromFormat('H:i:s', $timeValues[0]);
 
-        if(count($p_obj) > 0){
+        $totalSeconds = "0";
+
+        if(count($p_obj) > 0){  
 
             foreach($p_obj as $p){
                 $startTime=$p->created_at;
@@ -971,7 +974,11 @@ class ReportController extends Controller
                 $p->pin_time=$p->created_at->format('H:i:s');          
                 $p->pout_time=$p->updated_at->format('H:i:s');  
     
-                $result->add(Carbon::createFromFormat('H:i:s', $totalDuration)->diff(new Carbon('00:00:00')));
+                list($hours, $minutes, $seconds) = explode(':', $totalDuration);
+                $totalSeconds += $hours * 3600 + $minutes * 60 + $seconds;
+
+
+                // $result->add(Carbon::createFromFormat('H:i:s', $totalDuration)->diff(new Carbon('00:00:00')));
 
                 $u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$labours])->orderby('created_at','DESC')->get();
                 foreach($u_obj as $u){
@@ -1011,7 +1018,10 @@ class ReportController extends Controller
                 $p->pin_time=$p->created_at->format('H:i:s');          
                 $p->pout_time=$p->updated_at->format('H:i:s');  
 
-                $result->add(Carbon::createFromFormat('H:i:s', $totalDuration)->diff(new Carbon('00:00:00')));
+                list($hours, $minutes, $seconds) = explode(':', $totalDuration);
+                $totalSeconds += $hours * 3600 + $minutes * 60 + $seconds;
+
+                // $result->add(Carbon::createFromFormat('H:i:s', $totalDuration)->diff(new Carbon('00:00:00')));
                 $u_obj=UserModel::where(['delete'=>0,'is_active'=>0,'id'=>$labours])->orderby('created_at','DESC')->get();
                 foreach($u_obj as $u){
                     $p->technician_name = $u->name;
@@ -1038,12 +1048,25 @@ class ReportController extends Controller
             }
         }
 
+
+        // Convert total seconds back to hours, minutes, and seconds
+        $totalHours = floor($totalSeconds / 3600);
+        $totalSeconds %= 3600;
+        $totalMinutes = floor($totalSeconds / 60);
+        $totalSeconds %= 60;
+
+        // Format the result
+        $totalHoursd = sprintf("%02d:%02d:%02d", $totalHours, $totalMinutes, $totalSeconds);
+
+
+        // dd($totalDurations);
+
         // Format and display the final result
-        $totalHours = $result->format('H:i:s');
+        // $totalHourss = $result->format('H:i:s');
         $totalDays = count($p_obj);
         $from_date = date('d-m-Y', strtotime($from_date));
         $to_date = date('d-m-Y', strtotime($to_date));
-        $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.attendanceReportPdf',compact('u_obj','p_obj','totalHours','totalDays','from_date','to_date'))->setPaper('a4', 'potrait');
+        $pdf1 =PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.attendanceReportPdf',compact('u_obj','p_obj','totalHoursd','totalDays','from_date','to_date'))->setPaper('a4', 'potrait');
         
         $pdf1->getDomPDF()->setHttpContext(
                 stream_context_create([

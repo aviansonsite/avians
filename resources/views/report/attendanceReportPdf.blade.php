@@ -51,7 +51,7 @@
             <td style="width:30px;"> From Date : <br/> <b> {{$from_date}} </b></td>
             <td style="width:30px;"> To Date : <br/> <b> {{$to_date}} </b></td>
             <td style="width:30px;"> Total Days : <br/> <b>{{$totalDays}}</b></td>
-            <td style="width:30px;"> Total Hours : <br/> <b>{{$totalHours}}</b></td>
+            <td style="width:30px;"> Total Hours : <br/> <b>{{$totalHoursd}}</b></td>
         </tr>
         @endforeach
        

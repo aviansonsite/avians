@@ -1,6 +1,6 @@
 @extends('common.master')
 <?php $title=config('constants.PROJECT_NAME'); ?>
-@section('title',"Attendance Report | $title")
+@section('title',"Work Report | $title")
 @push('page_css')
 {!! Html::style('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') !!}
 {!! Html::style('assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css') !!}
@@ -80,7 +80,7 @@
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Site Expense Report</li>
+                            <li class="breadcrumb-item active">Work Report</li>
                         </ol>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
             <div class="col-sm-12 col-md-12 col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Site Expense Report</h5>
+                        <h5 class="card-title">Work Report</h5>
                         {!! Form::open(['class'=>"form-horizontal",'id'=>"site_exp_report_form"]) !!}
                         <div class="row">
                             <?php $tdate=date("Y-m-d"); ?>
@@ -151,7 +151,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-sm-flex flex-wrap">     
-                            <h4 class="card-title mb-4">Site Expense Report List  - &nbsp;</h4>
+                            <h4 class="card-title mb-4">Work Report List  - &nbsp;</h4>
                             <div id="edr_title">
                                 <h5 class="card-title mb-4">
                                     <strong>From Date : <span id="f_date"> - </span></strong>&nbsp;
