@@ -51,7 +51,7 @@
             <td style="width:30px;"> Adv Total Amount.: <br/> <b> {{$uo->adv_amnt}} </b></td>
             <td style="width:30px;"> From Date.: <br/> <b> {{$uo->from_date}} </b></td>
             <td style="width:30px;"> To Date.: <br/> <b> {{$uo->to_date}} </b></td>
-            <td style="width:30px;"> Total Peoples in OA.: <br/> <b>{{$no_of_people}}</b></td>
+            <td style="width:30px;">  </td>
         </tr>
         @endforeach
         <tr>       
@@ -180,7 +180,7 @@
                             <tr style="text-align:center;">
                                 <td >
                                     <h3>{{$te->exp_type}} </h3>
-                                    <img style="height: 500px; width: 500px;" src='{{URL::asset("files/user/travel_expense/$te->attachment")}}'/>
+                                    <img style="height: 200px; width: 300px;" src='{{URL::asset("files/user/travel_expense/$te->attachment")}}'/>
                                 </td>
                             </tr>
                         @endif    
@@ -189,7 +189,7 @@
                             <tr  style="text-align:center;">
                                 <td >
                                     <h3>{{$te->exp_type}} </h3>
-                                    <img style="height: 500px; width: 500px;" src='{{URL::asset("files/user/expense/$te->attachment")}}'/>
+                                    <img style="height: 200px; width: 300px;" src='{{URL::asset("files/user/expense/$te->attachment")}}'/>
                                 </td>
                             </tr>
                         @endif    
