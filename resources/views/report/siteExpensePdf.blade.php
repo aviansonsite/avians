@@ -180,7 +180,7 @@
                             <tr style="text-align:center;">
                                 <td >
                                     <h3>{{$te->exp_type}} </h3>
-                                    <img style="height: 200px; width: 300px;" src='{{URL::asset("files/user/travel_expense/$te->attachment")}}'/>
+                                    <img style="height: 300px; width: 300px;" src='{{URL::asset("files/user/travel_expense/$te->attachment")}}'/>
                                 </td>
                             </tr>
                         @endif    
@@ -189,7 +189,7 @@
                             <tr  style="text-align:center;">
                                 <td >
                                     <h3>{{$te->exp_type}} </h3>
-                                    <img style="height: 200px; width: 300px;" src='{{URL::asset("files/user/expense/$te->attachment")}}'/>
+                                    <img style="height: 300px; width: 300px;" src='{{URL::asset("files/user/expense/$te->attachment")}}'/>
                                 </td>
                             </tr>
                         @endif    
