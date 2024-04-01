@@ -953,7 +953,7 @@ class ReportController extends Controller
             $u->to_date = date('d-m-Y', strtotime($to_date));
         }
  
-        $p_obj=PunchInOutModel::where(['delete'=>0,'pin_u_id'=>$labours])->whereDate('pin_date', '>=' ,$from_date)->whereDate('pin_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+        $p_obj=PunchInOutModel::where(['delete'=>0,'pin_u_id'=>$labours])->whereDate('pin_date', '>=' ,$from_date)->whereDate('pin_date', '<=' ,$to_date)->orderby('updated_at','ASC')->get();
 
         // Initialize a Carbon object with the first time value
 
@@ -1007,7 +1007,7 @@ class ReportController extends Controller
         }else{
 
             //punch in records
-            $p_obj=PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->orderby('updated_at','DESC')->get();
+            $p_obj=PunchInOutModel::where(['delete'=>0,'pout_u_id'=>$labours])->whereDate('pout_date', '>=' ,$from_date)->whereDate('pout_date', '<=' ,$to_date)->orderby('updated_at','ASC')->get();
 
             foreach($p_obj as $p){
                 $startTime=$p->created_at;
