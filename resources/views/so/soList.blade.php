@@ -363,6 +363,14 @@
         getSO();
     });
 
+    //For set/unset select field
+    $('.nav-tabs a[href="#so_inactive_list"]').click(function()
+    {
+        $("#labour").empty();    
+        $("#labours").empty();            
+        getSO();
+    });
+
     getSO();
     function getSO(){
 
