@@ -364,6 +364,12 @@
         getSO();
     });
 
+    //For set/unset select field
+    $('.nav-tabs a[href="#so_inactive_list"]').click(function()
+    {            
+        getSO();
+    });
+
     getSO();
     function getSO(){
 
@@ -379,6 +385,8 @@
             success:function(data){
                 console.log(data.data);
                 $("#datatable").DataTable().destroy();
+                $("#inactive_datatable").DataTable().destroy();
+
                 content ="";
                 content1 ="";
                 var i=j= 0;        
