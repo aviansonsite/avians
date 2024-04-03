@@ -775,7 +775,7 @@ class AttendanceController extends Controller
         ->leftjoin('users as u','u.id','oth.lead_technician')
         ->leftjoin('sales_orders as so','so.id','oth.so_id')
         ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
-        ->where(['oth.id'=>$pin_oth_id,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+        ->where(['oth.id'=>$pin_oth_id,'u.delete'=>0,'u.is_active'=>0])
         ->orderby('oth.updated_at','DESC')
         ->get();
 
