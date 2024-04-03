@@ -1078,10 +1078,10 @@ class LabourPaymentController extends Controller
 
             foreach($s_obj as $s){
                 $technician = array_map('intval', explode(',', $s->labour));      // create array all sub technician
-                // foreach($technician as $t)
-                // {   
-                //     array_push($technicians,$t);        // push sub technician in technicians 
-                // }
+                foreach($technician as $t)
+                {   
+                    array_push($technicians,$t);        // push sub technician in technicians 
+                }
                 
                 $lead_tech = array_map('intval', explode(',', $s->lead_technician));    // lead technician
                 foreach($lead_tech as $l)
@@ -1096,7 +1096,7 @@ class LabourPaymentController extends Controller
 
     	    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->whereIn('id',$all_technician)->orderby('created_at','DESC')->get();
             
-            dd($s_obj);
+            // dd($s_obj);
         }
     	$s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
     	return view('labour.managelabourPayment',compact('u_obj','s_obj'));
