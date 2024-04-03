@@ -1153,7 +1153,7 @@
 
                     //get project type wise project records
                     // $('#p_in_soh').append("<option value='"+row.so_id+"'>"+row.so_number+"</option>").attr('selected','selected').change();
-                    $("#p_in_soh option[value='"+row.id+"']").attr('selected','selected').change();
+                    $("#p_in_soh option[value='"+row.oth_id+"']").attr('selected','selected').change();
 
                                 
                 });
