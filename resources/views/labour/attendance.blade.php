@@ -1128,8 +1128,8 @@
         var pin_date = $(this).data('pin_date');
         var pin_img = $(this).data('pin_img');
         // $('#p_in_soh option[value='+pin_oth_id+']').attr('selected','selected').change();    
-        // $("#p_in_soh option[value='"+pin_oth_id+"']").attr('selected','selected').change();              
-        $("#p_in_soh").val(pin_oth_id).trigger("change"); 
+        $("#p_in_soh option[value='"+pin_oth_id+"']").attr('selected','selected').change();              
+        // $("#p_in_soh").val(pin_oth_id).trigger("change"); 
 
         $.ajax({    
             url:"{{url('get-pinh-labour')}}",
