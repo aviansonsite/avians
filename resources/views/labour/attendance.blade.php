@@ -1148,6 +1148,15 @@
                     $("#p_in_labourh option[value='"+row.id+"']").attr('selected','selected').change();
 
                 });
+
+                $.each(response.s_obj,function(index,row){
+
+                    //get project type wise project records
+                    // $('#p_in_soh').append("<option value='"+row.so_id+"'>"+row.so_number+"</option>").attr('selected','selected').change();
+                    $("#p_in_soh option[value='"+row.id+"']").attr('selected','selected').change();
+
+                                
+                });
             }
         });
 

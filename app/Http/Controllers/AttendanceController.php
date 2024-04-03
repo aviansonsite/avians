@@ -775,14 +775,15 @@ class AttendanceController extends Controller
         ->leftjoin('users as u','u.id','oth.lead_technician')
         ->leftjoin('sales_orders as so','so.id','oth.so_id')
         ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
-        ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
+        ->where(['oth.id'=>$pin_oth_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
         ->orderby('oth.updated_at','DESC')
         ->get();
 
+        $s_obj1=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
         // $s_obj=SOModel::where(['delete'=>0,'id'=>$so_id])->orderby('created_at','DESC')->get();
         // $s_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->orderby('created_at','DESC')->get();
         if(!empty($data)){
-           return json_encode(array('status' => true ,'data' => $data,'l_obj'=>$l_obj,'s_obj'=>$s_obj));
+           return json_encode(array('status' => true ,'data' => $data,'l_obj'=>$l_obj,'s_obj'=>$s_obj,'s_obj1'=>$s_obj1));
         }else{
            return ['status' => false, 'message' => 'No Data Found'];
         }
