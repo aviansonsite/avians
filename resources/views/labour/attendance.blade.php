@@ -1207,8 +1207,8 @@
                 $.each(response.s_obj,function(index,row){
 
                     //get project type wise project records
-                    $('#p_in_soh').append("<option value='"+row.so_id+"' selected disabled>"+row.so_number+"</option>");
-                    // $("#p_in_soh option[value='"+row.oth_id+"']").attr('selected','selected').change();
+                    $('#pout_soh').append("<option value='"+row.so_id+"' selected disabled>"+row.so_number+"</option>");
+                    // $("#pout_soh option[value='"+row.oth_id+"']").attr('selected','selected').change();
 
                 });
             }
