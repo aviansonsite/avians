@@ -1091,7 +1091,7 @@ class LabourPaymentController extends Controller
             }
 
             $all_technician = array_unique($technicians);           //remove duplicate technician id
-            dd($all_technician);
+            dd($technicians);
             
 
     	    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->whereIn('id',$all_technician)->orderby('created_at','DESC')->get();
