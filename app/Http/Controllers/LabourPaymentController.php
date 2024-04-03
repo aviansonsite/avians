@@ -1095,7 +1095,7 @@ class LabourPaymentController extends Controller
 
     	    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->whereIn('id',$all_technician)->orderby('created_at','DESC')->get();
             
-            dd($u_obj);
+            dd($s_obj);
         }
     	$s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
     	return view('labour.managelabourPayment',compact('u_obj','s_obj'));
