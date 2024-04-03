@@ -1186,6 +1186,7 @@
         // $('#pout_soh option[value='+pout_oth_id+']').attr('selected','selected').change();      
         // $("#pout_soh option[value='"+pout_oth_id+"']").attr('selected','selected').change();              
         // $("#pout_soh").val(pout_oth_id).trigger("change"); 
+        
         $.ajax({    
             url:"{{url('get-pouth-labour')}}",
             type :'get',

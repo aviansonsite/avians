@@ -755,7 +755,7 @@ class AttendanceController extends Controller
 
         // $s_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->orderby('created_at','DESC')->get();
         if(!empty($data)){
-           return json_encode(array('status' => true ,'data' => $data,'l_obj'=>$l_obj,'s_obj'=>$s_obj));
+           return json_encode(array('status' => true ,'data' => $data,'l_obj'=>$l_obj,'s_obj'=>$s_obj,'pout_oth_id'=>$pout_oth_id));
         }else{
            return ['status' => false, 'message' => 'No Data Found'];
         }
@@ -791,7 +791,7 @@ class AttendanceController extends Controller
         // $s_obj=SOModel::where(['delete'=>0,'id'=>$so_id])->orderby('created_at','DESC')->get();
         // $s_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->orderby('created_at','DESC')->get();
         if(!empty($data)){
-           return json_encode(array('status' => true ,'data' => $data,'l_obj'=>$l_obj,'s_obj'=>$s_obj));
+           return json_encode(array('status' => true ,'data' => $data,'l_obj'=>$l_obj,'s_obj'=>$s_obj,'pin_oth_id'=>$pin_oth_id));
         }else{
            return ['status' => false, 'message' => 'No Data Found'];
         }
