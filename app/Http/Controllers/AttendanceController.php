@@ -35,13 +35,8 @@ class AttendanceController extends Controller
             ->orderby('oth.updated_at','DESC')
             ->get();
 
-        $s_obj1=DB::table('oa_tl_history as oth')
-        ->leftjoin('users as u','u.id','oth.lead_technician')
-        ->leftjoin('sales_orders as so','so.id','oth.so_id')
-        ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','so.project_name','so.client_name','so.address','u.name','u.delete as u_delete','u.is_active')
-        ->where(['oth.lead_technician'=>$a_id,'oth.status'=>1,'so.delete'=>0,'u.delete'=>0,'u.is_active'=>0])
-        ->orderby('oth.updated_at','DESC')
-        ->get();
+        $s_obj1=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+
 
         // dd($s_obj);
         $tdate=date("Y-m-d");

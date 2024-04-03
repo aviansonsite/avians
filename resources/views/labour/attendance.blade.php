@@ -291,8 +291,8 @@
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
                             <label for="p_in_soh" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA<sup class="text-danger">*</sup></label>
-                            <select class="form-control select2" id="p_in_soh" required name="p_in_soh" disabled>
-                            @foreach($s_obj as $so)
+                            <select class="form-control select2" id="p_in_soh" required name="p_in_soh">
+                            @foreach($s_obj1 as $so)
                                 <option value="{{$so->oth_id}}">{{$so->so_number}}</option>
                             @endforeach
                             </select>
@@ -487,7 +487,7 @@
                         <div class="form-group mb-3">
                             <label for="pout_soh" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA<sup class="text-danger">*</sup></label>
                             <select class="form-control select2" id="pout_soh" required name="pout_soh" disabled>
-                            @foreach($s_obj as $so)
+                            @foreach($s_obj1 as $so)
                                 <option value="{{$so->oth_id}}">{{$so->so_number}}</option>
                             @endforeach
                             </select>
@@ -588,7 +588,7 @@
                         <div class="form-group mb-3">
                             <label for="oa_hit" class="form-label" style="font-size: 11px;margin-bottom: 2px;">OA Number<sup class="text-danger">*</sup></label>
                             <select class="form-control select2" id="oa_hit" required name="oa_hit" disabled>
-                            @foreach($s_obj1 as $so)
+                            @foreach($s_obj as $so)
                                 <option value="{{$so->oth_id}}">{{$so->so_number}}</option>
                             @endforeach
                             </select>
