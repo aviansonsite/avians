@@ -1094,7 +1094,8 @@ class LabourPaymentController extends Controller
             
 
     	    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->whereIn('id',$all_technician)->orderby('created_at','DESC')->get();
-            // dd($s_obj);
+            
+            dd($u_obj);
         }
     	$s_obj=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
     	return view('labour.managelabourPayment',compact('u_obj','s_obj'));
@@ -1436,7 +1437,7 @@ class LabourPaymentController extends Controller
         {
             if($role == 3)      // for technician
             {
-                $date = Carbon::now()->subDays(60);  // get last 7 days record
+                $date = Carbon::now()->subDays(60);  // get last 60 days record
                 $data = TravelExpenseModel::where(['delete'=>0,'a_id'=>$a_id])->where('created_at', '>=', $date)->orderby('updated_at','DESC')->get();
                 foreach($data as $d)
                 {
