@@ -97,7 +97,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="text-muted">
-                            @foreach($s_obj as $s)
+                            @foreach($s_obj1 as $s)
                                 <div>
                                     <strong>OA Number : </strong>{{$s->so_number}} , <strong>Client Name : </strong>{{$s->client_name}} , <strong>Project Name : </strong>{{$s->project_name}} 
                                 </div>                        
