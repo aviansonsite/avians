@@ -291,7 +291,7 @@
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <div class="form-group mb-3">
                             <label for="p_in_soh" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select OA<sup class="text-danger">*</sup></label>
-                            <select class="form-control select2" id="p_in_soh" required name="p_in_soh">
+                            <select class="form-control select2" id="p_in_soh" required name="p_in_soh" disabled>
                             @foreach($s_obj1 as $so)
                                 <option value="{{$so->oth_id}}">{{$so->so_number}}</option>
                             @endforeach
@@ -1154,8 +1154,6 @@
                     //get project type wise project records
                     $('#p_in_soh').append("<option value='"+row.so_id+"' selected disabled>"+row.so_number+"</option>");
                     // $("#p_in_soh option[value='"+row.oth_id+"']").attr('selected','selected').change();
-
-                    // $("#p_in_soh").val(row.oth_id).trigger("change");  
                     
                 });
             }
@@ -1187,7 +1185,7 @@
         var pout_img = $(this).data('pout_img');
         // $('#pout_soh option[value='+pout_oth_id+']').attr('selected','selected').change();      
         // $("#pout_soh option[value='"+pout_oth_id+"']").attr('selected','selected').change();              
-        $("#pout_soh").val(pout_oth_id).trigger("change"); 
+        // $("#pout_soh").val(pout_oth_id).trigger("change"); 
         $.ajax({    
             url:"{{url('get-pouth-labour')}}",
             type :'get',
@@ -1203,6 +1201,14 @@
 
                     // $('#pout_labourh option[value='+row.id+']').attr('selected','selected').change();       
                     $("#pout_labourh option[value='"+row.id+"']").attr('selected','selected').change();
+
+                });
+
+                $.each(response.s_obj,function(index,row){
+
+                    //get project type wise project records
+                    $('#p_in_soh').append("<option value='"+row.so_id+"' selected disabled>"+row.so_number+"</option>");
+                    // $("#p_in_soh option[value='"+row.oth_id+"']").attr('selected','selected').change();
 
                 });
             }

@@ -745,9 +745,17 @@ class AttendanceController extends Controller
             ->orderby('u.created_at','DESC')
             ->get();
 
+        $s_obj=DB::table('oa_tl_history as oth')
+            ->leftjoin('users as u','u.id','oth.lead_technician')
+            ->leftjoin('sales_orders as so','so.id','oth.so_id')
+            ->select('oth.id as oth_id','oth.so_id','oth.lead_technician','oth.status','oth.updated_at','so.delete','so.labour','so.so_number','u.name','u.delete as u_delete','u.is_active')
+            ->where(['oth.id'=>$pout_oth_id,'u.delete'=>0,'u.is_active'=>0])
+            ->orderby('oth.updated_at','DESC')
+            ->get();
+
         // $s_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->orderby('created_at','DESC')->get();
         if(!empty($data)){
-           return json_encode(array('status' => true ,'data' => $data,'l_obj'=>$l_obj));
+           return json_encode(array('status' => true ,'data' => $data,'l_obj'=>$l_obj,'s_obj'=>$s_obj));
         }else{
            return ['status' => false, 'message' => 'No Data Found'];
         }
@@ -779,11 +787,11 @@ class AttendanceController extends Controller
         ->orderby('oth.updated_at','DESC')
         ->get();
 
-        $s_obj1=SOModel::where(['delete'=>0])->orderby('created_at','DESC')->get();
+     
         // $s_obj=SOModel::where(['delete'=>0,'id'=>$so_id])->orderby('created_at','DESC')->get();
         // $s_obj=SOModel::whereIn('id',$so_id)->where(['delete'=>0])->orderby('created_at','DESC')->get();
         if(!empty($data)){
-           return json_encode(array('status' => true ,'data' => $data,'l_obj'=>$l_obj,'s_obj'=>$s_obj,'s_obj1'=>$s_obj1));
+           return json_encode(array('status' => true ,'data' => $data,'l_obj'=>$l_obj,'s_obj'=>$s_obj));
         }else{
            return ['status' => false, 'message' => 'No Data Found'];
         }
