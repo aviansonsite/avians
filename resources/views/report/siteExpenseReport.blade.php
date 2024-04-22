@@ -421,12 +421,26 @@
                        
                             content +="<tr>";
                             content +="<td>"+ ++i +"</td>";
-                            content +="<td>"+exp_date+"</td>";                     
-                            if(row.exp_desc == null){
-                                content +="<td> - </td>";
-                            }else{
-                                content +="<td><strong>"+row.exp_desc+"</strong></td>";
-                            }
+                            content +="<td>"+exp_date+"</td>";   
+                            content +="<td>";    
+                                if(row.from_location == null){
+                                    content +="<strong>From Location: - </strong><br/>";
+                                }else{
+                                    content +="<strong>From Location: "+row.from_location+"</strong><br/>";
+                                }
+
+                                if(row.to_location == null){
+                                    content +="<strong>To Location: - </strong><br/>";
+                                }else{
+                                    content +="<strong>To Location: "+row.to_location+"</strong><br/>";
+                                }
+             
+                                if(row.exp_desc == null){
+                                    content +="<strong>Description: - </strong><br/>";
+                                }else{
+                                    content +="<strong>Description: "+row.exp_desc+"</strong><br/>";
+                                }
+                            content +="</td>";
                             content +="<td>"+row.project_admin+"</td>";
                             content +="<td>"+row.super_admin+"</td>";
                             content +="<td>"+row.so_number+"</td>";

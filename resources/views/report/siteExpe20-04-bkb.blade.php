@@ -87,25 +87,12 @@
             <tr style="border-bottom: none; border-top: none;">
             
                 <td style="width: ;text-align:center;">{{$exp_date}}</td>
-                <td  style="">
-                    @if(empty($te->from_location))
-                        <strong>From Location: - </strong><br/>
-                    @else
-                        <strong>From Location: {{$te->from_location}}</strong><br/>
-                    @endif
-
-                    @if(empty($te->to_location))
-                        <strong>To Location: - </strong><br/>
-                    @else
-                        <strong>To Location: {{$te->to_location}}</strong><br/>
-                    @endif
-
-                    @if($te->exp_desc == null)
-                        <strong>Description: - </strong>
-                    @else
-                        <strong>Description: {{$te->exp_desc}}</strong>
-                    @endif
-                </td>
+                @if($te->exp_desc == null)
+                    <td  style="text-align:center;"> - </td>
+                @else
+                    <td  style=""><strong>{{$te->exp_desc}}</strong></td>
+                @endif
+                
                 <td style="width: ;text-align:center;">{{$te->project_admin}}</td>
                 <td style="width: ;text-align:center;">{{$te->super_admin}}</td>
                 <td style="width: ;text-align:center;">{{$te->so_number}}</td>
