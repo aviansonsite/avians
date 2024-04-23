@@ -76,7 +76,7 @@
             <th  style="width:40px!important;white-space:wrap;text-align:center;">DA</th>
             <th  style="width:40px!important;white-space:wrap;text-align:center;">Mat Purchase</th>
             <th  style="width:40px!important;white-space:wrap;text-align:center;">Other Exp</th>
-            <th  style="width:10px!important;white-space:wrap;text-align:center;">Amt (in Rs.)</th>
+            <th  style="width:10%;white-space:wrap;text-align:center;">Amt (in Rs.)</th>
         </tr>
       <?php  $n=7?>
       <?php $j = 0; $total_tech_exp_amount=0; $sa_aprvd_amount=0;?>
