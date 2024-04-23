@@ -168,7 +168,7 @@
                     <td style="width: ;text-align:center;"> </td>
                 @endif
 
-                <td style="width: ;white-space:wrap;text-align:center;">{{$te->aprvd_amount}}</td>
+                <td style="width: ;white-space:wrap;text-align:left;">{{$te->aprvd_amount}}</td>
 
             </tr>
         @endforeach
