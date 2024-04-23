@@ -67,16 +67,16 @@
             <th  style="width:20px!important;white-space:wrap;text-align:center;">To Location</th>
             <th  style="width:60px!important;white-space:wrap;text-align:center;">Approver Admin</th>
             <th  style="width:60px!important;white-space:wrap;text-align:center;">Approver SuperAdmin</th>
-            <th  style="width:50px!important;text-align:center;"> OA NO.</th>
-            <th  style="width:90px!important;text-align:center;"> Project Name.</th>
-            <th  style="width:30px!important;text-align:center;"> Bills</th>
-            <th  style="width:30px!important;white-space:wrap;text-align:center;"> No of Persons</th>
+            <th  style="width:50px!important;text-align:center;">OA NO.</th>
+            <th  style="width:90px!important;text-align:center;">Project Name.</th>
+            <th  style="width:30px!important;text-align:center;">Bills</th>
+            <th  style="width:30px!important;white-space:wrap;text-align:center;">No of Persons</th>
             <th  style="width:50px!important;white-space:wrap;text-align:center;">Travel Exp</th>
             <th  style="width:40px!important;text-align:center;">Hotel</th>
             <th  style="width:40px!important;white-space:wrap;text-align:center;">DA</th>
             <th  style="width:40px!important;white-space:wrap;text-align:center;">Mat Purchase</th>
             <th  style="width:40px!important;white-space:wrap;text-align:center;">Other Exp</th>
-            <th  style="width:50px;white-space:wrap;text-align:left;">Amt (in Rs.)</th>
+            <th  style="width:50px;white-space:wrap;text-align:center;">Amt (in Rs.)</th>
         </tr>
       <?php  $n=7?>
       <?php $j = 0; $total_tech_exp_amount=0; $sa_aprvd_amount=0;?>
@@ -168,7 +168,7 @@
                     <td style="width: ;text-align:center;"> </td>
                 @endif
 
-                <td style="width: ;white-space:wrap;text-align:left;">{{$te->aprvd_amount}}</td>
+                <td style="width: ;white-space:wrap;text-align:center;">{{$te->aprvd_amount}}</td>
 
             </tr>
         @endforeach
