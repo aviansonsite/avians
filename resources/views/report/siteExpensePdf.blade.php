@@ -62,7 +62,9 @@
     <table style='margin-top: 0px;'>
         <tr>
             <th  style="width:60px;text-align:center;">Date</th>
-            <th  style="white-space:wrap;text-align:center;"> Expense Description</th>
+            <th  style="width:120px;white-space:wrap;text-align:center;"> Expense Description</th>
+            <th  style="width:20px;white-space:wrap;text-align:center;">From Location</th>
+            <th  style="width:20px;white-space:wrap;text-align:center;">To Location</th>
             <th  style="width:60px;white-space:wrap;text-align:center;">Approver Admin</th>
             <th  style="width:60px;white-space:wrap;text-align:center;">Approver SuperAdmin</th>
             <th  style="width:60px;text-align:center;"> OA NO.</th>
@@ -74,7 +76,7 @@
             <th  style="width:40px;white-space:wrap;text-align:center;">DA</th>
             <th  style="width:40px;white-space:wrap;text-align:center;">Mat Purchase</th>
             <th  style="width:40px;white-space:wrap;text-align:center;">Other Exp</th>
-            <th style="width:30px;white-space:wrap;text-align:center;">Amount (in Rs.)</th>
+            <th  style="width:10px!important;white-space:wrap;text-align:center;">Amt (in Rs.)</th>
         </tr>
       <?php  $n=7?>
       <?php $j = 0; $total_tech_exp_amount=0; $sa_aprvd_amount=0;?>
@@ -88,7 +90,7 @@
             
                 <td style="width: ;text-align:center;">{{$exp_date}}</td>
                 <td  style="">
-                    @if(empty($te->from_location))
+                    <!-- @if(empty($te->from_location))
                         <strong>From Location: - </strong><br/>
                     @else
                         <strong>From Location: {{$te->from_location}}</strong><br/>
@@ -98,20 +100,32 @@
                         <strong>To Location: - </strong><br/>
                     @else
                         <strong>To Location: {{$te->to_location}}</strong><br/>
-                    @endif
+                    @endif -->
 
                     @if($te->exp_desc == null)
-                        <strong>Description: - </strong>
+                        <strong> - </strong>
                     @else
-                        <strong>Description: {{$te->exp_desc}}</strong>
+                        <strong>{{$te->exp_desc}}</strong>
                     @endif
                 </td>
+                @if(empty($te->from_location))
+                    <td style="width: ;text-align:center;"><strong> - </strong></td>
+                @else
+                    <td style="width: ;text-align:center;"><strong> {{$te->from_location}}</strong></td>
+                @endif
+
+                @if(empty($te->to_location))
+                    <td style="width: ;text-align:center;"><strong> - </strong></td>
+                @else
+                    <td style="width: ;text-align:center;"><strong> {{$te->to_location}}</strong></td>
+                @endif
+
                 <td style="width: ;text-align:center;">{{$te->project_admin}}</td>
                 <td style="width: ;text-align:center;">{{$te->super_admin}}</td>
                 <td style="width: ;text-align:center;">{{$te->so_number}}</td>
                 <td style="width: ;text-align:center;">{{$te->project_name}}</td>
                 @if($te->attachment == null)
-                <td  style="text-align:center;"><strong> N </strong></td>
+                    <td  style="text-align:center;"><strong> N </strong></td>
                 @else
                     <td  style="text-align:center;"><strong> Y </strong></td>
                 @endif 
@@ -159,19 +173,19 @@
             </tr>
         @endforeach
         <tr style="border-bottom: none; border-top: none;">
-            <td colspan="13" style="text-align: right; font-style: normal;"><strong>Total claimed Amount (Technician)</strong></td>
+            <td colspan="15" style="text-align: right; font-style: normal;"><strong>Total claimed Amount (Technician)</strong></td>
             <td style="width: 100px;text-align:center;">{{$total_tech_exp_amount}}</td>
         </tr>
         <tr style="border-bottom: none; border-top: none;">
-            <td colspan="13" style="text-align: right; font-style: normal;"><strong>Total Approved Amount (super admin)</strong></td>
+            <td colspan="15" style="text-align: right; font-style: normal;"><strong>Total Approved Amount (super admin)</strong></td>
             <td style="width: 100px;text-align:center;">{{$sa_aprvd_amount}}</td>
         </tr>
         <tr style="border-bottom: none; border-top: none;">
-            <td colspan="13" style="text-align: right; font-style: normal;"><strong>Balance /refundable Amount to Company,if any</strong></td>
+            <td colspan="15" style="text-align: right; font-style: normal;"><strong>Balance /refundable Amount to Company,if any</strong></td>
             <td style="width: 100px;text-align:center;">{{$adv_amnt - $sa_aprvd_amount}}</td>
         </tr>   
         <tr style="border-bottom: none; border-top: none;">
-            <td colspan="11" style="text-align: right; font-style: normal;"></td>
+            <td colspan="13" style="text-align: right; font-style: normal;"></td>
             <td  colspan="3"style="text-align:right;">
                     <b style="vertical-align: text-top;">For  Avians Innovation Technology Pvt. Ltd </b>
                     <br/><br/><br/><br/><br/> 
