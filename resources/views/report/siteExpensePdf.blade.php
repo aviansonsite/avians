@@ -76,7 +76,7 @@
             <th  style="width:40px!important;white-space:wrap;text-align:center;">DA</th>
             <th  style="width:40px!important;white-space:wrap;text-align:center;">Mat Purchase</th>
             <th  style="width:40px!important;white-space:wrap;text-align:center;">Other Exp</th>
-            <th  style="width:100px;white-space:wrap;text-align:center;">Amt (in Rs.)</th>
+            <th  style="width:100px;white-space:wrap;text-align:left;">Amt (in Rs.)</th>
         </tr>
       <?php  $n=7?>
       <?php $j = 0; $total_tech_exp_amount=0; $sa_aprvd_amount=0;?>
@@ -172,7 +172,7 @@
 
             </tr>
         @endforeach
-        <tr style="border-bottom: none; border-top: none;">
+        <!-- <tr style="border-bottom: none; border-top: none;">
             <td colspan="15" style="text-align: right; font-style: normal;"><strong>Total claimed Amount (Technician)</strong></td>
             <td style="width: 100px;text-align:center;">{{$total_tech_exp_amount}}</td>
         </tr>
@@ -183,7 +183,7 @@
         <tr style="border-bottom: none; border-top: none;">
             <td colspan="15" style="text-align: right; font-style: normal;"><strong>Balance /refundable Amount to Company,if any</strong></td>
             <td style="width: 100px;text-align:center;">{{$adv_amnt - $sa_aprvd_amount}}</td>
-        </tr>   
+        </tr>    -->
         <!-- <tr style="border-bottom: none; border-top: none;">
             <td colspan="13" style="text-align: right; font-style: normal;"></td>
             <td  colspan="3"style="text-align:right;">
