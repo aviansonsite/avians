@@ -67,7 +67,7 @@
             <th  style="width:20px!important;white-space:wrap;text-align:center;">To Location</th>
             <th  style="width:60px!important;white-space:wrap;text-align:center;">Approver Admin</th>
             <th  style="width:60px!important;white-space:wrap;text-align:center;">Approver SuperAdmin</th>
-            <th  style="width:60px!important;text-align:center;"> OA NO.</th>
+            <th  style="width:50px!important;text-align:center;"> OA NO.</th>
             <th  style="width:90px!important;text-align:center;"> Project Name.</th>
             <th  style="width:30px!important;text-align:center;"> Bills</th>
             <th  style="width:30px!important;white-space:wrap;text-align:center;"> No of Persons</th>
