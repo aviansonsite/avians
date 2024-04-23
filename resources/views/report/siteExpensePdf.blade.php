@@ -62,7 +62,7 @@
     <table style='margin-top: 0px;'>
         <tr>
             <th  style="width:60px;text-align:center;">Date</th>
-            <th  style="width:100px!important;white-space:wrap;text-align:center;"> Expense Description</th>
+            <th  style="width:100%;white-space:wrap;text-align:center;"> Expense Description</th>
             <th  style="width:20px!important;white-space:wrap;text-align:center;">From Location</th>
             <th  style="width:20px!important;white-space:wrap;text-align:center;">To Location</th>
             <th  style="width:60px!important;white-space:wrap;text-align:center;">Approver Admin</th>
