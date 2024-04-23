@@ -62,20 +62,20 @@
     <table style='margin-top: 0px;'>
         <tr>
             <th  style="width:60px;text-align:center;">Date</th>
-            <th  style="width:120px;white-space:wrap;text-align:center;"> Expense Description</th>
-            <th  style="width:20px;white-space:wrap;text-align:center;">From Location</th>
-            <th  style="width:20px;white-space:wrap;text-align:center;">To Location</th>
-            <th  style="width:60px;white-space:wrap;text-align:center;">Approver Admin</th>
-            <th  style="width:60px;white-space:wrap;text-align:center;">Approver SuperAdmin</th>
-            <th  style="width:60px;text-align:center;"> OA NO.</th>
-            <th  style="width:90px;text-align:center;"> Project Name.</th>
-            <th  style="width:30px;text-align:center;"> Bills</th>
-            <th  style="width:30px;white-space:wrap;text-align:center;"> No of Persons</th>
-            <th  style="width:50px;white-space:wrap;text-align:center;">Travel Exp</th>
-            <th  style="width:40px;text-align:center;">Hotel</th>
-            <th  style="width:40px;white-space:wrap;text-align:center;">DA</th>
-            <th  style="width:40px;white-space:wrap;text-align:center;">Mat Purchase</th>
-            <th  style="width:40px;white-space:wrap;text-align:center;">Other Exp</th>
+            <th  style="width:120px!important;white-space:wrap;text-align:center;"> Expense Description</th>
+            <th  style="width:20px!important;white-space:wrap;text-align:center;">From Location</th>
+            <th  style="width:20px!important;white-space:wrap;text-align:center;">To Location</th>
+            <th  style="width:60px!important;white-space:wrap;text-align:center;">Approver Admin</th>
+            <th  style="width:60px!important;white-space:wrap;text-align:center;">Approver SuperAdmin</th>
+            <th  style="width:60px!important;text-align:center;"> OA NO.</th>
+            <th  style="width:90px!important;text-align:center;"> Project Name.</th>
+            <th  style="width:30px!important;text-align:center;"> Bills</th>
+            <th  style="width:30px!important;white-space:wrap;text-align:center;"> No of Persons</th>
+            <th  style="width:50px!important;white-space:wrap;text-align:center;">Travel Exp</th>
+            <th  style="width:40px!important;text-align:center;">Hotel</th>
+            <th  style="width:40px!important;white-space:wrap;text-align:center;">DA</th>
+            <th  style="width:40px!important;white-space:wrap;text-align:center;">Mat Purchase</th>
+            <th  style="width:40px!important;white-space:wrap;text-align:center;">Other Exp</th>
             <th  style="width:10px!important;white-space:wrap;text-align:center;">Amt (in Rs.)</th>
         </tr>
       <?php  $n=7?>
@@ -109,15 +109,15 @@
                     @endif
                 </td>
                 @if(empty($te->from_location))
-                    <td style="width: ;text-align:center;"><strong> - </strong></td>
+                    <td style="width: ;text-align:center;"> - </td>
                 @else
-                    <td style="width: ;text-align:center;"><strong> {{$te->from_location}}</strong></td>
+                    <td style="width: ;text-align:center;"> {{$te->from_location}}</td>
                 @endif
 
                 @if(empty($te->to_location))
-                    <td style="width: ;text-align:center;"><strong> - </strong></td>
+                    <td style="width: ;text-align:center;"> - </td>
                 @else
-                    <td style="width: ;text-align:center;"><strong> {{$te->to_location}}</strong></td>
+                    <td style="width: ;text-align:center;"> {{$te->to_location}}</td>
                 @endif
 
                 <td style="width: ;text-align:center;">{{$te->project_admin}}</td>
