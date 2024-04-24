@@ -185,8 +185,8 @@
             <td style="width: 50px;text-align:center;">{{$adv_amnt - $sa_aprvd_amount}}</td>
         </tr>   
         <tr style="border-bottom: none; border-top: none;">
-            <td colspan="13" style="text-align: right; font-style: normal;"></td>
-            <td  colspan="3"style="text-align:right;">
+            <td colspan="12" style="text-align: right; font-style: normal;"></td>
+            <td  colspan="4"style="text-align:right;">
                     <b style="vertical-align: text-top;">For  Avians Innovation Technology Pvt. Ltd </b>
                     <br/><br/><br/><br/><br/> 
                     <small>( Authorised Signatory )</small>
