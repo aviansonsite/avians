@@ -174,15 +174,15 @@
         @endforeach
         <tr style="border-bottom: none; border-top: none;">
             <td colspan="15" style="text-align: right; font-style: normal;"><strong>Total claimed Amount (Technician)</strong></td>
-            <td style="width: 100px;text-align:center;">{{$total_tech_exp_amount}}</td>
+            <td style="width: 50px;text-align:center;">{{$total_tech_exp_amount}}</td>
         </tr>
         <tr style="border-bottom: none; border-top: none;">
             <td colspan="15" style="text-align: right; font-style: normal;"><strong>Total Approved Amount (super admin)</strong></td>
-            <td style="width: 100px;text-align:center;">{{$sa_aprvd_amount}}</td>
+            <td style="width: 50px;text-align:center;">{{$sa_aprvd_amount}}</td>
         </tr>
         <tr style="border-bottom: none; border-top: none;">
             <td colspan="15" style="text-align: right; font-style: normal;"><strong>Balance /refundable Amount to Company,if any</strong></td>
-            <td style="width: 100px;text-align:center;">{{$adv_amnt - $sa_aprvd_amount}}</td>
+            <td style="width: 50px;text-align:center;">{{$adv_amnt - $sa_aprvd_amount}}</td>
         </tr>   
         <!-- <tr style="border-bottom: none; border-top: none;">
             <td colspan="13" style="text-align: right; font-style: normal;"></td>
