@@ -226,7 +226,7 @@
                                                         <th scope="col" style="width: 100px">OA Number</th>
                                                         <th scope="col" style="width: 100px">Project Name</th>
                                                         <th scope="col" style="white-space: normal;">Travel Mode</th>
-                                                        <th scope="col" style="width: 100px">Description</th>
+                                                        <!-- <th scope="col" style="width: 100px">Description</th> -->
                                                         <th scope="col" style="width: 100px">From Location</th>
                                                         <th scope="col" style="width: 100px">To Location</th>
                                                         <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
@@ -243,7 +243,7 @@
                                                         <th scope="col" style="width: 100px">OA Number</th>
                                                         <th scope="col" style="width: 100px">Project Name</th>
                                                         <th scope="col" style="white-space: normal;">Travel Mode</th>
-                                                        <th scope="col" style="width: 100px">Description</th>
+                                                        <!-- <th scope="col" style="width: 100px">Description</th> -->
                                                         <th scope="col" style="width: 100px">From Location</th>
                                                         <th scope="col" style="width: 100px">To Location</th>
                                                         <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
@@ -337,7 +337,7 @@
                                                     <th scope="col" style="width: 100px">OA Number</th>
                                                     <th scope="col" style="width: 100px">Project Name</th>
                                                     <th scope="col" style="white-space: normal;">Travel Mode</th>
-                                                    <th scope="col" style="width: 100px">Description</th>
+                                                    <!-- <th scope="col" style="width: 100px">Description</th> -->
                                                     <th scope="col" style="width: 100px">From Location</th>
                                                     <th scope="col" style="width: 100px">To Location</th>
                                                     <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
@@ -354,7 +354,7 @@
                                                     <th scope="col" style="width: 100px">OA Number</th>
                                                     <th scope="col" style="width: 100px">Project Name</th>
                                                     <th scope="col" style="white-space: normal;">Travel Mode</th>
-                                                    <th scope="col" style="width: 100px">Description</th>
+                                                    <!-- <th scope="col" style="width: 100px">Description</th> -->
                                                     <th scope="col" style="width: 100px">From Location</th>
                                                     <th scope="col" style="width: 100px">To Location</th>
                                                     <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
@@ -422,7 +422,7 @@
                                                     <th scope="col" style="width: 100px">OA Number</th>
                                                     <th scope="col" style="width: 100px">Project Name</th>
                                                     <th scope="col" style="white-space: normal;">Travel Mode</th>
-                                                    <th scope="col" style="width: 100px">Description</th>
+                                                    <!-- <th scope="col" style="width: 100px">Description</th> -->
                                                     <th scope="col" style="width: 100px">From Location</th>
                                                     <th scope="col" style="width: 100px">To Location</th>
                                                     <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
@@ -439,7 +439,7 @@
                                                     <th scope="col" style="width: 100px">OA Number</th>
                                                     <th scope="col" style="width: 100px">Project Name</th>
                                                     <th scope="col" style="white-space: normal;">Travel Mode</th>
-                                                    <th scope="col" style="width: 100px">Description</th>
+                                                    <!-- <th scope="col" style="width: 100px">Description</th> -->
                                                     <th scope="col" style="width: 100px">From Location</th>
                                                     <th scope="col" style="width: 100px">To Location</th>
                                                     <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
@@ -519,7 +519,7 @@
                                                         <th scope="col" style="width: 100px">OA Number</th>
                                                         <th scope="col" style="width: 100px">Project Name</th>
                                                         <th scope="col" style="white-space: normal;">Travel Mode</th>
-                                                        <th scope="col" style="width: 100px">Description</th>
+                                                        <!-- <th scope="col" style="width: 100px">Description</th> -->
                                                         <th scope="col" style="width: 100px">From Location</th>
                                                         <th scope="col" style="width: 100px">To Location</th>
                                                         <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
@@ -536,7 +536,7 @@
                                                         <th scope="col" style="width: 100px">OA Number</th>
                                                         <th scope="col" style="width: 100px">Project Name</th>
                                                         <th scope="col" style="white-space: normal;">Travel Mode</th>
-                                                        <th scope="col" style="width: 100px">Description</th>
+                                                        <!-- <th scope="col" style="width: 100px">Description</th> -->
                                                         <th scope="col" style="width: 100px">From Location</th>
                                                         <th scope="col" style="width: 100px">To Location</th>
                                                         <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
