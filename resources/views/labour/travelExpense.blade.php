@@ -227,6 +227,8 @@
                                                         <th scope="col" style="width: 100px">Project Name</th>
                                                         <th scope="col" style="white-space: normal;">Travel Mode</th>
                                                         <th scope="col" style="width: 100px">Description</th>
+                                                        <th scope="col" style="width: 100px">From Location</th>
+                                                        <th scope="col" style="width: 100px">To Location</th>
                                                         <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
                                                         <th scope="col" style="width: 100px">Status</th>
                                                         <th scope="col" style="width: 100px">Action</th>
@@ -242,6 +244,8 @@
                                                         <th scope="col" style="width: 100px">Project Name</th>
                                                         <th scope="col" style="white-space: normal;">Travel Mode</th>
                                                         <th scope="col" style="width: 100px">Description</th>
+                                                        <th scope="col" style="width: 100px">From Location</th>
+                                                        <th scope="col" style="width: 100px">To Location</th>
                                                         <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
                                                         <th scope="col" style="width: 100px">Status</th>
                                                         
@@ -334,6 +338,8 @@
                                                     <th scope="col" style="width: 100px">Project Name</th>
                                                     <th scope="col" style="white-space: normal;">Travel Mode</th>
                                                     <th scope="col" style="width: 100px">Description</th>
+                                                    <th scope="col" style="width: 100px">From Location</th>
+                                                    <th scope="col" style="width: 100px">To Location</th>
                                                     <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
                                                     <th scope="col" style="width: 100px">Status</th>
                                                     <th scope="col" style="width: 100px">Action</th>
@@ -349,6 +355,8 @@
                                                     <th scope="col" style="width: 100px">Project Name</th>
                                                     <th scope="col" style="white-space: normal;">Travel Mode</th>
                                                     <th scope="col" style="width: 100px">Description</th>
+                                                    <th scope="col" style="width: 100px">From Location</th>
+                                                    <th scope="col" style="width: 100px">To Location</th>
                                                     <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
                                                     <th scope="col" style="width: 100px">Status</th>
                                                 </tr>
@@ -415,6 +423,8 @@
                                                     <th scope="col" style="width: 100px">Project Name</th>
                                                     <th scope="col" style="white-space: normal;">Travel Mode</th>
                                                     <th scope="col" style="width: 100px">Description</th>
+                                                    <th scope="col" style="width: 100px">From Location</th>
+                                                    <th scope="col" style="width: 100px">To Location</th>
                                                     <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
                                                     <th scope="col" style="width: 100px">Status</th>
                                                     
@@ -430,6 +440,8 @@
                                                     <th scope="col" style="width: 100px">Project Name</th>
                                                     <th scope="col" style="white-space: normal;">Travel Mode</th>
                                                     <th scope="col" style="width: 100px">Description</th>
+                                                    <th scope="col" style="width: 100px">From Location</th>
+                                                    <th scope="col" style="width: 100px">To Location</th>
                                                     <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
                                                     <th scope="col" style="width: 100px">Status</th>
                                                 </tr>
@@ -508,6 +520,8 @@
                                                         <th scope="col" style="width: 100px">Project Name</th>
                                                         <th scope="col" style="white-space: normal;">Travel Mode</th>
                                                         <th scope="col" style="width: 100px">Description</th>
+                                                        <th scope="col" style="width: 100px">From Location</th>
+                                                        <th scope="col" style="width: 100px">To Location</th>
                                                         <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
                                                         <th scope="col" style="width: 100px">Status</th>
                                                         <th scope="col" style="width: 100px">Action</th>
@@ -523,6 +537,8 @@
                                                         <th scope="col" style="width: 100px">Project Name</th>
                                                         <th scope="col" style="white-space: normal;">Travel Mode</th>
                                                         <th scope="col" style="width: 100px">Description</th>
+                                                        <th scope="col" style="width: 100px">From Location</th>
+                                                        <th scope="col" style="width: 100px">To Location</th>
                                                         <th scope="col" style="width: 100px">Amount <br>(In Rs.)</th>
                                                         <th scope="col" style="width: 100px">Status</th>
                                                     </tr>
@@ -1298,8 +1314,20 @@
                                     }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
                                         content +="<td>"+row.mode_travel+"</td>";
                                     }
-                                    if(row.travel_desc != null){
-                                        content +="<td>"+row.travel_desc+"</td>";
+                                    // if(row.travel_desc != null){
+                                    //     content +="<td>"+row.travel_desc+"</td>";
+                                    // }else{
+                                    //     content +="<td class='text-center'> - </td>";
+                                    // }
+
+                                    if(row.from_location != null){
+                                        content +="<td>"+row.from_location+"</td>";
+                                    }else{
+                                        content +="<td class='text-center'> - </td>";
+                                    }
+
+                                    if(row.to_location != null){
+                                        content +="<td>"+row.to_location+"</td>";
                                     }else{
                                         content +="<td class='text-center'> - </td>";
                                     }
@@ -1329,8 +1357,20 @@
                                     }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
                                         content +="<td>"+row.mode_travel+"</td>";
                                     }
-                                    if(row.travel_desc != null){
-                                        content +="<td>"+row.travel_desc+"</td>";
+                                    // if(row.travel_desc != null){
+                                    //     content +="<td>"+row.travel_desc+"</td>";
+                                    // }else{
+                                    //     content +="<td class='text-center'> - </td>";
+                                    // }
+
+                                    if(row.from_location != null){
+                                        content +="<td>"+row.from_location+"</td>";
+                                    }else{
+                                        content +="<td class='text-center'> - </td>";
+                                    }
+
+                                    if(row.to_location != null){
+                                        content +="<td>"+row.to_location+"</td>";
                                     }else{
                                         content +="<td class='text-center'> - </td>";
                                     }
@@ -1446,12 +1486,24 @@
                                         content1 +="<td>"+row.mode_travel+"</td>";
                                     }
 
-                                    if(row.travel_desc != null){
-                                        content1 +="<td>"+row.travel_desc+"</td>";
+                                    // if(row.travel_desc != null){
+                                    //     content1 +="<td>"+row.travel_desc+"</td>";
+                                    // }else{
+                                    //     content1 +="<td class='text-center'> - </td>";
+                                    // }
+                                    
+                                    if(row.from_location != null){
+                                        content1 +="<td>"+row.from_location+"</td>";
                                     }else{
                                         content1 +="<td class='text-center'> - </td>";
                                     }
-                                    
+
+                                    if(row.to_location != null){
+                                        content1 +="<td>"+row.to_location+"</td>";
+                                    }else{
+                                        content1 +="<td class='text-center'> - </td>";
+                                    }
+
                                     if(row.attachment != null){
                                         content1 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
                                     }else{
@@ -1479,11 +1531,24 @@
                                     }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
                                         content1 +="<td>"+row.mode_travel+"</td>";
                                     }
-                                    if(row.travel_desc != null){
-                                        content1 +="<td>"+row.travel_desc+"</td>";
+                                    // if(row.travel_desc != null){
+                                    //     content1 +="<td>"+row.travel_desc+"</td>";
+                                    // }else{
+                                    //     content1 +="<td class='text-center'> - </td>";
+                                    // }
+
+                                    if(row.from_location != null){
+                                        content1 +="<td>"+row.from_location+"</td>";
                                     }else{
                                         content1 +="<td class='text-center'> - </td>";
                                     }
+
+                                    if(row.to_location != null){
+                                        content1 +="<td>"+row.to_location+"</td>";
+                                    }else{
+                                        content1 +="<td class='text-center'> - </td>";
+                                    }
+
                                     if(row.attachment != null){
                                         content1 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
                                     }else{
@@ -1582,8 +1647,20 @@
                                         content3 +="<td>"+row.mode_travel+"</td>";
                                     }
 
-                                    if(row.travel_desc != null){
-                                        content3 +="<td>"+row.travel_desc+"</td>";
+                                    // if(row.travel_desc != null){
+                                    //     content3 +="<td>"+row.travel_desc+"</td>";
+                                    // }else{
+                                    //     content3 +="<td class='text-center'> - </td>";
+                                    // }
+
+                                    if(row.from_location != null){
+                                        content3 +="<td>"+row.from_location+"</td>";
+                                    }else{
+                                        content3 +="<td class='text-center'> - </td>";
+                                    }
+
+                                    if(row.to_location != null){
+                                        content3 +="<td>"+row.to_location+"</td>";
                                     }else{
                                         content3 +="<td class='text-center'> - </td>";
                                     }
@@ -1615,8 +1692,20 @@
                                         content3 +="<td>"+row.mode_travel+"</td>";
                                     }
 
-                                    if(row.travel_desc != null){
-                                        content3 +="<td>"+row.travel_desc+"</td>";
+                                    // if(row.travel_desc != null){
+                                    //     content3 +="<td>"+row.travel_desc+"</td>";
+                                    // }else{
+                                    //     content3 +="<td class='text-center'> - </td>";
+                                    // }
+
+                                    if(row.from_location != null){
+                                        content3 +="<td>"+row.from_location+"</td>";
+                                    }else{
+                                        content3 +="<td class='text-center'> - </td>";
+                                    }
+
+                                    if(row.to_location != null){
+                                        content3 +="<td>"+row.to_location+"</td>";
                                     }else{
                                         content3 +="<td class='text-center'> - </td>";
                                     }
@@ -1727,11 +1816,24 @@
                                     }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
                                         content2 +="<td>"+row.mode_travel+"</td>";
                                     }
-                                    if(row.travel_desc != null){
-                                        content2 +="<td>"+row.travel_desc+"</td>";
+                                    // if(row.travel_desc != null){
+                                    //     content2 +="<td>"+row.travel_desc+"</td>";
+                                    // }else{
+                                    //     content2 +="<td class='text-center'> - </td>";
+                                    // }
+
+                                    if(row.from_location != null){
+                                        content2 +="<td>"+row.from_location+"</td>";
                                     }else{
                                         content2 +="<td class='text-center'> - </td>";
                                     }
+
+                                    if(row.to_location != null){
+                                        content2 +="<td>"+row.to_location+"</td>";
+                                    }else{
+                                        content2 +="<td class='text-center'> - </td>";
+                                    }
+
                                     if(row.attachment != null){
                                         content2 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
                                     }else{
@@ -1763,8 +1865,20 @@
                                         content2 +="<td>"+row.mode_travel+"</td>";
                                     }
 
-                                    if(row.travel_desc != null){
-                                        content2 +="<td>"+row.travel_desc+"</td>";
+                                    // if(row.travel_desc != null){
+                                    //     content2 +="<td>"+row.travel_desc+"</td>";
+                                    // }else{
+                                    //     content2 +="<td class='text-center'> - </td>";
+                                    // }
+
+                                    if(row.from_location != null){
+                                        content2 +="<td>"+row.from_location+"</td>";
+                                    }else{
+                                        content2 +="<td class='text-center'> - </td>";
+                                    }
+
+                                    if(row.to_location != null){
+                                        content2 +="<td>"+row.to_location+"</td>";
                                     }else{
                                         content2 +="<td class='text-center'> - </td>";
                                     }
@@ -1956,8 +2070,20 @@
                             }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
                                 content +="<td>"+row.mode_travel+"</td>";
                             }
-                            if(row.travel_desc != null){
-                                content +="<td>"+row.travel_desc+"</td>";
+                            // if(row.travel_desc != null){
+                            //     content +="<td>"+row.travel_desc+"</td>";
+                            // }else{
+                            //     content +="<td class='text-center'> - </td>";
+                            // }
+
+                            if(row.from_location != null){
+                                content +="<td>"+row.from_location+"</td>";
+                            }else{
+                                content +="<td class='text-center'> - </td>";
+                            }
+
+                            if(row.to_location != null){
+                                content +="<td>"+row.to_location+"</td>";
                             }else{
                                 content +="<td class='text-center'> - </td>";
                             }
@@ -1986,8 +2112,20 @@
                             }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
                                 content +="<td>"+row.mode_travel+"</td>";
                             }
-                            if(row.travel_desc != null){
-                                content +="<td>"+row.travel_desc+"</td>";
+                            // if(row.travel_desc != null){
+                            //     content +="<td>"+row.travel_desc+"</td>";
+                            // }else{
+                            //     content +="<td class='text-center'> - </td>";
+                            // }
+
+                            if(row.from_location != null){
+                                content +="<td>"+row.from_location+"</td>";
+                            }else{
+                                content +="<td class='text-center'> - </td>";
+                            }
+
+                            if(row.to_location != null){
+                                content +="<td>"+row.to_location+"</td>";
                             }else{
                                 content +="<td class='text-center'> - </td>";
                             }
@@ -2102,12 +2240,24 @@
                                 content1 +="<td>"+row.mode_travel+"</td>";
                             }
 
-                            if(row.travel_desc != null){
-                                content1 +="<td>"+row.travel_desc+"</td>";
+                            // if(row.travel_desc != null){
+                            //     content1 +="<td>"+row.travel_desc+"</td>";
+                            // }else{
+                            //     content1 +="<td class='text-center'> - </td>";
+                            // }
+                            
+                            if(row.from_location != null){
+                                content1 +="<td>"+row.from_location+"</td>";
                             }else{
                                 content1 +="<td class='text-center'> - </td>";
                             }
-                            
+
+                            if(row.to_location != null){
+                                content1 +="<td>"+row.to_location+"</td>";
+                            }else{
+                                content1 +="<td class='text-center'> - </td>";
+                            }
+
                             if(row.attachment != null){
                                 content1 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
                             }else{
@@ -2135,11 +2285,24 @@
                             }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
                                 content1 +="<td>"+row.mode_travel+"</td>";
                             }
-                            if(row.travel_desc != null){
-                                content1 +="<td>"+row.travel_desc+"</td>";
+                            // if(row.travel_desc != null){
+                            //     content1 +="<td>"+row.travel_desc+"</td>";
+                            // }else{
+                            //     content1 +="<td class='text-center'> - </td>";
+                            // }
+
+                            if(row.from_location != null){
+                                content1 +="<td>"+row.from_location+"</td>";
                             }else{
                                 content1 +="<td class='text-center'> - </td>";
                             }
+
+                            if(row.to_location != null){
+                                content1 +="<td>"+row.to_location+"</td>";
+                            }else{
+                                content1 +="<td class='text-center'> - </td>";
+                            }
+
                             if(row.attachment != null){
                                 content1 +="<td>"+row.aprvd_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
                             }else{
@@ -2238,8 +2401,20 @@
                                 content3 +="<td>"+row.mode_travel+"</td>";
                             }
 
-                            if(row.travel_desc != null){
-                                content3 +="<td>"+row.travel_desc+"</td>";
+                            // if(row.travel_desc != null){
+                            //     content3 +="<td>"+row.travel_desc+"</td>";
+                            // }else{
+                            //     content3 +="<td class='text-center'> - </td>";
+                            // }
+
+                            if(row.from_location != null){
+                                content3 +="<td>"+row.from_location+"</td>";
+                            }else{
+                                content3 +="<td class='text-center'> - </td>";
+                            }
+
+                            if(row.to_location != null){
+                                content3 +="<td>"+row.to_location+"</td>";
                             }else{
                                 content3 +="<td class='text-center'> - </td>";
                             }
@@ -2271,8 +2446,20 @@
                                 content3 +="<td>"+row.mode_travel+"</td>";
                             }
 
-                            if(row.travel_desc != null){
-                                content3 +="<td>"+row.travel_desc+"</td>";
+                            // if(row.travel_desc != null){
+                            //     content3 +="<td>"+row.travel_desc+"</td>";
+                            // }else{
+                            //     content3 +="<td class='text-center'> - </td>";
+                            // }
+
+                            if(row.from_location != null){
+                                content3 +="<td>"+row.from_location+"</td>";
+                            }else{
+                                content3 +="<td class='text-center'> - </td>";
+                            }
+
+                            if(row.to_location != null){
+                                content3 +="<td>"+row.to_location+"</td>";
                             }else{
                                 content3 +="<td class='text-center'> - </td>";
                             }
@@ -2383,11 +2570,24 @@
                             }else if(row.mode_travel != "Private_Auto" && row.mode_travel != "Shared_Auto"){
                                 content2 +="<td>"+row.mode_travel+"</td>";
                             }
-                            if(row.travel_desc != null){
-                                content2 +="<td>"+row.travel_desc+"</td>";
+                            // if(row.travel_desc != null){
+                            //     content2 +="<td>"+row.travel_desc+"</td>";
+                            // }else{
+                            //     content2 +="<td class='text-center'> - </td>";
+                            // }
+
+                            if(row.from_location != null){
+                                content2 +="<td>"+row.from_location+"</td>";
                             }else{
                                 content2 +="<td class='text-center'> - </td>";
                             }
+
+                            if(row.to_location != null){
+                                content2 +="<td>"+row.to_location+"</td>";
+                            }else{
+                                content2 +="<td class='text-center'> - </td>";
+                            }
+
                             if(row.attachment != null){
                                 content2 +="<td>"+row.travel_amount+"<br><span class='badge badge-soft-primary view_attachment' data-attachment='"+row.attachment+"'>View Attachment</span></td>";
                             }else{
@@ -2419,8 +2619,20 @@
                                 content2 +="<td>"+row.mode_travel+"</td>";
                             }
 
-                            if(row.travel_desc != null){
-                                content2 +="<td>"+row.travel_desc+"</td>";
+                            // if(row.travel_desc != null){
+                            //     content2 +="<td>"+row.travel_desc+"</td>";
+                            // }else{
+                            //     content2 +="<td class='text-center'> - </td>";
+                            // }
+
+                            if(row.from_location != null){
+                                content2 +="<td>"+row.from_location+"</td>";
+                            }else{
+                                content2 +="<td class='text-center'> - </td>";
+                            }
+
+                            if(row.to_location != null){
+                                content2 +="<td>"+row.to_location+"</td>";
                             }else{
                                 content2 +="<td class='text-center'> - </td>";
                             }
