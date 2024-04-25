@@ -180,6 +180,8 @@
                                         <th scope="col" style="width: 20px;">Sr.No</th>
                                         <th scope="col" style="width: 100px">Date</th>
                                         <th scope="col" style="width: 100px">Expense Description</th>
+                                        <th scope="col" style="width: 100px">From Location</th>
+                                        <th scope="col" style="width: 100px">To Location</th>
                                         <th scope="col" style="width: 100px">Approver Admin</th>
                                         <th scope="col" style="width: 100px">Approver SuperAdmin</th>
                                         <th scope="col" style="width: 100px">OA No</th>
@@ -423,23 +425,33 @@
                             content +="<td>"+ ++i +"</td>";
                             content +="<td>"+exp_date+"</td>";   
                             content +="<td>";    
-                                // if(row.from_location == null){
-                                //     content +="<strong>From Location: - </strong><br/>";
-                                // }else{
-                                //     content +="<strong>From Location: "+row.from_location+"</strong><br/>";
-                                // }
 
-                                // if(row.to_location == null){
-                                //     content +="<strong>To Location: - </strong><br/>";
-                                // }else{
-                                //     content +="<strong>To Location: "+row.to_location+"</strong><br/>";
-                                // }
-             
                                 if(row.exp_desc == null){
                                     content +="<strong> - </strong><br/>";
                                 }else{
                                     content +="<strong>"+row.exp_desc+"</strong><br/>";
                                 }
+
+                            content +="</td>";
+
+                            content +="<td>";   
+
+                                if(row.from_location == null){
+                                    content +="<strong> - </strong><br/>";
+                                }else{
+                                    content +="<strong>"+row.from_location+"</strong><br/>";
+                                }
+
+                            content +="</td>";
+
+                            content +="<td>"; 
+
+                                if(row.to_location == null){
+                                    content +="<strong> - </strong><br/>";
+                                }else{
+                                    content +="<strong>"+row.to_location+"</strong><br/>";
+                                }
+
                             content +="</td>";
                             content +="<td>"+row.project_admin+"</td>";
                             content +="<td>"+row.super_admin+"</td>";
