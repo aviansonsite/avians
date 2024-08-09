@@ -79,7 +79,7 @@
             <th  style="width:50px;white-space:wrap;text-align:center;">Amt (in Rs.)</th>
         </tr>
       <?php  $n=7?>
-      <?php $j = 0; $total_tech_exp_amount=0; $sa_aprvd_amount=0;?>
+      <?php $j = 0; $total_tech_exp_amount=$sa_aprvd_amount=$total_no_of_person=$total_trav_exp=$total_hotel=$total_da=$total_mat_purchase=$total_other_exp=0;?>
         @foreach($tech_exp as $te)
             <?php   
                     $total_tech_exp_amount += $te->amount;
@@ -90,17 +90,6 @@
             
                 <td style="width: ;text-align:center;">{{$exp_date}}</td>
                 <td  style="">
-                    <!-- @if(empty($te->from_location))
-                        <strong>From Location: - </strong><br/>
-                    @else
-                        <strong>From Location: {{$te->from_location}}</strong><br/>
-                    @endif
-
-                    @if(empty($te->to_location))
-                        <strong>To Location: - </strong><br/>
-                    @else
-                        <strong>To Location: {{$te->to_location}}</strong><br/>
-                    @endif -->
 
                     @if($te->exp_desc == null)
                         <strong> - </strong>
@@ -134,35 +123,45 @@
                 @if($te->no_of_person == null)
                     <td style="text-align:center;"> - </td>
                 @else
+                <?php $total_no_of_person += $total_no_of_person;?>
                     <td style="text-align:center;">{{$te->no_of_person}}</td>
                 @endif 
 
 
                 @if(($te->exp_type == 'Bus') || ($te->exp_type == 'Train') || ($te->exp_type == 'Bike') || ($te->exp_type == 'Shared_Auto') || ($te->exp_type == 'Private_Auto') || ($te->exp_type == 'Own Car') )
+                    <?php $total_trav_exp += $te->aprvd_amount;?>
                     <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
                 @else
                     <td style="width: ;text-align:center;"> </td>
                 @endif 
 
                 @if($te->exp_type == 'Hotel')
+                    <?php $total_hotel += $te->aprvd_amount;?>
+
                     <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
                 @else
                     <td style="width: ;text-align:center;"> </td>
                 @endif 
 
                 @if($te->exp_type == 'Daily Allowance')
+                    <?php $total_da += $te->aprvd_amount;?>
+
                     <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
                 @else
                     <td style="width: ;text-align:center;"> </td>
                 @endif
 
                 @if($te->exp_type == 'Material_Purchase')
+                    <?php $total_mat_purchase += $te->aprvd_amount;?>
+
                     <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
                 @else
                     <td style="width: ;text-align:center;"> </td>
                 @endif
 
                 @if(($te->exp_type == 'Crane/Hydra') || ($te->exp_type == 'Labour_Hired') || ($te->exp_type == 'Scaffolding') || ($te->exp_type == 'Other'))
+                    <?php $total_other_exp += $te->aprvd_amount;?>
+
                     <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
                 @else
                     <td style="width: ;text-align:center;"> </td>
@@ -172,6 +171,16 @@
 
             </tr>
         @endforeach
+        <tr style="border-bottom: none; border-top: none;">
+            <td colspan="9" style="text-align: right; font-style: normal;"><strong>Total</strong></td>
+            <td style="width: 50px;text-align:center;">{{$total_no_of_person}}</td>
+            <td style="width: 50px;text-align:center;">{{$total_trav_exp}}</td>
+            <td style="width: 50px;text-align:center;">{{$total_hotel}}</td>
+            <td style="width: 50px;text-align:center;">{{$total_da}}</td>
+            <td style="width: 50px;text-align:center;">{{$total_mat_purchase}}</td>
+            <td style="width: 50px;text-align:center;">{{$total_other_exp}}</td>
+            <td style="width: 50px;text-align:center;">{{$total_tech_exp_amount}}</td>
+        </tr>
         <tr style="border-bottom: none; border-top: none;">
             <td colspan="15" style="text-align: right; font-style: normal;"><strong>Total claimed Amount (Technician)</strong></td>
             <td style="width: 50px;text-align:center;">{{$total_tech_exp_amount}}</td>
