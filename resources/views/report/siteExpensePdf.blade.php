@@ -123,20 +123,20 @@
                 @if($te->no_of_person == null)
                     <td style="text-align:center;"> - </td>
                 @else
-                <?php $total_no_of_person += $total_no_of_person;?>
+                <?php $total_no_of_person = $total_no_of_person + $te->no_of_person ;?>
                     <td style="text-align:center;">{{$te->no_of_person}}</td>
                 @endif 
 
 
                 @if(($te->exp_type == 'Bus') || ($te->exp_type == 'Train') || ($te->exp_type == 'Bike') || ($te->exp_type == 'Shared_Auto') || ($te->exp_type == 'Private_Auto') || ($te->exp_type == 'Own Car') )
-                    <?php $total_trav_exp += $te->aprvd_amount;?>
+                    <?php $total_trav_exp = $total_trav_exp + $te->aprvd_amount;?>
                     <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
                 @else
                     <td style="width: ;text-align:center;"> </td>
                 @endif 
 
                 @if($te->exp_type == 'Hotel')
-                    <?php $total_hotel += $te->aprvd_amount;?>
+                    <?php $total_hotel = $total_hotel + $te->aprvd_amount;?>
 
                     <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
                 @else
@@ -144,7 +144,7 @@
                 @endif 
 
                 @if($te->exp_type == 'Daily Allowance')
-                    <?php $total_da += $te->aprvd_amount;?>
+                    <?php $total_da = $total_da + $te->aprvd_amount;?>
 
                     <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
                 @else
@@ -152,7 +152,7 @@
                 @endif
 
                 @if($te->exp_type == 'Material_Purchase')
-                    <?php $total_mat_purchase += $te->aprvd_amount;?>
+                    <?php $total_mat_purchase = $total_mat_purchase + $te->aprvd_amount;?>
 
                     <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
                 @else
@@ -160,7 +160,7 @@
                 @endif
 
                 @if(($te->exp_type == 'Crane/Hydra') || ($te->exp_type == 'Labour_Hired') || ($te->exp_type == 'Scaffolding') || ($te->exp_type == 'Other'))
-                    <?php $total_other_exp += $te->aprvd_amount;?>
+                    <?php $total_other_exp = $total_other_exp + $te->aprvd_amount;?>
 
                     <td style="width: ;text-align:center;">{{$te->aprvd_amount}}</td>
                 @else
