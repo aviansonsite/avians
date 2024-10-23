@@ -500,7 +500,7 @@
             dataType: 'json',                 
             success:function(data){
                 console.log(data);
-
+                oa_status = data.oa_status;
                 if(data.so_id == null){
                     if (data.count == 0) 
                     { 
@@ -510,7 +510,7 @@
                     }else{
                         $(".lerror_msg").show();     // on labour change check status
                         $(".labour_change").hide();     // on labour change 
-                        $("#lerror_msg").html("This Technician Already Exist in <strong>"+data.oa_status+" - "+data.oa_number+"</strong> ,Please Select Another Technician For Further Process.");
+                        $("#lerror_msg").html("This Technician Already Exist in <strong>"+oa_status+" - "+data.oa_number+"</strong> ,Please Select Another Technician For Further Process.");
                     }
                 }else{
                     if (((data.count == 1) && (data.so_id == data.d_so_id)) || ((data.count == 0) && (data.d_so_id == 0)) ) 
@@ -521,7 +521,7 @@
                     }else{
                         $(".lerror_msg").show();     // on labour change check status
                         $(".labour_change").hide();     // on labour change 
-                        $("#lerror_msg").html("This Technician Already Exist in <strong>"+data.oa_status+" - "+data.oa_number+"</strong> ,Please Select Another Technician For Further Process.");
+                        $("#lerror_msg").html("This Technician Already Exist in <strong>"+oa_status+" - "+data.oa_number+"</strong> ,Please Select Another Technician For Further Process.");
                     }
                 }
                  
