@@ -1068,7 +1068,7 @@ class LabourPaymentController extends Controller
     {
         $a_id=Session::get('USER_ID');
         $role=Session::get('ROLES');
-        if($role == 0){
+        if($role == 0 || $role == 2){
     	    $u_obj=UserModel::where(['delete'=>0,'role'=>3,'is_active'=>0])->orderby('created_at','DESC')->get();
 
         }else{
