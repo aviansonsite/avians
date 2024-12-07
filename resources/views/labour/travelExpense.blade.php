@@ -132,7 +132,7 @@
                                             <small><span class="text-danger" id="tderror" style="font-size: 11px !important;"></span></small>
                                         </div>
                                     </div>
-                                    @if($roles == 1 || $roles == 0)
+                                    @if($roles == 0 || $roles == 1 || $roles == 2)
                                         <div class="col-md-3 col-sm-12 col-lg-3">
                                             <div class="form-group mb-3">
                                                 <label for="slabours" class="form-label" style="font-size: 11px;margin-bottom: 2px;">Select Technician <sup class="text-danger">*</sup></label>
