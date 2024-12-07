@@ -22,7 +22,7 @@ $count=count($role);
                         
                         @endif
                         <!-- Super Admin & Admin -->
-                        @if($roles==0 || $roles==1 || $roles==2)
+                        @if($roles==0 || $roles==1)
 
                             <li class="nav-item">
                                 <a href="{{route('user.page')}}" class="waves-effect nav-link">
@@ -46,13 +46,6 @@ $count=count($role);
                                 <a href="{{route('manage_labour_payment.page')}}" class="waves-effect nav-link">
                                     <i class="bx bx-file"></i>
                                     <span key="t-dashboards">Manage Expense Requests</span>
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="{{route('travel_expense.page')}}" class="waves-effect nav-link">
-                                    <i class="bx bx-file"></i>
-                                    <span key="t-dashboards">Travel Expense</span>
                                 </a>
                             </li>
                         @endif
@@ -90,16 +83,15 @@ $count=count($role);
                                 </a>
                             </li>
                         @endif
-
                         <!--Not Accountant -->
-                        <!-- @if($roles!=2)
+                        @if($roles!=2)
                             <li class="nav-item">
                                 <a href="{{route('travel_expense.page')}}" class="waves-effect nav-link">
                                     <i class="bx bx-file"></i>
                                     <span key="t-dashboards">Travel Expense</span>
                                 </a>
                             </li>
-                        @endif -->
+                        @endif
                      
                         @if($roles!=3)
                             <li class="nav-item">
